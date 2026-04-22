@@ -915,21 +915,36 @@ a:hover { text-decoration: underline; }
   gap: 6px;
 }
 
-/* Staggered slide-in reveal: starts with Layer 01 (bottom/last child) */
+/* ============================================================
+   STAGGERED STACK REVEAL — "layers land from offscreen"
+   Each layer flies in from the left with scale + blur → focus,
+   overshoots with a spring, then fires a teal glow pulse on
+   arrival. Layer 01 leads; the 5-layer build tops out with the
+   contract-vehicle footer strip. ~2s total.
+   ============================================================ */
 .unified-stack .us-layer {
   opacity: 0;
-  transform: translateX(-28px);
+  transform: translateX(-140px) scale(0.82) rotate(-2deg);
+  filter: blur(8px);
   transition:
-    opacity 520ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 640ms cubic-bezier(0.34, 1.2, 0.64, 1);
+    opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 900ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    filter 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity, filter;
 }
-.unified-stack .us-head,
+.unified-stack .us-head {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 600ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
 .unified-stack .us-foot {
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(16px) scale(0.96);
   transition:
-    opacity 500ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 600ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 700ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .unified-stack.stacked .us-head {
   opacity: 1;
@@ -937,18 +952,32 @@ a:hover { text-decoration: underline; }
 }
 .unified-stack.stacked .us-layer {
   opacity: 1;
-  transform: translateX(0);
+  transform: translateX(0) scale(1) rotate(0);
+  filter: blur(0);
 }
-/* Order: 5 children. Layer 01 = last child = first to reveal. */
-.unified-stack.stacked .us-layer:nth-child(5) { transition-delay: 120ms; }  /* LAYER 01 */
-.unified-stack.stacked .us-layer:nth-child(4) { transition-delay: 260ms; }  /* LAYER 02 */
-.unified-stack.stacked .us-layer:nth-child(3) { transition-delay: 400ms; }  /* LAYER 03 */
-.unified-stack.stacked .us-layer:nth-child(2) { transition-delay: 540ms; }  /* LAYER 04 */
-.unified-stack.stacked .us-layer:nth-child(1) { transition-delay: 680ms; }  /* LAYER 05 */
+/* Glow-pulse on each layer as it lands. Uses --tint from inline style. */
+@keyframes layerLand {
+  0%   { box-shadow: 0 0 0 0 transparent, 0 0 0 0 transparent; }
+  55%  { box-shadow: 0 20px 48px -12px var(--tint, rgba(47,179,154,0.6)),
+                      0 0 0 1px rgba(255,255,255,0.12); }
+  100% { box-shadow: 0 0 0 0 transparent, 0 0 0 0 transparent; }
+}
+.unified-stack.stacked .us-layer {
+  animation-name: layerLand;
+  animation-duration: 1000ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: both;
+}
+/* Order: 5 children. Layer 01 = last child = first to reveal. Wider stagger. */
+.unified-stack.stacked .us-layer:nth-child(5) { transition-delay: 160ms; animation-delay: 160ms; }   /* LAYER 01 */
+.unified-stack.stacked .us-layer:nth-child(4) { transition-delay: 360ms; animation-delay: 360ms; }   /* LAYER 02 */
+.unified-stack.stacked .us-layer:nth-child(3) { transition-delay: 560ms; animation-delay: 560ms; }   /* LAYER 03 */
+.unified-stack.stacked .us-layer:nth-child(2) { transition-delay: 760ms; animation-delay: 760ms; }   /* LAYER 04 */
+.unified-stack.stacked .us-layer:nth-child(1) { transition-delay: 960ms; animation-delay: 960ms; }   /* LAYER 05 */
 .unified-stack.stacked .us-foot {
   opacity: 1;
-  transform: translateY(0);
-  transition-delay: 860ms;
+  transform: translateY(0) scale(1);
+  transition-delay: 1220ms;
 }
 @media (prefers-reduced-motion: reduce) {
   .unified-stack .us-layer,
@@ -956,7 +985,9 @@ a:hover { text-decoration: underline; }
   .unified-stack .us-foot {
     opacity: 1;
     transform: none;
+    filter: none;
     transition: none;
+    animation: none;
   }
 }
 .us-layer {
@@ -1524,7 +1555,8 @@ a:hover { text-decoration: underline; }
   pointer-events: none;
   opacity: 0;
   display: flex;
-  flex-direction: row;
+  /* Default = RIGHT side: bubble (inward) then mascot (outward edge) */
+  flex-direction: row-reverse;
   align-items: flex-end;
   gap: 14px;
   max-width: 320px;
@@ -1537,7 +1569,8 @@ a:hover { text-decoration: underline; }
 .mascot-floater.left {
   right: auto;
   left: max(24px, calc(50% - 700px));
-  flex-direction: row-reverse;
+  /* LEFT side: mascot (outward edge) then bubble (inward) */
+  flex-direction: row;
   transform: translate(-100px, 20px) scale(0.5) rotate(-10deg);
 }
 .mascot-floater.in {
@@ -1585,24 +1618,26 @@ a:hover { text-decoration: underline; }
   box-shadow: 0 8px 24px -4px rgba(0,0,0,0.4);
 }
 .mascot-floater .m-bubble::after {
+  /* Default = RIGHT side: mascot is to the bubble's RIGHT → tail points right */
   content: "";
   position: absolute;
   bottom: 16px;
-  left: -7px;
+  right: -7px;
   width: 12px; height: 12px;
   background: inherit;
-  border-left: 1px solid rgba(11,42,74,0.1);
-  border-bottom: 1px solid rgba(11,42,74,0.1);
+  border-right: 1px solid rgba(11,42,74,0.1);
+  border-top: 1px solid rgba(11,42,74,0.1);
   transform: rotate(45deg);
   border-radius: 2px;
 }
 .mascot-floater.left .m-bubble::after {
-  left: auto;
-  right: -7px;
-  border-left: 0;
-  border-bottom: 0;
-  border-right: 1px solid rgba(11,42,74,0.1);
-  border-top: 1px solid rgba(11,42,74,0.1);
+  /* LEFT side: mascot is to the bubble's LEFT → tail points left */
+  right: auto;
+  left: -7px;
+  border-right: 0;
+  border-top: 0;
+  border-left: 1px solid rgba(11,42,74,0.1);
+  border-bottom: 1px solid rgba(11,42,74,0.1);
 }
 .mascot-floater.on-dark .m-bubble::after { border-color: rgba(47,179,154,0.35) !important; }
 .mascot-pop .m-char {
