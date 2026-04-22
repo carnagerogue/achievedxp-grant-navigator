@@ -2199,7 +2199,16 @@ a:hover { text-decoration: underline; }
   grid-template-columns: 1.4fr 1fr;
   gap: 24px;
   margin-bottom: 24px;
+  align-items: start;
 }
+.stack-chart-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  aspect-ratio: 1 / 1;
+  margin: 8px auto 4px;
+}
+.stack-chart-wrap canvas { width: 100% !important; height: 100% !important; }
 .stack-layer {
   padding: 16px 20px;
   margin-bottom: 8px;
@@ -2473,6 +2482,220 @@ a:hover { text-decoration: underline; }
 .partner-tile.priority {
   border: 2px solid var(--teal);
   background: linear-gradient(180deg, rgba(47,179,154,0.04) 0%, transparent 100%);
+}
+
+/* ============================================================
+   PARTNER CATALOG (reworked)
+   ============================================================ */
+
+/* Bundled platform capabilities (2x3 grid) */
+.bundled-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.bundled-tile {
+  background: linear-gradient(135deg, rgba(47,179,154,0.06), rgba(47,179,154,0.02));
+  border: 1px solid rgba(47,179,154,0.2);
+  border-radius: 12px;
+  padding: 18px 18px 16px;
+}
+.bundled-tile .bt-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--teal-dark);
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.bundled-tile .bt-label::before {
+  content: "✓";
+  width: 16px; height: 16px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--teal);
+  color: #fff;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.bundled-tile .bt-title {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--navy);
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+.bundled-tile .bt-body {
+  font-size: 12.5px;
+  color: var(--grey-700);
+  line-height: 1.5;
+}
+
+/* Catalog section headers */
+.catalog-group {
+  margin-top: 28px;
+}
+.catalog-group:first-child { margin-top: 0; }
+.catalog-group-head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(11,42,74,0.12);
+  margin-bottom: 10px;
+}
+.catalog-group-head .cg-cat {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  color: var(--navy);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.catalog-group-head .cg-meta {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  color: var(--grey-500);
+  text-align: right;
+}
+
+/* Catalog row */
+.catalog-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1.4fr auto;
+  gap: 24px;
+  align-items: start;
+  padding: 18px 16px;
+  border-bottom: 1px solid rgba(11,42,74,0.06);
+  transition: background var(--dur) var(--ease);
+}
+.catalog-row:last-child { border-bottom: 0; }
+.catalog-row:hover { background: rgba(47,179,154,0.03); }
+.catalog-row.priority {
+  background: linear-gradient(90deg, rgba(47,179,154,0.04) 0%, transparent 60%);
+  border-left: 3px solid var(--teal);
+  padding-left: 13px;
+}
+.catalog-row .c-name {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--navy);
+  line-height: 1.25;
+}
+.catalog-row .c-priority {
+  display: inline-block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  color: var(--teal-dark);
+  background: rgba(47,179,154,0.12);
+  border: 1px solid rgba(47,179,154,0.28);
+  padding: 3px 7px;
+  border-radius: 5px;
+  margin-left: 8px;
+  vertical-align: middle;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.catalog-row .c-desc {
+  font-size: 13px;
+  color: var(--grey-700);
+  line-height: 1.55;
+  margin-top: 4px;
+}
+.catalog-row .c-grants {
+  margin-top: 6px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  color: var(--teal-dark);
+}
+.catalog-row .c-grants-label {
+  color: var(--grey-500);
+  margin-right: 6px;
+}
+.catalog-row .c-cost {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  min-width: 160px;
+}
+.catalog-row .c-cost-badge {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.catalog-row .c-cost-badge.bundled {
+  background: rgba(47,179,154,0.14);
+  color: var(--teal-dark);
+  border: 1px solid rgba(47,179,154,0.3);
+}
+.catalog-row .c-cost-badge.add {
+  background: rgba(232,119,34,0.12);
+  color: var(--orange-dark);
+  border: 1px solid rgba(232,119,34,0.28);
+}
+.catalog-row .c-cost-badge.own {
+  background: rgba(11,42,74,0.06);
+  color: var(--navy);
+  border: 1px solid rgba(11,42,74,0.14);
+}
+.catalog-row .c-cost-note {
+  font-size: 11px;
+  color: var(--grey-500);
+  text-align: right;
+  max-width: 220px;
+  line-height: 1.4;
+}
+.catalog-foot {
+  margin-top: 20px;
+  padding: 14px 16px;
+  background: var(--grey-50);
+  border: 1px solid rgba(11,42,74,0.06);
+  border-radius: 10px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: var(--grey-700);
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  display: flex;
+  gap: 10px;
+}
+.catalog-foot::before {
+  content: "i";
+  width: 18px; height: 18px;
+  flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--navy);
+  color: #fff;
+  border-radius: 50%;
+  font-family: "Fraunces", Georgia, serif;
+  font-style: italic;
+  font-size: 12px;
+  font-weight: 600;
+}
+@media (max-width: 820px) {
+  .bundled-grid { grid-template-columns: 1fr 1fr; }
+  .catalog-row { grid-template-columns: 1fr; gap: 10px; }
+  .catalog-row .c-cost { align-items: flex-start; }
+  .catalog-row .c-cost-note { text-align: left; }
 }
 
 /* ------------ NARRATIVE ------------ */
@@ -3359,7 +3582,7 @@ a:hover { text-decoration: underline; }
       <div class="card">
         <div class="card-title">Funding by category</div>
         <div class="card-desc">Where your dollars should come from.</div>
-        <canvas id="stackChart" height="260"></canvas>
+        <div class="stack-chart-wrap"><canvas id="stackChart"></canvas></div>
       </div>
     </div>
     <div class="card">
@@ -3419,18 +3642,60 @@ a:hover { text-decoration: underline; }
 
   <!-- PANEL: PARTNERS -->
   <div class="panel" data-panel="partners">
+    <!-- SECTION 1: What comes bundled with the AchieveDXP platform itself -->
     <div class="card">
-      <div class="card-title">Your partner ecosystem in AchieveDXP</div>
-      <div class="card-desc">Pre-integrated partners aligned to your selected programs. Each one strengthens your grant narrative and expands eligibility.</div>
-      <div class="partner-grid" id="partnerGrid"></div>
+      <div class="card-title">Bundled with every AchieveDXP platform license</div>
+      <div class="card-desc">These capabilities are included with your platform licensing — the infrastructure that holds every content provider together. No separate contracts, no add-on fees.</div>
+      <div class="bundled-grid">
+        <div class="bundled-tile">
+          <div class="bt-label">Platform</div>
+          <div class="bt-title">Unified learner record</div>
+          <div class="bt-body">One transcript that follows the learner across every app, every facility, every transfer.</div>
+        </div>
+        <div class="bundled-tile">
+          <div class="bt-label">Platform</div>
+          <div class="bt-title">Single sign-on (SSO)</div>
+          <div class="bt-body">One login for learners, instructors, administrators across all integrated content partners.</div>
+        </div>
+        <div class="bundled-tile">
+          <div class="bt-label">Platform</div>
+          <div class="bt-title">Grant-aligned reporting</div>
+          <div class="bt-body">NRS / Perkins V / WIOA outcome reports generated automatically — renewal evidence ready.</div>
+        </div>
+        <div class="bundled-tile">
+          <div class="bt-label">Platform</div>
+          <div class="bt-title">Account provisioning &amp; rostering</div>
+          <div class="bt-body">Automated creation, movement-aware rostering, offline-tolerant sessions for restricted networks.</div>
+        </div>
+        <div class="bundled-tile">
+          <div class="bt-label">Platform</div>
+          <div class="bt-title">Teacher &amp; admin dashboards</div>
+          <div class="bt-body">Real-time visibility into learner progress, persistence, credential attainment, facility-level rollups.</div>
+        </div>
+        <div class="bundled-tile">
+          <div class="bt-label">Platform</div>
+          <div class="bt-title">Compliance envelope</div>
+          <div class="bt-body">SOC 2 · ISO 27001 · FERPA · HIPAA · CIPA · NIST SP 800-53 — auditor-ready from day one.</div>
+        </div>
+      </div>
     </div>
+
+    <!-- SECTION 2: Catalog of content partners (separate licensing, grant-fundable) -->
     <div class="card">
-      <div class="card-title">Why integrated partners strengthen your applications</div>
+      <div class="card-title">Content &amp; credential partner catalog</div>
+      <div class="card-desc">Pre-integrated content providers aligned to your selected programs. These are licensed separately from the AchieveDXP platform — each one is grant-eligible when procured through the iT1 + Nucleos contract vehicle. Pricing is vendor-set and updated frequently; the team will return current rates in your Statement of Work.</div>
+      <div id="partnerCatalog"></div>
+      <div class="catalog-foot">Pricing disclosed per-vendor in your SOW. When you procure through AchieveDXP, every line item on this catalog is grant-eligible under the funding streams listed beside it. Nothing here is a trial, a demo, or upsell — it's the actual integrated catalog currently running in agencies like Wyoming DOC, Virginia DOC, and SF County Jail.</div>
+    </div>
+
+    <!-- SECTION 3: Why this structure strengthens applications -->
+    <div class="card">
+      <div class="card-title">Why a pre-integrated catalog strengthens your applications</div>
       <ul style="font-size:14px; color:var(--grey-700); line-height:1.7; padding-left:20px;">
-        <li><strong style="color:var(--navy);">Evidence-based programming:</strong> Each partner brings peer-reviewed or federally recognized curriculum that reviewers accept as evidence.</li>
-        <li><strong style="color:var(--navy);">Unified reporting:</strong> One dashboard across Coursera, GED, Ascend, iCEV, and your university partners — funders see one learner record.</li>
-        <li><strong style="color:var(--navy);">Faster procurement:</strong> Partners are pre-contracted through Nucleos. No separate procurement cycles.</li>
-        <li><strong style="color:var(--navy);">Scalable program expansion:</strong> Add a new population or program without a new RFP.</li>
+        <li><strong style="color:var(--navy);">Evidence-based programming:</strong> Each partner brings peer-reviewed or federally recognized curriculum that reviewers already accept as evidence.</li>
+        <li><strong style="color:var(--navy);">Unified reporting:</strong> One dashboard across every content provider — funders see one learner record, not eight disconnected reports.</li>
+        <li><strong style="color:var(--navy);">Faster procurement:</strong> Partners are pre-contracted through Nucleos. No separate procurement cycles, no individual vendor negotiations.</li>
+        <li><strong style="color:var(--navy);">Scalable expansion:</strong> Add a new population or program without a new RFP. The platform and its integrations scale with you.</li>
       </ul>
     </div>
   </div>
@@ -3922,16 +4187,29 @@ const COMPONENTS = [
 // ============================================================
 // PARTNERS
 // ============================================================
+// Each partner has:
+//   tier: "add" (separate licensing, grant-fundable) | "bundled" (included w/ platform) | "own" (bring your own)
+//   cost_note: one-line pricing/inclusion description
+//   grants: grant streams that typically cover this line
 const PARTNERS = [
-  { id: "university", name: "Universities & colleges", cat: "Post-secondary", desc: "Accredited degree and credit programs behind the wire, delivered through secure streaming. Canvas, Moodle, Blackboard." },
-  { id: "coursera",   name: "Coursera",                cat: "Credentials",    desc: "Industry-recognized certificates in tech, business, healthcare, and more." },
-  { id: "ascend",     name: "Ascend Math",             cat: "Adaptive math",  desc: "Adaptive math for learners below grade level. Feeds unified learner record." },
-  { id: "icev",       name: "iCEV",                    cat: "CTE",            desc: "CTE aligned to Perkins V: OSHA, ServSafe, logistics, agriculture, business." },
-  { id: "ged",        name: "Essential Education / NROC", cat: "GED / HSE",   desc: "NRS-aligned GED and HSE prep. Persistent records follow individuals between facilities and reentry." },
-  { id: "workforce",  name: "GoEducate / workforce",   cat: "Workforce",      desc: "Regional career portals that connect learners to jobs in their return communities." },
-  { id: "vant4ge",    name: "Vant4ge",                 cat: "Risk & needs",   desc: "Risk and needs, case planning, and program tracking integrated to AchieveDXP." },
-  { id: "jakapa",     name: "Jakapa",                  cat: "SEL",            desc: "Social-emotional learning and life skills for incarcerated and returning citizens." },
-  { id: "own",        name: "Bring your own content",  cat: "Flexibility",    desc: "Existing vendors, homegrown content, LMS. Integrate via SSO, xAPI, secure embedding." }
+  { id: "university", name: "Universities & colleges", cat: "Post-secondary", desc: "Accredited degree and credit programs behind the wire, delivered through secure streaming. Canvas, Moodle, Blackboard.",
+    tier: "add",     cost_note: "Tuition set by institution · typically per credit-hour", grants: ["Second Chance Pell", "Voc Rehab", "State higher-ed aid"] },
+  { id: "coursera",   name: "Coursera",                cat: "Credentials",    desc: "Industry-recognized certificates in tech, business, healthcare, and more. Pre-integrated with SSO.",
+    tier: "add",     cost_note: "Per-learner licensing · vendor-set · contact Nucleos for current rates", grants: ["AEFLA", "Perkins V", "Second Chance Act", "WIOA"] },
+  { id: "ascend",     name: "Ascend Math",             cat: "Adaptive math",  desc: "Adaptive math for learners below grade level. Feeds the unified learner record and progresses across housing transfers.",
+    tier: "add",     cost_note: "Per-learner licensing · annual", grants: ["AEFLA", "Title I", "State adult-ed"] },
+  { id: "icev",       name: "iCEV",                    cat: "CTE",            desc: "CTE aligned to Perkins V: OSHA, ServSafe, logistics, agriculture, construction, business.",
+    tier: "add",     cost_note: "Per-seat licensing · annual", grants: ["Perkins V", "WIOA", "State CTE"] },
+  { id: "ged",        name: "Essential Education / NROC", cat: "GED / HSE",   desc: "NRS-aligned GED and HSE preparation. Persistent records follow individuals between facilities and reentry.",
+    tier: "add",     cost_note: "Per-learner licensing · vendor-set", grants: ["AEFLA", "Second Chance Act", "State adult-ed"] },
+  { id: "workforce",  name: "GoEducate",               cat: "Workforce",      desc: "Regional career portals that connect learners to jobs in their return communities, with warm hand-off to workforce boards.",
+    tier: "add",     cost_note: "Regional licensing · varies by state/region", grants: ["WIOA Title I", "Voc Rehab"] },
+  { id: "vant4ge",    name: "Vant4ge",                 cat: "Risk & needs",   desc: "Validated risk-and-needs assessment, case planning, and program tracking integrated to AchieveDXP.",
+    tier: "add",     cost_note: "Agency-level licensing · typically DOC-funded", grants: ["Byrne JAG", "Justice Reinvestment", "State DOC"] },
+  { id: "jakapa",     name: "Jakapa",                  cat: "SEL",            desc: "Social-emotional learning and life skills curriculum for incarcerated and returning citizens.",
+    tier: "add",     cost_note: "Per-learner licensing · annual", grants: ["Second Chance Act", "SAMHSA", "Juvenile Justice"] },
+  { id: "own",        name: "Bring your own content",  cat: "Flexibility",    desc: "Your existing vendors, homegrown curriculum, or LMS — integrated via SSO, xAPI, or secure embedding.",
+    tier: "own",     cost_note: "No additional AchieveDXP licensing · keep your existing contracts", grants: ["Existing funding carries over"] }
 ];
 
 // ============================================================
@@ -4799,20 +5077,68 @@ function renderPartners() {
   state.goals.forEach(g => (goalsToPriority[g] || []).forEach(p => priority.add(p)));
   state.existingPartners.forEach(p => { if (p !== 'none') priority.add(p); });
 
-  const grid = document.getElementById('partnerGrid');
-  // Order: priority first, then rest
-  const sorted = [...PARTNERS].sort((a, b) => {
+  const host = document.getElementById('partnerCatalog');
+  if (!host) return;
+
+  // Group by licensing tier; within each, priority matches sort first
+  const byTier = { add: [], own: [] };
+  for (const p of PARTNERS) {
+    if (byTier[p.tier]) byTier[p.tier].push(p);
+  }
+  const sortByPriority = (a, b) => {
     const ap = priority.has(a.id) ? 0 : 1;
     const bp = priority.has(b.id) ? 0 : 1;
     return ap - bp;
-  });
-  grid.innerHTML = sorted.map(p => `
-    <div class="partner-tile ${priority.has(p.id) ? 'priority' : ''}">
-      <div class="cat">${escapeHtml(p.cat)}${priority.has(p.id) ? ' • PRIORITY FOR YOU' : ''}</div>
-      <div class="name">${escapeHtml(p.name)}</div>
-      <div class="desc">${escapeHtml(p.desc)}</div>
-    </div>
-  `).join('');
+  };
+  byTier.add.sort(sortByPriority);
+
+  const renderRow = (p) => {
+    const badgeClass = p.tier === "own" ? "own" : (p.tier === "bundled" ? "bundled" : "add");
+    const badgeText  = p.tier === "own" ? "Bring your own" : (p.tier === "bundled" ? "Bundled" : "Additional licensing");
+    const priorityTag = priority.has(p.id) ? '<span class="c-priority">Priority for you</span>' : '';
+    const grantsHtml = (p.grants && p.grants.length)
+      ? `<div class="c-grants"><span class="c-grants-label">Typical grant coverage:</span>${escapeHtml(p.grants.join(" · "))}</div>`
+      : '';
+    return `
+      <div class="catalog-row ${priority.has(p.id) ? 'priority' : ''}">
+        <div>
+          <div class="c-name">${escapeHtml(p.name)}${priorityTag}</div>
+          <div class="c-desc">${escapeHtml(p.desc)}</div>
+        </div>
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--grey-500); margin-bottom:6px; font-weight:600;">${escapeHtml(p.cat)}</div>
+          ${grantsHtml}
+        </div>
+        <div class="c-cost">
+          <span class="c-cost-badge ${badgeClass}">${escapeHtml(badgeText)}</span>
+          <span class="c-cost-note">${escapeHtml(p.cost_note || "")}</span>
+        </div>
+      </div>
+    `;
+  };
+
+  let html = '';
+  if (byTier.add.length) {
+    html += `<div class="catalog-group">
+      <div class="catalog-group-head">
+        <span class="cg-cat">Content &amp; credential partners</span>
+        <span></span>
+        <span class="cg-meta">${byTier.add.length} providers · additional licensing · grant-fundable</span>
+      </div>
+      ${byTier.add.map(renderRow).join('')}
+    </div>`;
+  }
+  if (byTier.own.length) {
+    html += `<div class="catalog-group">
+      <div class="catalog-group-head">
+        <span class="cg-cat">Your existing vendors</span>
+        <span></span>
+        <span class="cg-meta">integrate via SSO / xAPI · no duplicate licensing</span>
+      </div>
+      ${byTier.own.map(renderRow).join('')}
+    </div>`;
+  }
+  host.innerHTML = html;
 }
 
 function renderRoadmap() {
