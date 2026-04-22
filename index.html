@@ -1221,23 +1221,87 @@ a:hover { text-decoration: underline; }
   white-space: nowrap;
 }
 .acq-cta-sent {
-  background: rgba(47,179,154,0.14);
-  border: 1px solid rgba(47,179,154,0.4);
-  color: var(--teal-light);
-  padding: 12px 18px;
-  border-radius: 10px;
+  grid-column: 1 / -1;
+  background: rgba(47,179,154,0.10);
+  border: 1px solid rgba(47,179,154,0.35);
+  color: #fff;
+  padding: 22px 24px;
+  border-radius: 14px;
   font-family: "Inter", sans-serif;
-  font-size: 13px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 22px;
+  align-items: center;
+}
+.acq-cta-sent img {
+  width: 96px;
+  height: auto;
+  filter: drop-shadow(0 6px 16px rgba(47,179,154,0.35));
+}
+.acq-cta-sent .acq-cta-sent-title {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 19px;
   font-weight: 500;
+  letter-spacing: -0.015em;
+  color: #fff;
+  line-height: 1.25;
+  margin-bottom: 6px;
   display: flex;
   align-items: center;
   gap: 10px;
 }
-.acq-cta-sent::before {
+.acq-cta-sent .acq-cta-sent-title::before {
   content: "✓";
-  font-weight: 700;
-  font-size: 16px;
-  color: var(--teal);
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--teal);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: 0 0 12px rgba(47,179,154,0.5);
+  flex-shrink: 0;
+}
+.acq-cta-sent .acq-cta-sent-body {
+  font-size: 14px;
+  color: rgba(255,255,255,0.78);
+  line-height: 1.55;
+}
+
+/* ============================================================
+   MASCOT
+   ============================================================ */
+.mascot {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 0;
+}
+.mascot img { display: block; width: 100%; height: auto; }
+.mascot--xs { width: 32px; }
+.mascot--sm { width: 56px; }
+.mascot--md { width: 96px; }
+.mascot--lg { width: 140px; }
+.mascot--lg img { filter: drop-shadow(0 6px 16px rgba(47,179,154,0.3)); }
+
+/* Wizard header mascot — decorative, top-right of the dark header */
+.wizard-mascot {
+  position: absolute;
+  top: 18px;
+  right: 24px;
+  z-index: 2;
+  width: 88px;
+  opacity: 0.98;
+  filter: drop-shadow(0 6px 14px rgba(47,179,154,0.25));
+  pointer-events: none;
+  transition: transform 600ms var(--ease-out);
+}
+.wizard-mascot img { width: 100%; height: auto; display: block; }
+.wizard-mascot:hover { transform: translateY(-2px) rotate(-2deg); }
+@media (max-width: 640px) {
+  .wizard-mascot { width: 56px; top: 14px; right: 16px; }
 }
 .hero .cta-row {
   display: flex;
@@ -2806,6 +2870,7 @@ a:hover { text-decoration: underline; }
 <!-- WIZARD -->
 <div class="wizard" id="wizard" style="display:none;">
   <div class="wizard-head">
+    <div class="wizard-mascot" aria-hidden="true"><img src="./assets/mascot.png" alt=""></div>
     <h2>Tell us about your agency</h2>
     <div class="subtitle">Your answers shape your matched grants, funding stack, and program design.</div>
     <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
@@ -3952,7 +4017,16 @@ function requestSOW() {
     return res.json();
   }).then(() => {
     if (block) {
-      block.innerHTML = '<div class="acq-cta-sent">SOW request sent · The iT1 + Nucleos team will contact ' + escapeHtml(state.contactName || "you") + ' within one business day at ' + escapeHtml(state.contactEmail || "your email") + '.</div>';
+      const name = escapeHtml(state.contactName || "you");
+      const email = escapeHtml(state.contactEmail || "your email");
+      block.innerHTML =
+        '<div class="acq-cta-sent">' +
+          '<img src="./assets/mascot.png" alt="" aria-hidden="true">' +
+          '<div>' +
+            '<div class="acq-cta-sent-title">Request received — we\'re on it.</div>' +
+            '<div class="acq-cta-sent-body">The iT1 + Nucleos team will contact ' + name + ' within one business day at ' + email + '. Keep this page open or save it — your full plan is already generated below.</div>' +
+          '</div>' +
+        '</div>';
     }
     showToast("SOW request sent");
   }).catch(err => {
