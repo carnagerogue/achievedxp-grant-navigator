@@ -634,10 +634,17 @@ a:hover { text-decoration: underline; }
 }
 .cert-source.audited {
   color: var(--teal-dark);
-  background: rgba(47,179,154,0.1);
-  border: 1px solid rgba(47,179,154,0.25);
+  background: rgba(47,179,154,0.12);
+  border: 1px solid rgba(47,179,154,0.35);
+  font-weight: 700;
 }
-.cert-source.audited::before { background: var(--teal); box-shadow: 0 0 6px rgba(47,179,154,0.6); }
+.cert-source.audited::before { background: var(--teal); box-shadow: 0 0 8px rgba(47,179,154,0.7); }
+.cert-source.monitored {
+  color: var(--navy);
+  background: rgba(11,42,74,0.04);
+  border: 1px solid rgba(11,42,74,0.12);
+}
+.cert-source.monitored::before { background: var(--navy-light); }
 .cert-source.self {
   color: var(--grey-700);
   background: rgba(11,42,74,0.05);
@@ -1459,48 +1466,100 @@ a:hover { text-decoration: underline; }
 }
 
 /* ============================================================
-   MASCOT · DISNEY-MAGIC POP-INS
-   Each landing section has a <div class="mascot-pop"> anchored
-   to the viewport gutter (position: fixed). Entry is snappy and
-   springy; exit lingers longer so the user catches each one even
-   at normal scroll speed.
+   MASCOT · FLOATER (single element, moves between sections)
+   One fixed-position mascot. As each section scrolls into view,
+   the bubble text is swapped and the side alternates L/R with a
+   crossfade. Only ONE mascot ever visible at a time.
    ============================================================ */
-.mascot-pop {
+.mascot-floater {
   position: fixed;
-  bottom: 12%;
+  bottom: 10%;
+  right: max(24px, calc(50% - 700px));
   z-index: 40;
   pointer-events: none;
   opacity: 0;
   display: flex;
-  align-items: flex-end;
-  gap: 12px;
-  max-width: 280px;
-  /* Default (exit) transition — graceful fade out */
-  transition:
-    opacity 900ms cubic-bezier(0.4, 0, 0.2, 1),
-    transform 1100ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-/* Default: right-aligned (speech bubble to the LEFT of mascot) */
-.mascot-pop {
-  right: max(24px, calc(50% - 680px));
   flex-direction: row;
-  transform: translate(80px, 10px) scale(0.4) rotate(10deg);
+  align-items: flex-end;
+  gap: 14px;
+  max-width: 320px;
+  transform: translate(100px, 20px) scale(0.5) rotate(10deg);
+  /* Exit timing — graceful */
+  transition:
+    opacity 500ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 700ms cubic-bezier(0.4, 0, 0.2, 1);
 }
-.mascot-pop.left {
+.mascot-floater.left {
   right: auto;
-  left: max(24px, calc(50% - 680px));
+  left: max(24px, calc(50% - 700px));
   flex-direction: row-reverse;
-  transform: translate(-80px, 10px) scale(0.4) rotate(-10deg);
+  transform: translate(-100px, 20px) scale(0.5) rotate(-10deg);
 }
-/* Entry transition — snappy with spring overshoot */
-.mascot-pop.in {
+.mascot-floater.in {
   opacity: 1;
   transform: translate(0, 0) scale(1) rotate(0);
   pointer-events: auto;
+  /* Entry timing — snappy spring */
   transition:
-    opacity 380ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 520ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity 400ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 560ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+.mascot-floater .m-char {
+  width: 104px;
+  height: auto;
+  flex-shrink: 0;
+  filter: drop-shadow(0 10px 22px rgba(47,179,154,0.28));
+  animation: mascot-float 4s ease-in-out infinite;
+  pointer-events: auto;
+  transition: transform 250ms ease-out;
+}
+.mascot-floater .m-char:hover { transform: scale(1.08) rotate(-4deg); }
+.mascot-floater .m-bubble {
+  position: relative;
+  background: #fff;
+  border: 1px solid rgba(11,42,74,0.1);
+  border-radius: 16px;
+  padding: 12px 16px;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--navy);
+  line-height: 1.35;
+  box-shadow: 0 6px 18px -4px rgba(11,42,74,0.18);
+  max-width: 240px;
+  transition: opacity 280ms ease, transform 280ms ease;
+}
+.mascot-floater.bubble-swap .m-bubble {
+  opacity: 0;
+  transform: translateY(4px);
+}
+.mascot-floater.on-dark .m-bubble {
+  background: rgba(255,255,255,0.97);
+  border-color: rgba(47,179,154,0.35);
+  box-shadow: 0 8px 24px -4px rgba(0,0,0,0.4);
+}
+.mascot-floater .m-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: 16px;
+  left: -7px;
+  width: 12px; height: 12px;
+  background: inherit;
+  border-left: 1px solid rgba(11,42,74,0.1);
+  border-bottom: 1px solid rgba(11,42,74,0.1);
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
+.mascot-floater.left .m-bubble::after {
+  left: auto;
+  right: -7px;
+  border-left: 0;
+  border-bottom: 0;
+  border-right: 1px solid rgba(11,42,74,0.1);
+  border-top: 1px solid rgba(11,42,74,0.1);
+}
+.mascot-floater.on-dark .m-bubble::after { border-color: rgba(47,179,154,0.35) !important; }
 .mascot-pop .m-char {
   width: 72px;
   height: auto;
@@ -3059,6 +3118,12 @@ a:hover { text-decoration: underline; }
 
 <!-- LANDING -->
 <div id="landing">
+  <!-- Single mascot floater — moves between landing sections based on scroll -->
+  <div class="mascot-floater" id="mascotFloater" aria-hidden="true">
+    <img class="m-char" src="./assets/mascot.png" alt="">
+    <div class="m-bubble" id="mascotBubble">—</div>
+  </div>
+
   <div class="hero-canvas">
     <!-- TOP BAR (dark-mode, sits on hero) -->
     <div class="top-bar">
@@ -3096,11 +3161,7 @@ a:hover { text-decoration: underline; }
     </div>
   </div>
 
-  <div class="editorial" style="position: relative;">
-    <div class="mascot-pop left" data-scene="editorial" aria-hidden="true">
-      <img class="m-char" src="./assets/mascot.png" alt="">
-      <div class="m-bubble">Three moves. I'll walk you through each one.</div>
-    </div>
+  <div class="editorial" data-scene="editorial">
     <div class="lane">
       <div class="num">01 · DISCOVER</div>
       <h3>Match the right funding</h3>
@@ -3121,11 +3182,7 @@ a:hover { text-decoration: underline; }
   <!-- ========================================================
        SECTION · THE PLATFORM (what AchieveDXP is)
        ======================================================== -->
-  <section class="section" id="platform" style="position: relative;">
-    <div class="mascot-pop" data-scene="platform" aria-hidden="true">
-      <img class="m-char" src="./assets/mascot.png" alt="">
-      <div class="m-bubble">Every system talks. Every record follows — even after release.</div>
-    </div>
+  <section class="section" id="platform" data-scene="platform">
     <div class="section-head">
       <div class="section-eyebrow-col">
         <div class="section-kicker">AchieveDXP · The Platform</div>
@@ -3237,12 +3294,8 @@ a:hover { text-decoration: underline; }
   <!-- ========================================================
        SECTION · OUTCOMES (dark canvas)
        ======================================================== -->
-  <section class="section dark" id="outcomes">
-    <div class="inner" style="position: relative;">
-      <div class="mascot-pop on-dark left" data-scene="outcomes" aria-hidden="true">
-        <img class="m-char" src="./assets/mascot.png" alt="">
-        <div class="m-bubble">Reviewers reward evidence. Here's what works.</div>
-      </div>
+  <section class="section dark" id="outcomes" data-scene="outcomes">
+    <div class="inner">
       <div class="section-head">
         <div class="section-eyebrow-col">
           <div class="section-kicker">Outcomes · Published evidence</div>
@@ -3286,50 +3339,46 @@ a:hover { text-decoration: underline; }
   <!-- ========================================================
        SECTION · COMPLIANCE
        ======================================================== -->
-  <section class="section" id="compliance" style="position: relative;">
-    <div class="mascot-pop" data-scene="compliance" aria-hidden="true">
-      <img class="m-char" src="./assets/mascot.png" alt="">
-      <div class="m-bubble">Every box your auditor will ask about. 1,028 controls. 100% ready.</div>
-    </div>
+  <section class="section" id="compliance" data-scene="compliance">
     <div class="section-head">
       <div class="section-eyebrow-col">
         <div class="section-kicker">Compliance · Continuously monitored</div>
       </div>
       <div>
-        <h2 class="section-headline">Five audited frameworks, one self-attested. 1,028 controls. 100&#37; ready — continuously.</h2>
-        <p class="section-lead">AchieveDXP operates inside the federal and state compliance envelope agencies already live in. Every audited control is continuously monitored via <strong style="color:var(--navy)">Drata</strong> — no point-in-time snapshots, no gaps, no exceptions carved out. FedRAMP authorization puts AchieveDXP on the short list of corrections-ready platforms cleared for federal cloud.</p>
+        <h2 class="section-headline">SOC 2 Type I audited. Six frameworks under continuous monitoring. 1,028 controls. Zero exceptions.</h2>
+        <p class="section-lead">AchieveDXP operates inside the federal and state compliance envelope agencies already live in. Every control is continuously tracked in <strong style="color:var(--navy)">Drata</strong>, with the SOC 2 Type I audit independently attested and Type II monitoring controls already live. The audit trail is real-time — not point-in-time.</p>
       </div>
     </div>
 
     <div class="badge-grid">
       <div class="badge-tile">
-        <div class="cert-source audited">Audited · Drata</div>
+        <div class="cert-source monitored">Monitored · Drata</div>
         <div class="std">FedRAMP</div>
         <div class="std-sub">Federal cloud authorization</div>
         <div class="std-desc">U.S. government's standardized authorization for cloud systems. 323 requirements · 293 controls · 100&#37; ready. Cleared for federal corrections deployments.</div>
       </div>
       <div class="badge-tile">
-        <div class="cert-source audited">Audited · Drata</div>
+        <div class="cert-source monitored">Monitored · Drata</div>
         <div class="std">HIPAA</div>
         <div class="std-sub">Health information privacy</div>
         <div class="std-desc">Protected handling of health-adjacent learner data — SUD program enrollment, reentry case files, medical education records. 201 requirements · 113 controls · 100&#37; ready.</div>
       </div>
       <div class="badge-tile">
-        <div class="cert-source audited">Audited · Drata</div>
+        <div class="cert-source monitored">Monitored · Drata</div>
         <div class="std">ISO 27001:2022</div>
         <div class="std-sub">Information security management</div>
         <div class="std-desc">International standard for information security management systems — required for most federal procurement paths. 123 requirements · 170 controls · 100&#37; ready.</div>
       </div>
       <div class="badge-tile">
-        <div class="cert-source audited">Audited · Drata</div>
+        <div class="cert-source monitored">Monitored · Drata</div>
         <div class="std">NIST SP 800-53</div>
         <div class="std-sub">Federal security &amp; privacy controls</div>
         <div class="std-desc">The baseline DOJ, ED, and HHS grant-funded systems must meet. 370 requirements · 308 controls · 100&#37; ready.</div>
       </div>
       <div class="badge-tile">
-        <div class="cert-source audited">Audited · Drata</div>
+        <div class="cert-source audited">Type I audited · Drata-monitored</div>
         <div class="std">SOC 2</div>
-        <div class="std-sub">Type I audited · Type II controls monitored</div>
+        <div class="std-sub">Independently audited · Type II controls live</div>
         <div class="std-desc">Independent Type I attestation that security, availability, and confidentiality controls are designed to meet trust-services criteria. All Type II monitoring controls continuously tracked in Drata. 61 requirements · 144 controls · 100&#37; ready.</div>
       </div>
       <div class="badge-tile">
@@ -3352,11 +3401,7 @@ a:hover { text-decoration: underline; }
   <!-- ========================================================
        SECTION · THE JOINT iT1 + NUCLEOS TEAM
        ======================================================== -->
-  <section class="section" id="team" style="position: relative;">
-    <div class="mascot-pop left" data-scene="team" aria-hidden="true">
-      <img class="m-char" src="./assets/mascot.png" alt="">
-      <div class="m-bubble">Real agencies. Already running. Today.</div>
-    </div>
+  <section class="section" id="team" data-scene="team">
     <div class="section-head">
       <div class="section-eyebrow-col">
         <div class="section-kicker">The Joint Team · iT1 + Nucleos</div>
@@ -3434,12 +3479,8 @@ a:hover { text-decoration: underline; }
   <!-- ========================================================
        SECTION · FINAL CTA
        ======================================================== -->
-  <section class="section dark">
-    <div class="inner final-cta" style="position: relative;">
-      <div class="mascot-pop on-dark" data-scene="final" aria-hidden="true">
-        <img class="m-char" src="./assets/mascot.png" alt="" style="width: 96px;">
-        <div class="m-bubble">Let's go! ✨</div>
-      </div>
+  <section class="section dark" data-scene="final">
+    <div class="inner final-cta">
       <div class="section-kicker" style="justify-content: center; margin-bottom: 24px;">Ready · Launch</div>
       <h2>See your full funding stack in <span class="accent">under five minutes.</span></h2>
       <p class="sub">Ten questions. A matched grant stack across five funding layers, a component-level program design, and a reviewer-ready narrative. No account, no email wall.</p>
@@ -5575,50 +5616,80 @@ function installLogos() {
 function bootLanding() {
   installLogos();
   initOptions();
-  initMascotPops();
+  initMascotFloater();
 }
 
 // ============================================================
-// MASCOT POP-INS — Disney-magic section transitions
-// As each section containing a .mascot-pop scrolls into view,
-// the mascot springs in from below with a small speech bubble.
-// The animation is skipped when prefers-reduced-motion is set.
+// MASCOT FLOATER — single element, swaps scenes as you scroll
+// One mascot lives at the viewport bottom-corner. When a landing
+// section scrolls into focus, the bubble text + side swap with a
+// fade. Only one scene active at a time — never two mascots.
 // ============================================================
-function initMascotPops() {
-  if (!("IntersectionObserver" in window)) return;
-  const pops = Array.from(document.querySelectorAll('.mascot-pop'));
-  if (!pops.length) return;
+const MASCOT_SCENES = {
+  editorial:   { text: "Three moves. I'll walk you through each one.",                       side: "left",  dark: false },
+  platform:    { text: "Every system talks. Every record follows — even after release.",     side: "right", dark: false },
+  outcomes:    { text: "Reviewers reward evidence. Here's what works.",                      side: "left",  dark: true  },
+  compliance:  { text: "Six frameworks. 1,028 controls. 100% ready. Continuously monitored.", side: "right", dark: false },
+  team:        { text: "Real agencies. Already running. Today.",                              side: "left",  dark: false },
+  final:       { text: "Let's go! ✨",                                                         side: "right", dark: true  }
+};
 
-  // Pair each mascot with its containing section so the observer
-  // tracks section visibility (mascot itself is fixed-position and
-  // would always be "visible" to an observer).
-  const pairs = pops.map(pop => {
-    const section = pop.closest('section.section, .editorial, .final-cta') || pop.parentElement;
-    return { pop, section };
-  }).filter(p => p.section);
+function initMascotFloater() {
+  if (!("IntersectionObserver" in window)) return;
+  const floater = document.getElementById('mascotFloater');
+  const bubble  = document.getElementById('mascotBubble');
+  if (!floater || !bubble) return;
+
+  const sections = Array.from(document.querySelectorAll('[data-scene]'));
+  if (!sections.length) return;
+
+  // Map section -> current intersection ratio (weighted visibility)
+  const visibility = new Map();
+  sections.forEach(s => visibility.set(s, 0));
+
+  let currentScene = null;
+  let swapTimer = null;
+
+  const applyScene = (scene) => {
+    if (scene === currentScene) return;
+    currentScene = scene;
+    const config = scene ? MASCOT_SCENES[scene] : null;
+    if (!config) {
+      floater.classList.remove('in');
+      return;
+    }
+    // Fade the bubble out, swap text + side, fade back in
+    floater.classList.add('bubble-swap');
+    clearTimeout(swapTimer);
+    swapTimer = setTimeout(() => {
+      bubble.textContent = config.text;
+      floater.classList.toggle('left', config.side === 'left');
+      floater.classList.toggle('on-dark', !!config.dark);
+      floater.classList.remove('bubble-swap');
+      // If hidden, pop back in
+      floater.classList.add('in');
+    }, 260);
+  };
+
+  const pickActive = () => {
+    let best = null, bestRatio = 0;
+    visibility.forEach((ratio, section) => {
+      if (ratio > bestRatio) { best = section; bestRatio = ratio; }
+    });
+    applyScene(best && bestRatio > 0.1 ? best.dataset.scene : null);
+  };
 
   const observer = new IntersectionObserver((entries) => {
-    // Each mascot follows its own section independently. When two sections
-    // overlap in the trigger zone (transitions), both may briefly show — but
-    // their sides alternate L/R so they never stack.
     entries.forEach(entry => {
-      const pair = pairs.find(p => p.section === entry.target);
-      if (!pair) return;
-      if (entry.isIntersecting) {
-        pair.pop.classList.add('in');
-      } else {
-        pair.pop.classList.remove('in');
-      }
+      visibility.set(entry.target, entry.isIntersecting ? entry.intersectionRatio : 0);
     });
+    pickActive();
   }, {
     root: null,
-    // Activate when the section is in the middle ~70% of viewport.
-    // Generous enough that fast scrollers still catch each mascot.
-    rootMargin: "-15% 0px -15% 0px",
-    threshold: 0
+    threshold: [0, 0.1, 0.25, 0.5, 0.75, 1]
   });
 
-  pairs.forEach(p => observer.observe(p.section));
+  sections.forEach(s => observer.observe(s));
 }
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", bootLanding);
