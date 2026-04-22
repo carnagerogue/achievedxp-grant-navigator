@@ -1461,8 +1461,9 @@ a:hover { text-decoration: underline; }
 /* ============================================================
    MASCOT · DISNEY-MAGIC POP-INS
    Each landing section has a <div class="mascot-pop"> anchored
-   to the viewport gutter (position: fixed) so the mascot never
-   overlaps content. Only one activates at a time via observer.
+   to the viewport gutter (position: fixed). Entry is snappy and
+   springy; exit lingers longer so the user catches each one even
+   at normal scroll speed.
    ============================================================ */
 .mascot-pop {
   position: fixed;
@@ -1474,9 +1475,10 @@ a:hover { text-decoration: underline; }
   align-items: flex-end;
   gap: 12px;
   max-width: 280px;
+  /* Default (exit) transition — graceful fade out */
   transition:
-    opacity 600ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 800ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity 900ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 1100ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 /* Default: right-aligned (speech bubble to the LEFT of mascot) */
 .mascot-pop {
@@ -1490,17 +1492,14 @@ a:hover { text-decoration: underline; }
   flex-direction: row-reverse;
   transform: translate(-80px, 10px) scale(0.4) rotate(-10deg);
 }
+/* Entry transition — snappy with spring overshoot */
 .mascot-pop.in {
   opacity: 1;
   transform: translate(0, 0) scale(1) rotate(0);
   pointer-events: auto;
-}
-.mascot-pop.out {
-  opacity: 0;
-  transform: translate(40px, -20px) scale(0.7) rotate(4deg);
-}
-.mascot-pop.left.out {
-  transform: translate(-40px, -20px) scale(0.7) rotate(-4deg);
+  transition:
+    opacity 380ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 520ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .mascot-pop .m-char {
   width: 72px;
@@ -3240,7 +3239,7 @@ a:hover { text-decoration: underline; }
        ======================================================== -->
   <section class="section dark" id="outcomes">
     <div class="inner" style="position: relative;">
-      <div class="mascot-pop on-dark" data-scene="outcomes" aria-hidden="true">
+      <div class="mascot-pop on-dark left" data-scene="outcomes" aria-hidden="true">
         <img class="m-char" src="./assets/mascot.png" alt="">
         <div class="m-bubble">Reviewers reward evidence. Here's what works.</div>
       </div>
@@ -3288,7 +3287,7 @@ a:hover { text-decoration: underline; }
        SECTION · COMPLIANCE
        ======================================================== -->
   <section class="section" id="compliance" style="position: relative;">
-    <div class="mascot-pop left" data-scene="compliance" aria-hidden="true">
+    <div class="mascot-pop" data-scene="compliance" aria-hidden="true">
       <img class="m-char" src="./assets/mascot.png" alt="">
       <div class="m-bubble">Every box your auditor will ask about. 1,028 controls. 100% ready.</div>
     </div>
@@ -3330,8 +3329,8 @@ a:hover { text-decoration: underline; }
       <div class="badge-tile">
         <div class="cert-source audited">Audited · Drata</div>
         <div class="std">SOC 2</div>
-        <div class="std-sub">Type II · independent audit</div>
-        <div class="std-desc">Independent attestation of security, availability, and confidentiality controls — the audit your CIO already asks about. 61 requirements · 144 controls · 100&#37; ready.</div>
+        <div class="std-sub">Type I audited · Type II controls monitored</div>
+        <div class="std-desc">Independent Type I attestation that security, availability, and confidentiality controls are designed to meet trust-services criteria. All Type II monitoring controls continuously tracked in Drata. 61 requirements · 144 controls · 100&#37; ready.</div>
       </div>
       <div class="badge-tile">
         <div class="cert-source self">Self-attested</div>
@@ -5599,14 +5598,13 @@ function initMascotPops() {
   }).filter(p => p.section);
 
   const observer = new IntersectionObserver((entries) => {
-    // Process this batch, then enforce "only one active at a time" —
-    // the last section that became intersecting wins.
+    // Each mascot follows its own section independently. When two sections
+    // overlap in the trigger zone (transitions), both may briefly show — but
+    // their sides alternate L/R so they never stack.
     entries.forEach(entry => {
       const pair = pairs.find(p => p.section === entry.target);
       if (!pair) return;
       if (entry.isIntersecting) {
-        // Hide all others, then show this one
-        pairs.forEach(p => { if (p.pop !== pair.pop) p.pop.classList.remove('in'); });
         pair.pop.classList.add('in');
       } else {
         pair.pop.classList.remove('in');
@@ -5614,8 +5612,9 @@ function initMascotPops() {
     });
   }, {
     root: null,
-    // Activate when the section's middle band is in the viewport's middle 40%.
-    rootMargin: "-30% 0px -30% 0px",
+    // Activate when the section is in the middle ~70% of viewport.
+    // Generous enough that fast scrollers still catch each mascot.
+    rootMargin: "-15% 0px -15% 0px",
     threshold: 0
   });
 
