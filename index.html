@@ -2638,35 +2638,58 @@ a:hover { text-decoration: underline; }
       <p class="desc">Existing partnerships strengthen grant applications and our funding stack recommendations.</p>
       <div class="option-grid" data-field="existingPartners" data-type="multi">
         <button class="option" data-value="university"><span class="check square"></span>College or university</button>
-        <button class="option" data-value="coursera"><span class="check square"></span>Coursera</button>
-        <button class="option" data-value="ged"><span class="check square"></span>GED / HSE provider (Essential Ed, NROC, etc.)</button>
-        <button class="option" data-value="ascend"><span class="check square"></span>Ascend Math</button>
-        <button class="option" data-value="icev"><span class="check square"></span>iCEV</button>
+        <button class="option" data-value="coursera"><span class="check square"></span>Online course / MOOC provider</button>
+        <button class="option" data-value="ged"><span class="check square"></span>GED / HSE provider</button>
+        <button class="option" data-value="ascend"><span class="check square"></span>Adaptive math content</button>
+        <button class="option" data-value="icev"><span class="check square"></span>CTE / career content</button>
         <button class="option" data-value="wioa"><span class="check square"></span>Local workforce board</button>
         <button class="option" data-value="nonprofit"><span class="check square"></span>Reentry nonprofits</button>
         <button class="option" data-value="none"><span class="check square"></span>None yet</button>
+      </div>
+      <div class="field" style="margin-top: 20px;">
+        <label for="partnersOther">Other partners (optional) — list any specific vendors or programs</label>
+        <input id="partnersOther" class="text-input" type="text" placeholder="e.g. Khan Academy, local community college, specific reentry nonprofit" oninput="state.existingPartnersOther = this.value">
       </div>
     </div>
 
     <!-- STEP 10 -->
     <div class="step" data-step="10">
-      <div class="step-label">Question 10 of 10</div>
-      <h3>One last detail</h3>
-      <p class="desc">Name your agency so we can personalize your report.</p>
+      <div class="step-label">Last step · Get your plan</div>
+      <h3>Where should we send your report?</h3>
+      <p class="desc">Your plan is personalized and ready. The iT1 + Nucleos team will follow up within one business day to review the matched grants and next steps.</p>
       <div class="field-row">
         <div class="field">
-          <label>Agency name</label>
-          <input class="text-input" id="agencyName" placeholder="e.g. Kent County Sheriff's Office">
+          <label>Agency name <span style="color:var(--orange)">*</span></label>
+          <input class="text-input" id="agencyName" placeholder="e.g. Kent County Sheriff's Office" required>
         </div>
         <div class="field">
-          <label>Program name (optional)</label>
+          <label>Program name <span class="muted" style="font-weight:400">(optional)</span></label>
           <input class="text-input" id="programName" placeholder="e.g. Kent Reentry Academy">
         </div>
       </div>
-      <div class="field">
-        <label>Primary contact (optional)</label>
-        <input class="text-input" id="contactName" placeholder="Your name, role, or email">
+      <div class="field-row">
+        <div class="field">
+          <label>Your name <span style="color:var(--orange)">*</span></label>
+          <input class="text-input" id="contactName" placeholder="First and last name" required autocomplete="name">
+        </div>
+        <div class="field">
+          <label>Your role <span style="color:var(--orange)">*</span></label>
+          <input class="text-input" id="contactRole" placeholder="e.g. Director of Reentry Programs" required autocomplete="organization-title">
+        </div>
       </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Work email <span style="color:var(--orange)">*</span></label>
+          <input class="text-input" id="contactEmail" type="email" placeholder="you@agency.gov" required autocomplete="email">
+        </div>
+        <div class="field">
+          <label>Phone <span class="muted" style="font-weight:400">(optional)</span></label>
+          <input class="text-input" id="contactPhone" type="tel" placeholder="(555) 123-4567" autocomplete="tel">
+        </div>
+      </div>
+      <p class="small muted" style="margin-top: 18px; line-height: 1.6;">
+        By submitting, you agree to be contacted by the iT1 &amp; Nucleos team about your funding plan. We will not share your information. You can request deletion at any time by emailing <a href="mailto:publicsafety@it1.com">publicsafety@it1.com</a>.
+      </p>
     </div>
   </div>
 
@@ -3033,9 +3056,13 @@ const state = {
   grantExp: null,
   timeline: null,
   existingPartners: [],
+  existingPartnersOther: "",
   agencyName: "",
   programName: "",
   contactName: "",
+  contactRole: "",
+  contactEmail: "",
+  contactPhone: "",
   programSelections: new Set(),
   gapCost: 0,
   gapHave: 0
@@ -3395,6 +3422,20 @@ function initOptions() {
   document.getElementById('agencyName').addEventListener('input', e => state.agencyName = e.target.value.trim());
   document.getElementById('programName').addEventListener('input', e => state.programName = e.target.value.trim());
   document.getElementById('contactName').addEventListener('input', e => state.contactName = e.target.value.trim());
+  const contactRoleEl = document.getElementById('contactRole');
+  if (contactRoleEl) contactRoleEl.addEventListener('input', e => state.contactRole = e.target.value.trim());
+  const contactEmailEl = document.getElementById('contactEmail');
+  if (contactEmailEl) contactEmailEl.addEventListener('input', e => state.contactEmail = e.target.value.trim());
+  const contactPhoneEl = document.getElementById('contactPhone');
+  if (contactPhoneEl) contactPhoneEl.addEventListener('input', e => state.contactPhone = e.target.value.trim());
+  const partnersOtherEl = document.getElementById('partnersOther');
+  if (partnersOtherEl) partnersOtherEl.addEventListener('input', e => state.existingPartnersOther = e.target.value.trim());
+}
+
+// Basic RFC-5322-ish email validation (good-enough for form gating; server should still validate)
+function isValidEmail(s) {
+  if (!s || typeof s !== "string") return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s.trim());
 }
 
 // ============================================================
@@ -3429,14 +3470,21 @@ function validateStep() {
     6: () => state.budget,
     7: () => state.grantExp,
     8: () => state.timeline,
-    9: () => state.existingPartners.length > 0,
-    10: () => state.agencyName && state.agencyName.length > 1
+    9: () => state.existingPartners.length > 0 || (state.existingPartnersOther && state.existingPartnersOther.trim().length > 0),
+    10: () => (state.agencyName && state.agencyName.length > 1)
+           && (state.contactName && state.contactName.length > 1)
+           && (state.contactRole && state.contactRole.length > 1)
+           && isValidEmail(state.contactEmail)
   };
   return required[state.step] ? required[state.step]() : true;
 }
 function nextStep() {
   if (!validateStep()) {
-    showToast("Pick an option to continue");
+    if (state.step === 10) {
+      showToast("Please fill the required fields (name, role, email, agency)");
+    } else {
+      showToast("Pick an option to continue");
+    }
     return;
   }
   if (state.step < state.total) {
@@ -3444,8 +3492,76 @@ function nextStep() {
     showStep(state.step);
     window.scrollTo({top: 0, behavior: 'smooth'});
   } else {
+    // Final step: compute results first (sets readiness score), then fire lead POST.
     generateResults();
+    submitLead();
   }
+}
+
+// ============================================================
+// LEAD CAPTURE → Formsubmit.co (posts to publicsafety@it1.com)
+// Static-site friendly: no backend, no signup. First delivery requires
+// a one-time confirmation click from the inbox owner (standard
+// anti-abuse). We never block the user on the POST — report always
+// shows. Submission is also persisted to localStorage as a fallback.
+// ============================================================
+const LEAD_ENDPOINT = "https://formsubmit.co/ajax/publicsafety@it1.com";
+
+function buildLeadPayload() {
+  const partnersSelected = (state.existingPartners || []).join(", ");
+  const partnersOther = (state.existingPartnersOther || "").trim();
+  const allPartners = [partnersSelected, partnersOther].filter(Boolean).join(" · ");
+  const stateName = (US_STATES.find(s => s[0] === state.stateCode) || ["", state.stateCode || ""])[1];
+  return {
+    _subject: `New AchieveDXP lead — ${state.agencyName || "(unnamed)"} (${stateName || state.stateCode || "?"})`,
+    _template: "table",
+    _captcha: "false",
+    source: "AchieveDXP Grant Navigator",
+    submitted_at: new Date().toISOString(),
+    contact_name: state.contactName,
+    contact_role: state.contactRole,
+    contact_email: state.contactEmail,
+    contact_phone: state.contactPhone || "(not provided)",
+    agency_name: state.agencyName,
+    program_name: state.programName || "(not provided)",
+    agency_type: state.agencyType,
+    state: stateName || state.stateCode,
+    population_size: state.populationSize,
+    goals: (state.goals || []).join(", "),
+    infrastructure: (state.infra || []).join(", "),
+    budget_range: state.budget,
+    grant_experience: state.grantExp,
+    timeline: state.timeline,
+    existing_partners: allPartners || "(none)",
+    readiness_score: (window.__lastReadinessScore != null ? String(window.__lastReadinessScore) : "(pending)")
+  };
+}
+
+function submitLead() {
+  const payload = buildLeadPayload();
+  // Persist locally so the lead is never lost even if the network fails.
+  try {
+    const key = "achievedxp_leads_backup";
+    const queue = JSON.parse(localStorage.getItem(key) || "[]");
+    queue.push(payload);
+    localStorage.setItem(key, JSON.stringify(queue).slice(0, 1000000));
+  } catch (_) { /* localStorage unavailable — proceed */ }
+
+  // Fire-and-forget POST. No await — user sees their report immediately.
+  fetch(LEAD_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+    body: JSON.stringify(payload)
+  }).then(res => {
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    return res.json();
+  }).then(() => {
+    // Success — could log to console if helpful for debugging
+    console.info("[AchieveDXP] lead submitted");
+  }).catch(err => {
+    console.warn("[AchieveDXP] lead submission failed:", err);
+    // Non-blocking; lead is in localStorage backup
+  });
 }
 function prevStep() {
   if (state.step > 1) {
@@ -3458,14 +3574,15 @@ function restart() {
   Object.assign(state, {
     step: 1, agencyType: null, stateCode: null, populationSize: null,
     goals: [], infra: [], budget: null, grantExp: null, timeline: null,
-    existingPartners: [], agencyName: "", programName: "", contactName: "",
+    existingPartners: [], existingPartnersOther: "",
+    agencyName: "", programName: "", contactName: "", contactRole: "", contactEmail: "", contactPhone: "",
     programSelections: new Set(), gapCost: 0, gapHave: 0
   });
   document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
   document.getElementById('stateSelect').value = "";
-  document.getElementById('agencyName').value = "";
-  document.getElementById('programName').value = "";
-  document.getElementById('contactName').value = "";
+  ["agencyName","programName","contactName","contactRole","contactEmail","contactPhone","partnersOther"].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = "";
+  });
   document.getElementById('results').classList.remove('active');
   document.getElementById('wizard').style.display = 'none';
   document.getElementById('landing').style.display = 'block';
@@ -3515,7 +3632,8 @@ function computeReadinessScore() {
   });
 
   // Partnerships
-  const hasPartners = state.existingPartners.length > 0 && !state.existingPartners.includes('none');
+  const hasOther = state.existingPartnersOther && state.existingPartnersOther.trim().length > 0;
+  const hasPartners = (state.existingPartners.length > 0 && !state.existingPartners.includes('none')) || hasOther;
   if (hasPartners) score += 8;
   else gaps.push({
     t: "Evidence-based partners",
@@ -3554,6 +3672,7 @@ function computeReadinessScore() {
   score = Math.min(score, 97);
   score = Math.max(score, 20);
 
+  window.__lastReadinessScore = score;
   return { score, gaps: gaps.slice(0, 5) };
 }
 
