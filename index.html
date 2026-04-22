@@ -2157,8 +2157,13 @@ a:hover { text-decoration: underline; }
 }
 .wizard-body {
   padding: 36px 48px 40px;
-  min-height: 380px;
 }
+.option.option-soft {
+  opacity: 0.72;
+  font-style: italic;
+}
+.option.option-soft:hover { opacity: 1; font-style: normal; }
+.option.option-soft.selected { opacity: 1; font-style: normal; }
 .step { display: none; animation: stepIn 320ms var(--ease-out); }
 .step.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -2426,19 +2431,14 @@ a:hover { text-decoration: underline; }
   box-shadow: 0 1px 2px rgba(11,42,74,0.12), 0 4px 12px -4px rgba(11,42,74,0.3);
 }
 .tab .tab-num {
-  display: inline-block;
-  min-width: 20px;
-  height: 20px;
-  border-radius: 6px;
-  text-align: center;
-  line-height: 20px;
-  background: rgba(255,255,255,0.18);
-  color: inherit;
   font-size: 11px;
-  margin-left: 6px;
+  font-weight: 500;
+  opacity: 0.55;
+  margin-right: 8px;
   font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
 }
-.tab:not(.active) .tab-num { background: rgba(11,42,74,0.08); color: var(--grey-700); }
+.tab.active .tab-num { opacity: 0.8; }
 
 .panel { display: none; }
 .panel.active { display: block; animation: fadeIn 240ms ease-out; }
@@ -3808,14 +3808,14 @@ a:hover { text-decoration: underline; }
 <div class="wizard" id="wizard" style="display:none;">
   <div class="wizard-head">
     <div class="wizard-mascot" aria-hidden="true"><img src="./assets/mascot.png" alt=""></div>
-    <h2>Tell us about your agency</h2>
+    <h2 id="wizardTitle">Tell us about your agency</h2>
     <div class="subtitle">Your answers shape your matched grants, funding stack, and program design.</div>
     <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
   </div>
   <div class="wizard-body">
 
     <!-- STEP 1 -->
-    <div class="step active" data-step="1">
+    <div class="step active" data-step="1" data-title="Tell us about your agency">
       <div class="step-label">Question 1 of 10</div>
       <h3>What type of agency are you?</h3>
       <p class="desc">We'll match grants that are eligible for your agency type.</p>
@@ -3829,7 +3829,7 @@ a:hover { text-decoration: underline; }
     </div>
 
     <!-- STEP 2 -->
-    <div class="step" data-step="2">
+    <div class="step" data-step="2" data-title="Your location">
       <div class="step-label">Question 2 of 10</div>
       <h3>What state or territory?</h3>
       <p class="desc">Determines state administered programs (AEFLA, Perkins V, WIOA, Byrne JAG SAA).</p>
@@ -3842,7 +3842,7 @@ a:hover { text-decoration: underline; }
     </div>
 
     <!-- STEP 3 -->
-    <div class="step" data-step="3">
+    <div class="step" data-step="3" data-title="Scope and scale">
       <div class="step-label">Question 3 of 10</div>
       <h3>What's your population size?</h3>
       <p class="desc">Average daily population or headcount you'd serve with this program.</p>
@@ -3857,7 +3857,7 @@ a:hover { text-decoration: underline; }
     </div>
 
     <!-- STEP 4 -->
-    <div class="step" data-step="4">
+    <div class="step" data-step="4" data-title="Program goals">
       <div class="step-label">Question 4 of 10 — select all that apply</div>
       <h3>What are your primary goals?</h3>
       <p class="desc">Drives grant matching and your program design.</p>
@@ -3874,7 +3874,7 @@ a:hover { text-decoration: underline; }
     </div>
 
     <!-- STEP 5 -->
-    <div class="step" data-step="5">
+    <div class="step" data-step="5" data-title="What's in place today">
       <div class="step-label">Question 5 of 10 — select all that apply</div>
       <h3>What's your current infrastructure?</h3>
       <p class="desc">Helps us calibrate your readiness score and recommend device / network components.</p>
@@ -3884,12 +3884,12 @@ a:hover { text-decoration: underline; }
         <button class="option" data-value="lms"><span class="check square"></span>LMS / learning platform in place</button>
         <button class="option" data-value="partners"><span class="check square"></span>Active content / education partners</button>
         <button class="option" data-value="staff"><span class="check square"></span>Dedicated education staff</button>
-        <button class="option" data-value="none"><span class="check square"></span>Starting mostly from scratch</button>
+        <button class="option option-soft" data-value="none"><span class="check square"></span>Starting mostly from scratch</button>
       </div>
     </div>
 
     <!-- STEP 6 -->
-    <div class="step" data-step="6">
+    <div class="step" data-step="6" data-title="Budget">
       <div class="step-label">Question 6 of 10</div>
       <h3>Approximate annual education budget</h3>
       <p class="desc">So we can size the funding stack and the gap.</p>
@@ -3904,7 +3904,7 @@ a:hover { text-decoration: underline; }
     </div>
 
     <!-- STEP 7 -->
-    <div class="step" data-step="7">
+    <div class="step" data-step="7" data-title="Your grant history">
       <div class="step-label">Question 7 of 10</div>
       <h3>Grant experience</h3>
       <p class="desc">Affects readiness score and what level of support we recommend.</p>
@@ -3917,7 +3917,7 @@ a:hover { text-decoration: underline; }
     </div>
 
     <!-- STEP 8 -->
-    <div class="step" data-step="8">
+    <div class="step" data-step="8" data-title="Timeline">
       <div class="step-label">Question 8 of 10</div>
       <h3>When do you want to apply?</h3>
       <p class="desc">Filters for grants with near-term deadlines and shapes your roadmap.</p>
@@ -3929,7 +3929,7 @@ a:hover { text-decoration: underline; }
     </div>
 
     <!-- STEP 9 -->
-    <div class="step" data-step="9">
+    <div class="step" data-step="9" data-title="Your partners">
       <div class="step-label">Question 9 of 10 — select all that apply</div>
       <h3>Which partners do you already work with?</h3>
       <p class="desc">Existing partnerships strengthen grant applications and our funding stack recommendations.</p>
@@ -3941,7 +3941,7 @@ a:hover { text-decoration: underline; }
         <button class="option" data-value="icev"><span class="check square"></span>CTE / career content</button>
         <button class="option" data-value="wioa"><span class="check square"></span>Local workforce board</button>
         <button class="option" data-value="nonprofit"><span class="check square"></span>Reentry nonprofits</button>
-        <button class="option" data-value="none"><span class="check square"></span>None yet</button>
+        <button class="option option-soft" data-value="none"><span class="check square"></span>None yet</button>
       </div>
       <div class="field" style="margin-top: 20px;">
         <label for="partnersOther">Other partners (optional) — list any specific vendors or programs</label>
@@ -3950,7 +3950,7 @@ a:hover { text-decoration: underline; }
     </div>
 
     <!-- STEP 10 -->
-    <div class="step" data-step="10">
+    <div class="step" data-step="10" data-title="Your details">
       <div class="step-label">Last step · Get your plan</div>
       <h3>Where should we send your report?</h3>
       <p class="desc">Your plan is personalized and ready. The iT1 + Nucleos team will follow up within one business day to review the matched grants and next steps.</p>
@@ -4012,15 +4012,15 @@ a:hover { text-decoration: underline; }
   </div>
 
   <div class="tab-bar" id="tabBar">
-    <button class="tab active" data-tab="readiness">Readiness Score <span class="tab-num">1</span></button>
-    <button class="tab" data-tab="acquisition">AchieveDXP Plan <span class="tab-num">2</span></button>
-    <button class="tab" data-tab="grants">Grants <span class="tab-num">3</span></button>
-    <button class="tab" data-tab="stack">Funding Stack <span class="tab-num">4</span></button>
-    <button class="tab" data-tab="program">Program Builder <span class="tab-num">5</span></button>
-    <button class="tab" data-tab="gap">Gap Calculator <span class="tab-num">6</span></button>
-    <button class="tab" data-tab="partners">Partners <span class="tab-num">7</span></button>
-    <button class="tab" data-tab="roadmap">Roadmap <span class="tab-num">8</span></button>
-    <button class="tab" data-tab="narrative">Narrative <span class="tab-num">9</span></button>
+    <button class="tab active" data-tab="readiness"><span class="tab-num">01</span>Readiness Score</button>
+    <button class="tab" data-tab="acquisition"><span class="tab-num">02</span>AchieveDXP Plan</button>
+    <button class="tab" data-tab="grants"><span class="tab-num">03</span>Grants</button>
+    <button class="tab" data-tab="stack"><span class="tab-num">04</span>Funding Stack</button>
+    <button class="tab" data-tab="program"><span class="tab-num">05</span>Program Builder</button>
+    <button class="tab" data-tab="gap"><span class="tab-num">06</span>Gap Calculator</button>
+    <button class="tab" data-tab="partners"><span class="tab-num">07</span>Partners</button>
+    <button class="tab" data-tab="roadmap"><span class="tab-num">08</span>Roadmap</button>
+    <button class="tab" data-tab="narrative"><span class="tab-num">09</span>Narrative</button>
   </div>
 
   <!-- PANEL: READINESS -->
@@ -4888,6 +4888,8 @@ function showStep(n) {
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
   const el = document.querySelector('.step[data-step="' + n + '"]');
   if (el) el.classList.add('active');
+  const title = el && el.getAttribute('data-title');
+  if (title) document.getElementById('wizardTitle').textContent = title;
   document.getElementById('backBtn').style.visibility = n === 1 ? 'hidden' : 'visible';
   document.getElementById('nextBtn').textContent = n === state.total ? 'See my report  →' : 'Next  →';
   document.getElementById('stepNum').textContent = n;
