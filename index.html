@@ -429,6 +429,355 @@ a:hover { text-decoration: underline; }
   line-height: 1.65;
   max-width: 320px;
 }
+
+/* ============================================================
+   SECTION PRIMITIVES (reusable across landing sections)
+   ============================================================ */
+.section {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 96px 32px;
+  position: relative;
+}
+.section-head {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 48px;
+  align-items: start;
+  margin-bottom: 64px;
+}
+.section-kicker {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--teal-dark);
+  font-weight: 500;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-kicker::before {
+  content: "";
+  display: inline-block;
+  width: 28px;
+  height: 1px;
+  background: var(--teal-dark);
+}
+.section-headline {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: clamp(32px, 4.5vw, 56px);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  color: var(--navy);
+}
+.section-lead {
+  font-family: "Inter", sans-serif;
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--grey-700);
+  max-width: 580px;
+  margin-top: 20px;
+}
+.section-eyebrow-col { padding-top: 6px; }
+
+/* dark section variant (ink canvas) */
+.section.dark {
+  max-width: none;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding: 96px 0;
+  background:
+    radial-gradient(ellipse 900px 400px at 15% 0%, rgba(47,179,154,0.14), transparent 65%),
+    radial-gradient(ellipse 700px 400px at 85% 100%, rgba(232,119,34,0.07), transparent 65%),
+    linear-gradient(180deg, #071A30 0%, #0B2A4A 60%, #061829 100%);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.section.dark::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at 50% 50%, black 15%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 15%, transparent 70%);
+  pointer-events: none;
+}
+.section.dark > .inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 32px;
+  position: relative;
+  z-index: 1;
+}
+.section.dark .section-headline { color: #fff; }
+.section.dark .section-kicker { color: var(--teal-light); }
+.section.dark .section-kicker::before { background: var(--teal-light); }
+.section.dark .section-lead { color: rgba(255,255,255,0.72); }
+
+.section-rule { border-top: 1px solid rgba(11,42,74,0.08); padding-top: 32px; }
+.section.dark .section-rule { border-top-color: rgba(255,255,255,0.12); }
+
+/* Capabilities list (platform section) */
+.cap-list { display: grid; grid-template-columns: 1fr; gap: 0; }
+.cap-list .cap {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  gap: 20px;
+  align-items: baseline;
+  padding: 22px 0;
+  border-top: 1px solid rgba(11,42,74,0.08);
+}
+.cap-list .cap:last-child { border-bottom: 1px solid rgba(11,42,74,0.08); }
+.cap .idx {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: var(--grey-500);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+}
+.cap .name {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: var(--navy);
+  line-height: 1.3;
+}
+.cap .desc {
+  font-size: 14px;
+  color: var(--grey-700);
+  line-height: 1.55;
+  margin-top: 4px;
+  max-width: 520px;
+}
+.cap .tag {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--teal-dark);
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+/* Badge grid (compliance) */
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(11,42,74,0.08);
+  border: 1px solid rgba(11,42,74,0.08);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.section.dark .badge-grid { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.08); }
+.badge-tile {
+  background: #fff;
+  padding: 32px 24px;
+  transition: background var(--dur) var(--ease);
+}
+.section.dark .badge-tile { background: rgba(11,42,74,0.55); backdrop-filter: blur(8px); }
+.badge-tile:hover { background: rgba(47,179,154,0.06); }
+.section.dark .badge-tile:hover { background: rgba(47,179,154,0.14); }
+.badge-tile .std {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--navy);
+  line-height: 1.1;
+}
+.section.dark .badge-tile .std { color: #fff; }
+.badge-tile .std-sub {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  color: var(--teal-dark);
+  text-transform: uppercase;
+  margin-top: 10px;
+  font-weight: 500;
+}
+.section.dark .badge-tile .std-sub { color: var(--teal-light); }
+.badge-tile .std-desc {
+  font-size: 13px;
+  color: var(--grey-700);
+  line-height: 1.55;
+  margin-top: 10px;
+}
+.section.dark .badge-tile .std-desc { color: rgba(255,255,255,0.65); }
+
+/* Outcome stat grid */
+.outcomes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.outcome {
+  background: rgba(11,42,74,0.6);
+  padding: 48px 40px;
+  backdrop-filter: blur(8px);
+}
+.outcome .big {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 88px;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 0.95;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+.outcome .big .unit {
+  font-family: "Inter", sans-serif;
+  font-size: 42px;
+  color: var(--teal-light);
+  font-weight: 400;
+  margin-left: 2px;
+}
+.outcome .title {
+  font-family: "Inter", sans-serif;
+  font-size: 17px;
+  color: #fff;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-top: 20px;
+  letter-spacing: -0.005em;
+}
+.outcome .src {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  color: rgba(47,179,154,0.9);
+  text-transform: uppercase;
+  margin-top: 14px;
+  font-weight: 500;
+}
+.outcome-secondary-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 48px;
+  margin-top: 64px;
+  padding-top: 40px;
+  border-top: 1px solid rgba(255,255,255,0.12);
+}
+.outcome-small .num {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 40px;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+.outcome-small .body {
+  font-size: 15px;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.55;
+  margin-top: 10px;
+  max-width: 420px;
+}
+.outcome-small .body cite {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-style: normal;
+  color: rgba(47,179,154,0.9);
+  letter-spacing: 0.08em;
+  display: block;
+  margin-top: 8px;
+}
+
+/* Customer / partners lists */
+.roster {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 48px;
+  margin-top: 32px;
+}
+.roster .rost {
+  padding: 20px 0;
+  border-top: 1px solid rgba(11,42,74,0.08);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: baseline;
+}
+.roster .rost:last-child, .roster .rost:nth-last-child(2):nth-child(odd) { border-bottom: 1px solid rgba(11,42,74,0.08); }
+.roster .rost .org {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+}
+.roster .rost .meta {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  color: var(--grey-500);
+  text-transform: uppercase;
+}
+
+.vehicles {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+.vehicle {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.1em;
+  color: var(--navy);
+  background: rgba(11,42,74,0.05);
+  border: 1px solid rgba(11,42,74,0.14);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+.section.dark .vehicle {
+  color: rgba(255,255,255,0.88);
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.16);
+}
+
+/* Final CTA */
+.final-cta {
+  text-align: center;
+  padding: 120px 32px;
+}
+.final-cta h2 {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: clamp(40px, 6.5vw, 80px);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  color: #fff;
+  line-height: 1.02;
+  max-width: 900px;
+  margin: 0 auto 32px;
+}
+.final-cta h2 .accent {
+  font-style: italic;
+  background: linear-gradient(135deg, #5FC9B5, #2FB39A, #8ED9C8);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.final-cta .sub {
+  font-family: "Inter", sans-serif;
+  font-size: 17px;
+  color: rgba(255,255,255,0.65);
+  max-width: 560px;
+  margin: 0 auto 40px;
+  line-height: 1.6;
+}
+.final-cta .cta-row { justify-content: center; }
 .hero .cta-row {
   display: flex;
   justify-content: center;
@@ -1739,6 +2088,205 @@ a:hover { text-decoration: underline; }
       <p>Strategy report, grant narrative, implementation roadmap — formatted for your next DOJ / Education / HHS / DOL application. Copy-paste, not reverse-engineer.</p>
     </div>
   </div>
+
+  <!-- ========================================================
+       SECTION · THE PLATFORM (what AchieveDXP is)
+       ======================================================== -->
+  <section class="section" id="platform">
+    <div class="section-head">
+      <div class="section-eyebrow-col">
+        <div class="section-kicker">AchieveDXP · The Platform</div>
+      </div>
+      <div>
+        <h2 class="section-headline">A unified learning platform, purpose-built for corrections.</h2>
+        <p class="section-lead">AchieveDXP seamlessly integrates every learning application an agency already uses — GED, CTE, college pathways, reentry — into one centralized, secure platform. One learner record. One reporting surface. One contract. Personalized pathways, actionable insights, and outcomes grant reviewers can verify.</p>
+      </div>
+    </div>
+
+    <div class="cap-list">
+      <div class="cap">
+        <div class="idx">01</div>
+        <div>
+          <div class="name">Unified learner records across every app</div>
+          <div class="desc">A single transcript-grade record that follows the learner across GED, Coursera, iCEV, Ascend Math, accredited university pathways, and 90+ other providers — not 20 disconnected logins and 20 disconnected reports.</div>
+        </div>
+        <div class="tag">Core</div>
+      </div>
+      <div class="cap">
+        <div class="idx">02</div>
+        <div>
+          <div class="name">Streamlined provisioning & rostering</div>
+          <div class="desc">Automated account creation, movement-aware rostering, and offline-tolerant access. Learners keep progress across housing transfers, pod changes, and facility moves.</div>
+        </div>
+        <div class="tag">Operational</div>
+      </div>
+      <div class="cap">
+        <div class="idx">03</div>
+        <div>
+          <div class="name">Real-time analytics aligned to grant metrics</div>
+          <div class="desc">Teacher dashboards, program-level outcomes, and agency-level reports mapped to NRS (AEFLA), Perkins V, and WIOA indicators — the exact evidence reviewers ask for on renewals.</div>
+        </div>
+        <div class="tag">Reporting</div>
+      </div>
+      <div class="cap">
+        <div class="idx">04</div>
+        <div>
+          <div class="name">Infrastructure delivered by iT1</div>
+          <div class="desc">Corrections-grade devices, network design, and secure deployment — not a software-only vendor handing you a link. iT1's public-sector team owns hardware, network, and rollout under one accountability line.</div>
+        </div>
+        <div class="tag">Infrastructure</div>
+      </div>
+      <div class="cap">
+        <div class="idx">05</div>
+        <div>
+          <div class="name">50+ learning apps integrated out of the box</div>
+          <div class="desc">Coursera, iCEV, Essential Education, NROC, Ascend Math, GoEducate, accredited universities, 90+ content providers. Pre-contracted, pre-integrated, single sign-on.</div>
+        </div>
+        <div class="tag">Ecosystem</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SECTION · OUTCOMES (dark canvas)
+       ======================================================== -->
+  <section class="section dark" id="outcomes">
+    <div class="inner">
+      <div class="section-head">
+        <div class="section-eyebrow-col">
+          <div class="section-kicker">Outcomes · Published evidence</div>
+        </div>
+        <div>
+          <h2 class="section-headline">Education is the most-studied<br>recidivism intervention in corrections.</h2>
+          <p class="section-lead">Grant reviewers don't reward promises. They reward outcomes tied to peer-reviewed evidence. AchieveDXP's program model anchors to the two most-cited studies in the field.</p>
+        </div>
+      </div>
+
+      <div class="outcomes">
+        <div class="outcome">
+          <div class="big">28<span class="unit">%</span></div>
+          <div class="title">Reduction in recidivism among incarcerated adults who participate in correctional education.</div>
+          <div class="src">MIT · RAND Corporation meta-analysis</div>
+        </div>
+        <div class="outcome">
+          <div class="big">17.6<span class="unit">%</span></div>
+          <div class="title">Three-year re-incarceration rate across Virginia DOC education cohorts — vs. 45% national baseline.</div>
+          <div class="src">Virginia Department of Corrections · FY2023</div>
+        </div>
+      </div>
+
+      <div class="outcome-secondary-row">
+        <div class="outcome-small">
+          <div class="num">7 in 10</div>
+          <div class="body">State-prison adults entered without a high school diploma. The credential gap is the single highest-leverage intervention point.
+            <cite>Source: nucleos.com</cite>
+          </div>
+        </div>
+        <div class="outcome-small">
+          <div class="num">6 in 10</div>
+          <div class="body">Formerly incarcerated adults struggle to secure employment post-release. Credentialed reentry changes the trajectory.
+            <cite>Source: nucleos.com</cite>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SECTION · COMPLIANCE
+       ======================================================== -->
+  <section class="section" id="compliance">
+    <div class="section-head">
+      <div class="section-eyebrow-col">
+        <div class="section-kicker">Compliance · Standards</div>
+      </div>
+      <div>
+        <h2 class="section-headline">Built to the standards corrections auditors already enforce.</h2>
+        <p class="section-lead">AchieveDXP operates inside the federal and state compliance envelope agencies already live in. No exceptions carved out. No compensating controls negotiated.</p>
+      </div>
+    </div>
+
+    <div class="badge-grid">
+      <div class="badge-tile">
+        <div class="std">CIPA</div>
+        <div class="std-sub">Children's Internet Protection Act</div>
+        <div class="std-desc">Required filtering and internet-access controls for any K–12 or juvenile-facility learning environment.</div>
+      </div>
+      <div class="badge-tile">
+        <div class="std">HIPAA</div>
+        <div class="std-sub">Health Information Privacy</div>
+        <div class="std-desc">Protected handling of health-adjacent learner data — SUD program enrollment, reentry case files, medical education records.</div>
+      </div>
+      <div class="badge-tile">
+        <div class="std">FERPA</div>
+        <div class="std-sub">Educational Records Privacy</div>
+        <div class="std-desc">Family Educational Rights and Privacy Act compliance for student transcripts, credentials, and transfer records.</div>
+      </div>
+      <div class="badge-tile">
+        <div class="std">SOC 2</div>
+        <div class="std-sub">Type II · Annual audit</div>
+        <div class="std-desc">Independent attestation of security, availability, and confidentiality controls — the audit your CIO already asks about.</div>
+      </div>
+      <div class="badge-tile">
+        <div class="std">ISO 27001</div>
+        <div class="std-sub">Information Security Management</div>
+        <div class="std-desc">International standard for information security management systems — required for most federal procurement paths.</div>
+      </div>
+      <div class="badge-tile">
+        <div class="std">NIST SP 800-53</div>
+        <div class="std-sub">Federal security controls</div>
+        <div class="std-desc">Federal information system security and privacy controls — the baseline DOJ, ED, and HHS grant-funded systems must meet.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SECTION · THE JOINT iT1 + NUCLEOS TEAM
+       ======================================================== -->
+  <section class="section" id="team">
+    <div class="section-head">
+      <div class="section-eyebrow-col">
+        <div class="section-kicker">The Joint Team · iT1 + Nucleos</div>
+      </div>
+      <div>
+        <h2 class="section-headline">Hardware, network, platform, partners — one contract vehicle.</h2>
+        <p class="section-lead">Nucleos is an iT1 Company. Agencies procure the full stack under a single grant-compliant vehicle instead of negotiating five separate contracts across five vendors.</p>
+        <div class="vehicles">
+          <div class="vehicle">GSA</div>
+          <div class="vehicle">SEWP V</div>
+          <div class="vehicle">NASPO ValuePoint</div>
+          <div class="vehicle">State cooperative</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-rule">
+      <div class="section-kicker" style="margin-bottom: 20px;">Agencies shipping AchieveDXP today</div>
+      <div class="roster">
+        <div class="rost"><div class="org">Wyoming Department of Corrections</div><div class="meta">WDOC · Statewide · 2024</div></div>
+        <div class="rost"><div class="org">Virginia Department of Corrections</div><div class="meta">VADOC · Statewide · 17.6% recidivism</div></div>
+        <div class="rost"><div class="org">San Francisco County Jail</div><div class="meta">SFSO · Free tablet program · 2024</div></div>
+        <div class="rost"><div class="org">U.S. Virgin Islands Bureau of Corrections</div><div class="meta">USVI BOC · Territorial</div></div>
+        <div class="rost"><div class="org">Gordon Bernell Correctional Charter School</div><div class="meta">New Mexico · Charter school model</div></div>
+        <div class="rost"><div class="org">Yuba County Office of Education</div><div class="meta">California · Juvenile facility</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SECTION · FINAL CTA
+       ======================================================== -->
+  <section class="section dark">
+    <div class="inner final-cta">
+      <div class="section-kicker" style="justify-content: center; margin-bottom: 24px;">Ready · Launch</div>
+      <h2>See your full funding stack in <span class="accent">under five minutes.</span></h2>
+      <p class="sub">Ten questions. A matched grant stack across five funding layers, a component-level program design, and a reviewer-ready narrative. No account, no email wall.</p>
+      <div class="cta-row">
+        <button class="btn btn-primary" onclick="startWizard()">Launch the Navigator  →</button>
+        <a class="btn btn-secondary" href="mailto:publicsafety@it1.com?subject=AchieveDXP%20inquiry">Talk to the team</a>
+      </div>
+    </div>
+  </section>
 </div>
 
 <!-- WIZARD -->
