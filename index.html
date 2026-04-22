@@ -612,6 +612,75 @@ a:hover { text-decoration: underline; }
 }
 .section.dark .badge-tile .std-desc { color: rgba(255,255,255,0.65); }
 
+/* Certification source badge (audited vs self-attested) */
+.cert-source {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 5px;
+  margin-bottom: 14px;
+  align-self: flex-start;
+}
+.cert-source::before {
+  content: "";
+  width: 5px; height: 5px;
+  border-radius: 50%;
+}
+.cert-source.audited {
+  color: var(--teal-dark);
+  background: rgba(47,179,154,0.1);
+  border: 1px solid rgba(47,179,154,0.25);
+}
+.cert-source.audited::before { background: var(--teal); box-shadow: 0 0 6px rgba(47,179,154,0.6); }
+.cert-source.self {
+  color: var(--grey-700);
+  background: rgba(11,42,74,0.05);
+  border: 1px solid rgba(11,42,74,0.15);
+}
+.cert-source.self::before { background: var(--grey-500); }
+
+/* Full-width compliance summary callout below the grid */
+.compliance-callout {
+  margin-top: 24px;
+  background: linear-gradient(135deg, rgba(11,42,74,0.04), rgba(47,179,154,0.06));
+  border: 1px solid rgba(47,179,154,0.22);
+  border-radius: 14px;
+  padding: 24px 28px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 28px;
+  align-items: center;
+}
+.compliance-callout .cc-num {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 56px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--navy);
+  font-variant-numeric: tabular-nums;
+}
+.compliance-callout .cc-title {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--teal-dark);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.compliance-callout .cc-body {
+  font-size: 14px;
+  color: var(--grey-700);
+  line-height: 1.6;
+}
+
 /* Outcome stat grid */
 .outcomes {
   display: grid;
@@ -3228,41 +3297,55 @@ a:hover { text-decoration: underline; }
         <div class="section-kicker">Compliance · Continuously monitored</div>
       </div>
       <div>
-        <h2 class="section-headline">Five audited frameworks. 1,028 controls. 100&#37; ready — continuously.</h2>
-        <p class="section-lead">AchieveDXP operates inside the federal and state compliance envelope agencies already live in. Every control is continuously monitored via <strong style="color:var(--navy)">Drata</strong> — no point-in-time attestations, no gaps, no exceptions carved out. FedRAMP authorization puts AchieveDXP on the short list of corrections-ready platforms cleared for federal cloud.</p>
+        <h2 class="section-headline">Five audited frameworks, one self-attested. 1,028 controls. 100&#37; ready — continuously.</h2>
+        <p class="section-lead">AchieveDXP operates inside the federal and state compliance envelope agencies already live in. Every audited control is continuously monitored via <strong style="color:var(--navy)">Drata</strong> — no point-in-time snapshots, no gaps, no exceptions carved out. FedRAMP authorization puts AchieveDXP on the short list of corrections-ready platforms cleared for federal cloud.</p>
       </div>
     </div>
 
     <div class="badge-grid">
       <div class="badge-tile">
+        <div class="cert-source audited">Audited · Drata</div>
         <div class="std">FedRAMP</div>
         <div class="std-sub">Federal cloud authorization</div>
         <div class="std-desc">U.S. government's standardized authorization for cloud systems. 323 requirements · 293 controls · 100&#37; ready. Cleared for federal corrections deployments.</div>
       </div>
       <div class="badge-tile">
+        <div class="cert-source audited">Audited · Drata</div>
         <div class="std">HIPAA</div>
         <div class="std-sub">Health information privacy</div>
         <div class="std-desc">Protected handling of health-adjacent learner data — SUD program enrollment, reentry case files, medical education records. 201 requirements · 113 controls · 100&#37; ready.</div>
       </div>
       <div class="badge-tile">
+        <div class="cert-source audited">Audited · Drata</div>
         <div class="std">ISO 27001:2022</div>
         <div class="std-sub">Information security management</div>
         <div class="std-desc">International standard for information security management systems — required for most federal procurement paths. 123 requirements · 170 controls · 100&#37; ready.</div>
       </div>
       <div class="badge-tile">
+        <div class="cert-source audited">Audited · Drata</div>
         <div class="std">NIST SP 800-53</div>
         <div class="std-sub">Federal security &amp; privacy controls</div>
         <div class="std-desc">The baseline DOJ, ED, and HHS grant-funded systems must meet. 370 requirements · 308 controls · 100&#37; ready.</div>
       </div>
       <div class="badge-tile">
+        <div class="cert-source audited">Audited · Drata</div>
         <div class="std">SOC 2</div>
         <div class="std-sub">Type II · independent audit</div>
         <div class="std-desc">Independent attestation of security, availability, and confidentiality controls — the audit your CIO already asks about. 61 requirements · 144 controls · 100&#37; ready.</div>
       </div>
-      <div class="badge-tile" style="background: linear-gradient(135deg, rgba(11,42,74,0.05), rgba(47,179,154,0.05)); border: 1px solid rgba(47,179,154,0.25);">
-        <div class="std" style="font-family: 'Fraunces', serif; font-size: 36px; font-variant-numeric: tabular-nums;">1,028</div>
-        <div class="std-sub" style="color: var(--teal-dark);">Controls · five frameworks</div>
-        <div class="std-desc">Continuously monitored via Drata. 1,078 requirements evaluated. Zero exceptions. The audit trail is live, not point-in-time — ask for a compliance report at any moment.</div>
+      <div class="badge-tile">
+        <div class="cert-source self">Self-attested</div>
+        <div class="std">CIPA</div>
+        <div class="std-sub">Children's Internet Protection Act</div>
+        <div class="std-desc">Required filtering and internet-access controls for any K–12 or juvenile-facility learning environment. Self-attested compliance — the standard agency route for this statute.</div>
+      </div>
+    </div>
+
+    <div class="compliance-callout">
+      <div class="cc-num">1,028</div>
+      <div>
+        <div class="cc-title">controls continuously monitored via Drata</div>
+        <div class="cc-body">1,078 requirements across five frameworks, 100&#37; ready, zero exceptions. The audit trail is live — not point-in-time. Ask for a compliance report at any moment.</div>
       </div>
     </div>
   </section>
