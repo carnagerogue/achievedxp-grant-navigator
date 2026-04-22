@@ -1846,7 +1846,7 @@ const MASCOT_SCENES = {
   editorial:   { text: "Three moves. I'll walk you through each one.",                       side: "left",  dark: false },
   platform:    { text: "Every system talks. Every record follows — even after release.",     side: "right", dark: false },
   outcomes:    { text: "Reviewers reward evidence. Here's what works.",                      side: "left",  dark: true  },
-  compliance:  { text: "Six frameworks. 1,028 controls. 100% ready. Continuously monitored.", side: "right", dark: false },
+  compliance:  { text: "Audited, continuously monitored, ready for federal reviewers.",        side: "right", dark: false },
   team:        { text: "Real agencies. Already running. Today.",                              side: "left",  dark: false },
   final:       { text: "Let's go! ✨",                                                         side: "right", dark: true  }
 };
