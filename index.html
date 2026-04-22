@@ -778,6 +778,171 @@ a:hover { text-decoration: underline; }
   line-height: 1.6;
 }
 .final-cta .cta-row { justify-content: center; }
+
+/* Platform visual panel */
+.platform-visual {
+  position: relative;
+  margin: 16px 0 72px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #071A30 0%, #0B2A4A 100%);
+  border: 1px solid rgba(11,42,74,0.08);
+  box-shadow: var(--shadow-lg);
+  aspect-ratio: 16 / 7;
+  min-height: 280px;
+}
+.platform-visual img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  padding: 24px;
+}
+.platform-visual .pv-overlay {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 28px 32px;
+  background: linear-gradient(180deg, transparent, rgba(7,26,48,0.92));
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.platform-visual .pv-cap {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  max-width: 560px;
+  line-height: 1.3;
+}
+.platform-visual .pv-meta {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  color: var(--teal-light);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* Testimonial cards */
+.testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 48px;
+}
+.testimonial {
+  background: #fff;
+  border: 1px solid rgba(11,42,74,0.08);
+  border-radius: 14px;
+  padding: 28px 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: border-color var(--dur) var(--ease), transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.testimonial:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
+  border-color: rgba(47,179,154,0.3);
+}
+.testimonial .quote-mark {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 52px;
+  color: var(--teal);
+  line-height: 0.6;
+  height: 18px;
+  font-weight: 500;
+}
+.testimonial .quote {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 17px;
+  line-height: 1.45;
+  color: var(--navy);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  flex: 1;
+}
+.testimonial .attribution {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(11,42,74,0.08);
+}
+.testimonial .avatar {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--grey-200);
+  flex-shrink: 0;
+}
+.testimonial .who {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--navy);
+  letter-spacing: -0.005em;
+  line-height: 1.3;
+}
+.testimonial .where {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  color: var(--grey-500);
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* Deployments photo strip */
+.deployments {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 32px;
+  padding-top: 40px;
+  border-top: 1px solid rgba(11,42,74,0.08);
+}
+.deployments .dep {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 3 / 2;
+  border: 1px solid rgba(11,42,74,0.08);
+  background: var(--grey-100);
+  transition: transform var(--dur) var(--ease);
+}
+.deployments .dep:hover { transform: translateY(-3px); }
+.deployments .dep img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.deployments .dep .dep-cap {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 14px 16px 12px;
+  background: linear-gradient(180deg, transparent, rgba(7,26,48,0.88));
+  color: #fff;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+}
+.deployments .dep .dep-cap .dep-meta {
+  display: block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--teal-light);
+  font-weight: 500;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
 .hero .cta-row {
   display: flex;
   justify-content: center;
@@ -2103,6 +2268,14 @@ a:hover { text-decoration: underline; }
       </div>
     </div>
 
+    <div class="platform-visual">
+      <img src="./assets/hero-learners.png" alt="Learners using AchieveDXP across facilities" loading="lazy">
+      <div class="pv-overlay">
+        <div class="pv-cap">A single platform across every learner, every app, every facility in the agency.</div>
+        <div class="pv-meta">Unified · Secure · Grant-ready</div>
+      </div>
+    </div>
+
     <div class="cap-list">
       <div class="cap">
         <div class="idx">01</div>
@@ -2261,14 +2434,59 @@ a:hover { text-decoration: underline; }
     </div>
 
     <div class="section-rule">
-      <div class="section-kicker" style="margin-bottom: 20px;">Agencies shipping AchieveDXP today</div>
-      <div class="roster">
-        <div class="rost"><div class="org">Wyoming Department of Corrections</div><div class="meta">WDOC · Statewide · 2024</div></div>
-        <div class="rost"><div class="org">Virginia Department of Corrections</div><div class="meta">VADOC · Statewide · 17.6% recidivism</div></div>
-        <div class="rost"><div class="org">San Francisco County Jail</div><div class="meta">SFSO · Free tablet program · 2024</div></div>
-        <div class="rost"><div class="org">U.S. Virgin Islands Bureau of Corrections</div><div class="meta">USVI BOC · Territorial</div></div>
-        <div class="rost"><div class="org">Gordon Bernell Correctional Charter School</div><div class="meta">New Mexico · Charter school model</div></div>
-        <div class="rost"><div class="org">Yuba County Office of Education</div><div class="meta">California · Juvenile facility</div></div>
+      <div class="section-kicker" style="margin-bottom: 28px;">In their words · Agencies shipping AchieveDXP</div>
+
+      <div class="testimonial-grid">
+        <div class="testimonial">
+          <div class="quote-mark">"</div>
+          <div class="quote">Our partnership is well on its way to increasing access and opportunity for our incarcerated students.</div>
+          <div class="attribution">
+            <img class="avatar" src="./assets/beth-dorado.png" alt="Beth Dorado" loading="lazy">
+            <div>
+              <div class="who">Beth Dorado</div>
+              <div class="where">Gordon Bernell Correctional Charter · NM</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial">
+          <div class="quote-mark">"</div>
+          <div class="quote">Nucleos is an innovative platform that allows our incarcerated population to continue to do course work within their housing units.</div>
+          <div class="attribution">
+            <img class="avatar" src="./assets/peter-abrahams.jpg" alt="Peter Abrahams" loading="lazy">
+            <div>
+              <div class="who">Peter Abrahams</div>
+              <div class="where">Dir. of Programs · USVI Bureau of Corrections</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial">
+          <div class="quote-mark">"</div>
+          <div class="quote">A secure option for our students to have access to technology — our collaboration with Nucleos has been exceptional.</div>
+          <div class="attribution">
+            <img class="avatar" src="./assets/sherry-fortner.jpg" alt="Sherry Fortner" loading="lazy">
+            <div>
+              <div class="who">Sherry Fortner</div>
+              <div class="where">Principal · Yuba County Office of Ed · CA</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="deployments">
+        <div class="dep">
+          <img src="./assets/wdoc-partner.webp" alt="Wyoming Department of Corrections partnership with iT1 and Nucleos" loading="lazy">
+          <div class="dep-cap">Wyoming Department of Corrections<span class="dep-meta">WDOC · iT1 partnership · 2024</span></div>
+        </div>
+        <div class="dep">
+          <img src="./assets/sf-tablet.jpg" alt="San Francisco County Jail free tablet program" loading="lazy">
+          <div class="dep-cap">San Francisco County Jail<span class="dep-meta">SFSO · Free tablet program · 2024</span></div>
+        </div>
+        <div class="dep">
+          <img src="./assets/dxp-launch.png" alt="AchieveDXP platform launch" loading="lazy">
+          <div class="dep-cap">AchieveDXP platform launch<span class="dep-meta">Nucleos · iT1 Company · 2024</span></div>
+        </div>
       </div>
     </div>
   </section>
