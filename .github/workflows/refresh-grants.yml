@@ -1,0 +1,39 @@
+name: Refresh grants.gov feed
+
+on:
+  schedule:
+    # 07:00 UTC daily = 03:00 ET — matches the cadence in the System Design doc.
+    - cron: "0 7 * * *"
+  workflow_dispatch: {} # manual "Run workflow" button in the Actions tab
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-grants
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Pull latest grants.gov opportunities
+        run: node scripts/refresh-grants.mjs
+
+      - name: Commit refreshed feed (if changed)
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet --exit-code opportunities.json; then
+            echo "No changes — skipping commit."
+          else
+            git add opportunities.json
+            git commit -m "chore(feed): refresh grants.gov opportunities ($(date -u +%Y-%m-%dT%H:%MZ))"
+            git push
+          fi
