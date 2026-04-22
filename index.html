@@ -916,6 +916,46 @@ a:hover { text-decoration: underline; }
 }
 
 /* ============================================================
+   HERO · LOAD-IN SEQUENCE (fires on page load, cascading)
+   ============================================================ */
+@keyframes heroDrop {
+  0%   { opacity: 0; transform: translateY(-18px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes heroRise {
+  0%   { opacity: 0; transform: translateY(28px); filter: blur(6px); }
+  100% { opacity: 1; transform: translateY(0);    filter: blur(0); }
+}
+@keyframes heroScaleIn {
+  0%   { opacity: 0; transform: translateY(28px) scale(0.94); filter: blur(6px); }
+  100% { opacity: 1; transform: translateY(0) scale(1);       filter: blur(0); }
+}
+@keyframes heroSlideLeft {
+  0%   { opacity: 0; transform: translateX(28px); filter: blur(4px); }
+  100% { opacity: 1; transform: translateX(0);    filter: blur(0); }
+}
+.hero .kicker   { animation: heroDrop 700ms cubic-bezier(0.16,1,0.3,1) 120ms both; }
+.hero h1        { animation: heroRise 1100ms cubic-bezier(0.16,1,0.3,1) 280ms both; }
+.hero p.lead    { animation: heroRise 900ms cubic-bezier(0.16,1,0.3,1) 520ms both; }
+.hero .cta-row  { animation: heroRise 800ms cubic-bezier(0.34,1.56,0.64,1) 720ms both; }
+.hero .proof-row .stat {
+  animation: heroScaleIn 800ms cubic-bezier(0.16,1,0.3,1) both;
+}
+.hero .proof-row .stat:nth-child(1) { animation-delay: 880ms; }
+.hero .proof-row .stat:nth-child(2) { animation-delay: 980ms; }
+.hero .proof-row .stat:nth-child(3) { animation-delay: 1080ms; }
+.hero .proof-row .stat:nth-child(4) { animation-delay: 1180ms; }
+.hero .telemetry { animation: heroSlideLeft 900ms cubic-bezier(0.16,1,0.3,1) 1320ms both; }
+
+/* Top-bar logos drop in first */
+.top-bar .logos { animation: heroDrop 700ms cubic-bezier(0.16,1,0.3,1) 40ms both; }
+.top-bar .meta  { animation: heroDrop 700ms cubic-bezier(0.16,1,0.3,1) 180ms both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero *, .top-bar * { animation: none !important; }
+}
+
+/* ============================================================
    STAGGERED STACK REVEAL — "layers land from offscreen"
    Each layer flies in from the left with scale + blur → focus,
    overshoots with a spring, then fires a teal glow pulse on
@@ -983,6 +1023,190 @@ a:hover { text-decoration: underline; }
   .unified-stack .us-layer,
   .unified-stack .us-head,
   .unified-stack .us-foot {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+    animation: none;
+  }
+}
+
+/* ============================================================
+   SCROLL-TRIGGERED SCENE REVEALS
+   JS adds .revealed to containers when they enter view.
+   Each descendant has its own stagger via nth-child delays.
+   ============================================================ */
+
+/* Editorial 3-up */
+.editorial .lane {
+  opacity: 0;
+  transform: translateY(40px);
+  filter: blur(6px);
+  transition:
+    opacity 800ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 900ms cubic-bezier(0.34, 1.4, 0.64, 1),
+    filter 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.editorial.revealed .lane {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+.editorial.revealed .lane:nth-child(1) { transition-delay: 0ms; }
+.editorial.revealed .lane:nth-child(2) { transition-delay: 180ms; }
+.editorial.revealed .lane:nth-child(3) { transition-delay: 360ms; }
+
+/* Outcomes — big stat cards with glow pulse + count-up */
+.outcomes .outcome {
+  opacity: 0;
+  transform: translateY(32px) scale(0.92);
+  filter: blur(8px);
+  transition:
+    opacity 900ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1000ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    filter 800ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.outcomes.revealed .outcome {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  animation: outcomeLand 1400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.outcomes.revealed .outcome:nth-child(1) { transition-delay: 100ms; animation-delay: 200ms; }
+.outcomes.revealed .outcome:nth-child(2) { transition-delay: 340ms; animation-delay: 440ms; }
+@keyframes outcomeLand {
+  0%   { box-shadow: 0 0 0 0 transparent, 0 0 0 0 transparent; }
+  50%  { box-shadow: 0 24px 64px -16px rgba(47,179,154,0.65),
+                     0 0 0 1px rgba(47,179,154,0.35); }
+  100% { box-shadow: 0 0 0 0 transparent, 0 0 0 0 transparent; }
+}
+
+/* Secondary stats row */
+.outcome-secondary-row .outcome-small {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 800ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.outcomes.revealed .outcome-small {
+  opacity: 1;
+  transform: translateY(0);
+}
+.outcomes.revealed .outcome-small:nth-child(1) { transition-delay: 720ms; }
+.outcomes.revealed .outcome-small:nth-child(2) { transition-delay: 880ms; }
+
+/* Compliance badge tiles — each lands with teal glow */
+.badge-grid .badge-tile {
+  opacity: 0;
+  transform: translateY(28px) scale(0.9) rotate(-1deg);
+  filter: blur(6px);
+  transition:
+    opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 800ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    filter 600ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+.badge-grid.revealed .badge-tile {
+  opacity: 1;
+  transform: translateY(0) scale(1) rotate(0);
+  filter: blur(0);
+  animation: tileLand 1000ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.badge-grid.revealed .badge-tile:nth-child(1) { transition-delay:   0ms; animation-delay:  100ms; }
+.badge-grid.revealed .badge-tile:nth-child(2) { transition-delay: 120ms; animation-delay:  220ms; }
+.badge-grid.revealed .badge-tile:nth-child(3) { transition-delay: 240ms; animation-delay:  340ms; }
+.badge-grid.revealed .badge-tile:nth-child(4) { transition-delay: 360ms; animation-delay:  460ms; }
+.badge-grid.revealed .badge-tile:nth-child(5) { transition-delay: 480ms; animation-delay:  580ms; }
+.badge-grid.revealed .badge-tile:nth-child(6) { transition-delay: 600ms; animation-delay:  700ms; }
+@keyframes tileLand {
+  0%   { box-shadow: 0 0 0 0 transparent; }
+  50%  { box-shadow: 0 20px 40px -12px rgba(47,179,154,0.5); }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+/* Compliance summary callout — reveals after all tiles finish */
+.compliance-callout {
+  opacity: 0;
+  transform: translateY(24px) scale(0.96);
+  transition:
+    opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 800ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.badge-grid.revealed + .compliance-callout {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition-delay: 1300ms;
+}
+
+/* Testimonial cards */
+.testimonial-grid .testimonial {
+  opacity: 0;
+  transform: translateY(24px) scale(0.96);
+  filter: blur(4px);
+  transition:
+    opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 800ms cubic-bezier(0.34, 1.4, 0.64, 1),
+    filter 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.testimonial-grid.revealed .testimonial {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+.testimonial-grid.revealed .testimonial:nth-child(1) { transition-delay:   0ms; }
+.testimonial-grid.revealed .testimonial:nth-child(2) { transition-delay: 180ms; }
+.testimonial-grid.revealed .testimonial:nth-child(3) { transition-delay: 360ms; }
+
+/* Deployment photo tiles */
+.deployments .dep {
+  opacity: 0;
+  transform: translateY(20px) scale(0.92);
+  filter: blur(4px);
+  transition:
+    opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 800ms cubic-bezier(0.34, 1.4, 0.64, 1),
+    filter 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.deployments.revealed .dep {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+.deployments.revealed .dep:nth-child(1) { transition-delay: 0ms; }
+.deployments.revealed .dep:nth-child(2) { transition-delay: 140ms; }
+.deployments.revealed .dep:nth-child(3) { transition-delay: 280ms; }
+
+/* Final CTA sequence */
+.final-cta .section-kicker,
+.final-cta h2,
+.final-cta .sub,
+.final-cta .cta-row {
+  opacity: 0;
+  transform: translateY(30px);
+  filter: blur(6px);
+  transition:
+    opacity 900ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1000ms cubic-bezier(0.34, 1.4, 0.64, 1),
+    filter 800ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.final-cta.revealed .section-kicker { opacity: 1; transform: translateY(0); filter: blur(0); transition-delay: 0ms; }
+.final-cta.revealed h2              { opacity: 1; transform: translateY(0); filter: blur(0); transition-delay: 180ms; }
+.final-cta.revealed .sub            { opacity: 1; transform: translateY(0); filter: blur(0); transition-delay: 420ms; }
+.final-cta.revealed .cta-row        { opacity: 1; transform: translateY(0); filter: blur(0); transition-delay: 640ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .editorial .lane,
+  .outcomes .outcome,
+  .outcome-secondary-row .outcome-small,
+  .badge-grid .badge-tile,
+  .compliance-callout,
+  .testimonial-grid .testimonial,
+  .deployments .dep,
+  .final-cta .section-kicker,
+  .final-cta h2,
+  .final-cta .sub,
+  .final-cta .cta-row {
     opacity: 1;
     transform: none;
     filter: none;
@@ -3388,12 +3612,12 @@ a:hover { text-decoration: underline; }
 
       <div class="outcomes">
         <div class="outcome">
-          <div class="big">28<span class="unit">%</span></div>
+          <div class="big"><span class="count-up" data-count="28" data-decimals="0">0</span><span class="unit">%</span></div>
           <div class="title">Reduction in recidivism among incarcerated adults who participate in correctional education.</div>
           <div class="src">MIT · RAND Corporation meta-analysis</div>
         </div>
         <div class="outcome">
-          <div class="big">17.6<span class="unit">%</span></div>
+          <div class="big"><span class="count-up" data-count="17.6" data-decimals="1">0</span><span class="unit">%</span></div>
           <div class="title">Three-year re-incarceration rate across Virginia DOC education cohorts — vs. 45% national baseline.</div>
           <div class="src">Virginia Department of Corrections · FY2023</div>
         </div>
@@ -3401,13 +3625,13 @@ a:hover { text-decoration: underline; }
 
       <div class="outcome-secondary-row">
         <div class="outcome-small">
-          <div class="num">7 in 10</div>
+          <div class="num"><span class="count-up" data-count="7" data-decimals="0">0</span> in 10</div>
           <div class="body">State-prison adults entered without a high school diploma. The credential gap is the single highest-leverage intervention point.
             <cite>Source: nucleos.com</cite>
           </div>
         </div>
         <div class="outcome-small">
-          <div class="num">6 in 10</div>
+          <div class="num"><span class="count-up" data-count="6" data-decimals="0">0</span> in 10</div>
           <div class="body">Formerly incarcerated adults struggle to secure employment post-release. Credentialed reentry changes the trajectory.
             <cite>Source: nucleos.com</cite>
           </div>
@@ -5698,6 +5922,60 @@ function bootLanding() {
   initOptions();
   initMascotFloater();
   initStackReveal();
+  initSceneReveals();
+}
+
+// ============================================================
+// SCROLL-TRIGGERED SCENE REVEALS + COUNT-UP ENGINE
+// Adds .revealed to designated containers as they enter view,
+// which drives staggered descendant animations via CSS.
+// Any [data-count] spans inside get animated number tweens.
+// One-shot: unobserve after firing.
+// ============================================================
+function initSceneReveals() {
+  if (!("IntersectionObserver" in window)) return;
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const targets = document.querySelectorAll(
+    '.editorial, .outcomes, .badge-grid, .testimonial-grid, .deployments, .final-cta'
+  );
+  if (!targets.length) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('revealed');
+      // Fire any count-ups inside this container
+      entry.target.querySelectorAll('.count-up').forEach(el => {
+        const target = parseFloat(el.dataset.count);
+        const decimals = parseInt(el.dataset.decimals || "0", 10);
+        if (isFinite(target)) animateCountUp(el, target, decimals, reduce ? 0 : 1600);
+      });
+      observer.unobserve(entry.target);
+    });
+  }, { rootMargin: "0px 0px -12% 0px", threshold: 0.18 });
+
+  targets.forEach(t => observer.observe(t));
+}
+
+function animateCountUp(el, target, decimals, duration) {
+  if (!duration || duration <= 0) {
+    el.textContent = target.toFixed(decimals);
+    return;
+  }
+  const startTime = performance.now();
+  const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+  const formatter = new Intl.NumberFormat(undefined, {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals
+  });
+  function tick(now) {
+    const p = Math.min(1, (now - startTime) / duration);
+    const v = target * easeOutCubic(p);
+    el.textContent = formatter.format(v);
+    if (p < 1) requestAnimationFrame(tick);
+    else el.textContent = formatter.format(target);
+  }
+  requestAnimationFrame(tick);
 }
 
 // ============================================================
