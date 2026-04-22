@@ -914,6 +914,51 @@ a:hover { text-decoration: underline; }
   flex-direction: column;
   gap: 6px;
 }
+
+/* Staggered slide-in reveal: starts with Layer 01 (bottom/last child) */
+.unified-stack .us-layer {
+  opacity: 0;
+  transform: translateX(-28px);
+  transition:
+    opacity 520ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 640ms cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+.unified-stack .us-head,
+.unified-stack .us-foot {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 500ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.unified-stack.stacked .us-head {
+  opacity: 1;
+  transform: translateY(0);
+}
+.unified-stack.stacked .us-layer {
+  opacity: 1;
+  transform: translateX(0);
+}
+/* Order: 5 children. Layer 01 = last child = first to reveal. */
+.unified-stack.stacked .us-layer:nth-child(5) { transition-delay: 120ms; }  /* LAYER 01 */
+.unified-stack.stacked .us-layer:nth-child(4) { transition-delay: 260ms; }  /* LAYER 02 */
+.unified-stack.stacked .us-layer:nth-child(3) { transition-delay: 400ms; }  /* LAYER 03 */
+.unified-stack.stacked .us-layer:nth-child(2) { transition-delay: 540ms; }  /* LAYER 04 */
+.unified-stack.stacked .us-layer:nth-child(1) { transition-delay: 680ms; }  /* LAYER 05 */
+.unified-stack.stacked .us-foot {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 860ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  .unified-stack .us-layer,
+  .unified-stack .us-head,
+  .unified-stack .us-foot {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
 .us-layer {
   display: grid;
   grid-template-columns: 48px 1fr auto;
@@ -5617,6 +5662,27 @@ function bootLanding() {
   installLogos();
   initOptions();
   initMascotFloater();
+  initStackReveal();
+}
+
+// ============================================================
+// UNIFIED STACK — staggered slide-in reveal
+// Starts with Layer 01 (last DOM child) and builds upward.
+// One-shot: fires once when the stack enters the viewport.
+// ============================================================
+function initStackReveal() {
+  if (!("IntersectionObserver" in window)) return;
+  const stack = document.querySelector('.unified-stack');
+  if (!stack) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        stack.classList.add('stacked');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: "0px 0px -18% 0px", threshold: 0.25 });
+  observer.observe(stack);
 }
 
 // ============================================================
