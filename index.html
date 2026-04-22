@@ -600,7 +600,9 @@
     <h2 id="reportTitle">Funded Corrections Education Plan</h2>
     <p id="reportSummary">A personalized funding and program strategy, built for your agency in under five minutes.</p>
     <div class="ctas">
-      <button class="btn btn-primary" onclick="window.print()">Download PDF (Print)</button>
+      <button class="btn btn-primary" onclick="openCallbackModal('primary')">📞 Request a call</button>
+      <a class="btn btn-call" href="tel:8777775995">(877) 777-5995</a>
+      <button class="btn btn-secondary" onclick="window.print()">Download PDF (Print)</button>
       <button class="btn btn-secondary" onclick="copyFullReport()">Copy full report</button>
       <button class="btn btn-secondary" onclick="copyShareLink(this)">Copy share link</button>
       <button class="btn btn-ghost" style="color:white; background:rgba(255,255,255,0.1);" onclick="restart()">↺ Start over</button>
@@ -934,6 +936,44 @@
 </div>
 
 <div class="toast" id="toast">Copied to clipboard</div>
+
+<!-- Callback request modal — replaces mailto: CTAs, keeps user in-app -->
+<div class="callback-modal" id="callbackModal" role="dialog" aria-modal="true" aria-labelledby="cmHeadline" hidden>
+  <div class="cm-backdrop" onclick="closeCallbackModal()"></div>
+  <div class="cm-panel" role="document">
+    <button type="button" class="cm-close" onclick="closeCallbackModal()" aria-label="Close">×</button>
+    <div class="cm-team">Nucleos Public Safety Team · iT1 + Nucleos</div>
+    <h3 id="cmHeadline">Request a callback</h3>
+    <p class="cm-sub" id="cmSub">A specialist will reach out within one business day.</p>
+    <div class="cm-ctx" id="cmCtx"></div>
+    <form id="callbackForm" onsubmit="submitCallback(event); return false;">
+      <div class="cm-grid">
+        <label>Name<input type="text" id="cmName" required autocomplete="name"></label>
+        <label>Role<input type="text" id="cmRole" required autocomplete="organization-title"></label>
+        <label>Email<input type="email" id="cmEmail" required autocomplete="email"></label>
+        <label>Phone<input type="tel" id="cmPhone" autocomplete="tel" placeholder="(optional)"></label>
+      </div>
+      <label>Preferred contact time
+        <select id="cmWhen">
+          <option value="morning">Mornings (8am–12pm local)</option>
+          <option value="afternoon">Afternoons (12pm–5pm local)</option>
+          <option value="flexible" selected>Flexible — any business hour</option>
+        </select>
+      </label>
+      <label>What's most important to cover?
+        <textarea id="cmNotes" rows="3"></textarea>
+      </label>
+      <button type="submit" class="btn btn-primary cm-submit" id="cmSubmit">Request callback</button>
+      <div class="cm-guarantee">Within one business day. Your info stays with the Nucleos team — never shared.</div>
+    </form>
+    <div class="cm-success" id="cmSuccess" hidden>
+      <div class="cm-check" aria-hidden="true">✓</div>
+      <h3>Request received</h3>
+      <p>A Nucleos specialist will reach you within one business day. Need to talk sooner? <a id="cmCall" href="tel:8777775995">Call (877) 777-5995</a>.</p>
+      <button type="button" class="btn btn-secondary" onclick="closeCallbackModal()">Close</button>
+    </div>
+  </div>
+</div>
 </div>
 <script defer src="app.js"></script>
 </body>

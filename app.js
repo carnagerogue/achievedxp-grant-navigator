@@ -745,10 +745,14 @@ function buildLeadPayload() {
   const partnersOther = (state.existingPartnersOther || "").trim();
   const allPartners = [partnersSelected, partnersOther].filter(Boolean).join(" · ");
   const stateName = (US_STATES.find(s => s[0] === state.stateCode) || ["", state.stateCode || ""])[1];
+  const scoreRaw = (state._score != null) ? state._score : (window.__lastReadinessScore != null ? window.__lastReadinessScore : null);
+  const priority = (scoreRaw != null && scoreRaw >= 65 && state.timeline === 'now');
+  const baseSubject = `New AchieveDXP lead — ${state.agencyName || "(unnamed)"} (${stateName || state.stateCode || "?"})`;
   return {
-    _subject: `New AchieveDXP lead — ${state.agencyName || "(unnamed)"} (${stateName || state.stateCode || "?"})`,
+    _subject: priority ? `[PRIORITY] ${baseSubject}` : baseSubject,
     _template: "table",
     _captcha: "false",
+    priority: priority ? "HIGH" : "standard",
     source: "AchieveDXP Grant Navigator",
     submitted_at: new Date().toISOString(),
     contact_name: state.contactName,
@@ -781,8 +785,10 @@ function requestSOW() {
   if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
 
   const base = buildLeadPayload();
+  const priority = isPriorityLead();
+  const sowSubject = `SOW REQUEST — ${state.agencyName || "(unnamed)"} — AchieveDXP`;
   const payload = Object.assign({}, base, {
-    _subject: `SOW REQUEST — ${state.agencyName || "(unnamed)"} — AchieveDXP`,
+    _subject: priority ? `[PRIORITY] ${sowSubject}` : sowSubject,
     request_type: "procurement_sow",
     requested_at: new Date().toISOString()
   });
@@ -1075,6 +1081,13 @@ function generateResults() {
 // shareable plan URL so the team sees the exact report.
 // ============================================================
 const NEXT_STEP_CTAS = {
+  primary: {
+    headline: "Request a callback",
+    blurb: "A Nucleos Public Safety specialist will review your report and reach out within one business day.",
+    button: "Request a call",
+    subject: "Callback request — AchieveDXP report",
+    ask: "I'd like to talk through my AchieveDXP Grant Navigator report: matched grants, funding stack, and next steps to an SOW."
+  },
   readiness: {
     headline: "Turn this readiness score into a 15-minute review.",
     blurb: "A Nucleos advisor walks the gaps with you and confirms which matched grants fit first.",
@@ -1112,44 +1125,132 @@ const NEXT_STEP_CTAS = {
   }
 };
 function renderNextStepCTAs() {
-  const agency = state.agencyName || "our agency";
-  const program = state.programName || "Corrections Education Program";
-  const score = state._score || 0;
-  const scoreWith = state._scoreWith || 0;
-  const planUrl = (location.origin && !location.origin.startsWith("null"))
-    ? (location.origin + location.pathname + location.hash)
-    : "";
   document.querySelectorAll('.next-step-cta[data-ctx]').forEach(el => {
     const ctx = el.dataset.ctx;
     const cfg = NEXT_STEP_CTAS[ctx];
     if (!cfg) return;
-    const bodyLines = [
-      `Hi team,`,
-      ``,
-      `I just ran the AchieveDXP Grant Navigator for ${agency} (${program}).`,
-      `Readiness today: ${score}/100. With AchieveDXP: ${scoreWith}/100.`,
-      ``,
-      cfg.ask,
-      ``,
-      planUrl ? `Shareable report: ${planUrl}` : `(Shareable report URL will be attached once the plan is finalized.)`,
-      ``,
-      `${state.contactName || "[Your name]"}`,
-      `${state.contactRole || "[Your role]"}`,
-      state.contactEmail || "",
-      state.contactPhone || ""
-    ].filter(Boolean);
-    const subject = `${cfg.subject} — ${agency}`;
-    const href = `mailto:publicsafety@it1.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
     el.innerHTML = `
       <div class="ns-inner">
         <div class="ns-text">
           <div class="ns-head">${escapeHtml(cfg.headline)}</div>
           <div class="ns-blurb">${escapeHtml(cfg.blurb)}</div>
         </div>
-        <a class="btn btn-primary ns-btn" href="${href}">${escapeHtml(cfg.button)}</a>
+        <button type="button" class="btn btn-primary ns-btn" onclick="openCallbackModal('${ctx}')">${escapeHtml(cfg.button)}</button>
+        <a class="ns-call" href="tel:8777775995">📞 (877) 777-5995</a>
+        <div class="ns-guarantee">A Nucleos specialist responds within one business day.</div>
       </div>`;
   });
 }
+
+// ============================================================
+// CALLBACK MODAL — replaces mailto: CTAs with an in-app form that
+// posts to the same formsubmit.co endpoint. Keeps the user in-session
+// and captures structured data (preferred time, phone, priority).
+// ============================================================
+function isPriorityLead() {
+  const s = state._score || 0;
+  return (s >= 65 && state.timeline === 'now');
+}
+function openCallbackModal(ctx) {
+  const cfg = NEXT_STEP_CTAS[ctx] || {
+    headline: "Request a callback",
+    blurb: "A Nucleos specialist will reach out within one business day.",
+    ask: "I'd like to talk to the team about my AchieveDXP plan.",
+    subject: "Callback request"
+  };
+  const modal = document.getElementById('callbackModal');
+  if (!modal) return;
+  modal.hidden = false;
+  modal.dataset.ctx = ctx || '';
+  document.body.style.overflow = 'hidden';
+  document.getElementById('cmHeadline').textContent = cfg.headline;
+  document.getElementById('cmSub').textContent = cfg.blurb;
+  document.getElementById('cmCtx').textContent = cfg.ask;
+  document.getElementById('cmName').value = state.contactName || "";
+  document.getElementById('cmRole').value = state.contactRole || "";
+  document.getElementById('cmEmail').value = state.contactEmail || "";
+  document.getElementById('cmPhone').value = state.contactPhone || "";
+  document.getElementById('cmNotes').value = "";
+  const form = document.getElementById('callbackForm');
+  const success = document.getElementById('cmSuccess');
+  if (form) form.hidden = false;
+  if (success) success.hidden = true;
+  setTimeout(() => document.getElementById('cmName')?.focus(), 80);
+}
+function closeCallbackModal() {
+  const modal = document.getElementById('callbackModal');
+  if (!modal) return;
+  modal.hidden = true;
+  document.body.style.overflow = '';
+}
+function submitCallback(ev) {
+  if (ev) ev.preventDefault();
+  const modal = document.getElementById('callbackModal');
+  const ctx = (modal && modal.dataset.ctx) || '';
+  const cfg = NEXT_STEP_CTAS[ctx] || { subject: "Callback request", ask: "" };
+  const name = document.getElementById('cmName').value.trim();
+  const role = document.getElementById('cmRole').value.trim();
+  const email = document.getElementById('cmEmail').value.trim();
+  const phone = document.getElementById('cmPhone').value.trim();
+  const when = document.getElementById('cmWhen').value;
+  const notes = document.getElementById('cmNotes').value.trim();
+  if (!name || !role || !email) { showToast("Please fill name, role, and email"); return; }
+  // Update state so follow-up submissions are consistent
+  state.contactName = name;
+  state.contactRole = role;
+  state.contactEmail = email;
+  state.contactPhone = phone;
+
+  const priority = isPriorityLead();
+  const agency = state.agencyName || "(unnamed agency)";
+  const base = buildLeadPayload();
+  const subjectBase = `${cfg.subject || 'Callback request'} — ${agency}`;
+  const payload = Object.assign({}, base, {
+    _subject: priority ? `[PRIORITY] ${subjectBase}` : subjectBase,
+    _template: "table",
+    _captcha: "false",
+    request_type: "callback_request",
+    request_context: ctx || "general",
+    priority: priority ? "HIGH" : "standard",
+    preferred_contact_time: when,
+    specific_question: notes || cfg.ask || "(none)",
+    readiness_score_today: String(state._score || ""),
+    readiness_score_with_achievedxp: String(state._scoreWith || ""),
+    shareable_report_url: (location.origin && !location.origin.startsWith("null"))
+      ? (location.origin + location.pathname + location.hash) : "",
+    requested_at: new Date().toISOString()
+  });
+
+  const btn = document.getElementById('cmSubmit');
+  if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+
+  try {
+    const key = "achievedxp_callback_requests";
+    const queue = JSON.parse(localStorage.getItem(key) || "[]");
+    queue.push(payload);
+    localStorage.setItem(key, JSON.stringify(queue).slice(0, 1000000));
+  } catch (_) {}
+
+  fetch(LEAD_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+    body: JSON.stringify(payload)
+  }).catch(() => { /* backed up to localStorage */ })
+    .finally(() => {
+      if (btn) { btn.disabled = false; btn.textContent = "Request callback"; }
+      const form = document.getElementById('callbackForm');
+      const success = document.getElementById('cmSuccess');
+      if (form) form.hidden = true;
+      if (success) success.hidden = false;
+    });
+}
+// ESC to close the modal
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    const modal = document.getElementById('callbackModal');
+    if (modal && !modal.hidden) closeCallbackModal();
+  }
+});
 
 function renderHeader() {
   const stateName = (US_STATES.find(s => s[0] === state.stateCode) || ["",""])[1];
