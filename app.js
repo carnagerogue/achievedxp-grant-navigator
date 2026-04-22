@@ -2003,10 +2003,22 @@ const ACHIEVE_B64 = "iVBORw0KGgoAAAANSUhEUgAAA1sAAACgCAYAAAD6gXZCAAAACXBIWXMAAAs
 
 // Wire embedded logos into the DOM so the HTML ships as a single portable file.
 function installLogos() {
+  document.querySelectorAll('.logo-src-n').forEach(el => { el.src = "data:image/png;base64," + NUCLEOS_B64; });
+  document.querySelectorAll('.logo-src-a').forEach(el => { el.src = "data:image/png;base64," + ACHIEVE_B64; });
   const n = document.getElementById("logoNucleos");
   const a = document.getElementById("logoAchieve");
-  if (n) n.src = "data:image/png;base64," + NUCLEOS_B64;
-  if (a) a.src = "data:image/png;base64," + ACHIEVE_B64;
+  if (n && !n.src) n.src = "data:image/png;base64," + NUCLEOS_B64;
+  if (a && !a.src) a.src = "data:image/png;base64," + ACHIEVE_B64;
+}
+function returnToLanding() {
+  document.getElementById('wizard').style.display = 'none';
+  const results = document.getElementById('results');
+  if (results) results.classList.remove('active');
+  document.getElementById('landing').style.display = 'block';
+  if (location.hash && location.hash.indexOf('plan=') !== -1) {
+    history.replaceState(null, '', location.pathname + location.search);
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 function bootLanding() {
   installLogos();

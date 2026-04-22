@@ -30,11 +30,11 @@
   <div class="hero-canvas">
     <!-- TOP BAR (dark-mode, sits on hero) -->
     <div class="top-bar">
-      <div class="logos">
-        <img class="logo-n" id="logoNucleos" alt="Nucleos, an iT1 Company">
+      <a href="#" class="logos home-link" onclick="returnToLanding(); return false;" aria-label="Back to home">
+        <img class="logo-n logo-src-n" id="logoNucleos" alt="Nucleos, an iT1 Company">
         <div class="divider"></div>
-        <img class="logo-a" id="logoAchieve" alt="Achieve DXP">
-      </div>
+        <img class="logo-a logo-src-a" id="logoAchieve" alt="Achieve DXP">
+      </a>
       <div class="meta">
         <strong>AchieveDXP Grant Navigator</strong>
         <div>publicsafety@it1.com · (877) 777-5995</div>
@@ -392,6 +392,11 @@
 <!-- WIZARD -->
 <div class="wizard" id="wizard" style="display:none;">
   <div class="wizard-head">
+    <a href="#" class="home-link wizard-home" onclick="returnToLanding(); return false;" aria-label="Back to home">
+      <img class="logo-src-n" alt="Nucleos">
+      <div class="divider"></div>
+      <img class="logo-src-a" alt="AchieveDXP">
+    </a>
     <div class="wizard-mascot" aria-hidden="true"><img src="./assets/mascot.png" alt=""></div>
     <h2 id="wizardTitle">Tell us about your agency</h2>
     <div class="subtitle">Your answers shape your matched grants, funding stack, and program design.</div>
@@ -586,6 +591,11 @@
 <div class="results" id="results">
 
   <div class="results-header">
+    <a href="#" class="home-link results-home" onclick="returnToLanding(); return false;" aria-label="Back to home">
+      <img class="logo-src-n" alt="Nucleos">
+      <div class="divider"></div>
+      <img class="logo-src-a" alt="AchieveDXP">
+    </a>
     <div class="kicker">Your AchieveDXP Grant Navigator Report</div>
     <h2 id="reportTitle">Funded Corrections Education Plan</h2>
     <p id="reportSummary">A personalized funding and program strategy, built for your agency in under five minutes.</p>
