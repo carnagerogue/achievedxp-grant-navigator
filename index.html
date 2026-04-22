@@ -1756,21 +1756,21 @@ a:hover { text-decoration: underline; }
 .mascot--lg img { filter: drop-shadow(0 6px 16px rgba(47,179,154,0.3)); }
 
 /* Wizard header mascot — decorative, top-right of the dark header */
-.wizard-mascot {
+.wizard-head .wizard-mascot {
   position: absolute;
-  top: 18px;
-  right: 24px;
-  z-index: 2;
-  width: 88px;
+  top: 20px;
+  right: 28px;
+  z-index: 3;
+  width: 96px;
   opacity: 0.98;
   filter: drop-shadow(0 6px 14px rgba(47,179,154,0.25));
   pointer-events: none;
   transition: transform 600ms var(--ease-out);
 }
-.wizard-mascot img { width: 100%; height: auto; display: block; }
-.wizard-mascot:hover { transform: translateY(-2px) rotate(-2deg); }
+.wizard-head .wizard-mascot img { width: 100%; height: auto; display: block; }
+.wizard-head .wizard-mascot:hover { transform: translateY(-2px) rotate(-2deg); }
 @media (max-width: 640px) {
-  .wizard-mascot { width: 56px; top: 14px; right: 16px; }
+  .wizard-head .wizard-mascot { width: 64px; top: 14px; right: 16px; }
 }
 
 /* ============================================================
@@ -2108,7 +2108,7 @@ a:hover { text-decoration: underline; }
     radial-gradient(ellipse 500px 200px at 95% 100%, rgba(232,119,34,0.14), transparent 60%),
     linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
   color: var(--white);
-  padding: 32px 40px 28px;
+  padding: 26px 40px 22px;
   position: relative;
   overflow: hidden;
 }
@@ -2140,11 +2140,11 @@ a:hover { text-decoration: underline; }
   font-weight: 400;
 }
 .progress-bar {
-  height: 5px;
-  background: rgba(255,255,255,0.12);
+  height: 6px;
+  background: rgba(255,255,255,0.14);
   border-radius: 999px;
   overflow: hidden;
-  margin-top: 20px;
+  margin-top: 16px;
   position: relative;
 }
 .progress-fill {
@@ -2156,7 +2156,7 @@ a:hover { text-decoration: underline; }
   border-radius: inherit;
 }
 .wizard-body {
-  padding: 44px 48px;
+  padding: 36px 48px 40px;
   min-height: 380px;
 }
 .step { display: none; animation: stepIn 320ms var(--ease-out); }
@@ -2173,7 +2173,7 @@ a:hover { text-decoration: underline; }
   text-transform: uppercase;
   color: var(--teal-dark);
   font-weight: 600;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 .step h3 {
   font-family: "Fraunces", Georgia, serif;
@@ -2199,7 +2199,7 @@ a:hover { text-decoration: underline; }
 .option-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
 .option-grid.cols-1 { grid-template-columns: 1fr; }
 .option {
-  padding: 18px 20px;
+  padding: 14px 18px;
   border: 1.5px solid var(--grey-200);
   border-radius: 10px;
   background: var(--white);
@@ -3823,7 +3823,6 @@ a:hover { text-decoration: underline; }
         <button class="option" data-value="state_doc"><span class="check"></span>State Department of Corrections</button>
         <button class="option" data-value="county_jail"><span class="check"></span>County Jail / Sheriff's Office</button>
         <button class="option" data-value="juvenile"><span class="check"></span>Juvenile Justice Agency</button>
-        <button class="option" data-value="federal_bop"><span class="check"></span>Federal Bureau of Prisons facility</button>
         <button class="option" data-value="community"><span class="check"></span>Community Corrections / Parole</button>
         <button class="option" data-value="other"><span class="check"></span>Other / Multi-agency</button>
       </div>
