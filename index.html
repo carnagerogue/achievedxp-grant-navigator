@@ -1391,28 +1391,47 @@ a:hover { text-decoration: underline; }
 
 /* ============================================================
    MASCOT · DISNEY-MAGIC POP-INS
-   Each landing section can host a <div class="mascot-pop"> that
-   appears with a spring when the section enters the viewport.
+   Each landing section has a <div class="mascot-pop"> anchored
+   to the viewport gutter (position: fixed) so the mascot never
+   overlaps content. Only one activates at a time via observer.
    ============================================================ */
 .mascot-pop {
-  position: absolute;
-  z-index: 3;
+  position: fixed;
+  bottom: 12%;
+  z-index: 40;
   pointer-events: none;
   opacity: 0;
-  transform: translate(var(--mx, 0), 30px) scale(0.3) rotate(-8deg);
-  transition:
-    opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 900ms cubic-bezier(0.34, 1.56, 0.64, 1);
   display: flex;
   align-items: flex-end;
   gap: 12px;
-  width: auto;
   max-width: 280px;
+  transition:
+    opacity 600ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 800ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.mascot-pop.right { flex-direction: row-reverse; }
+/* Default: right-aligned (speech bubble to the LEFT of mascot) */
+.mascot-pop {
+  right: max(24px, calc(50% - 680px));
+  flex-direction: row;
+  transform: translate(80px, 10px) scale(0.4) rotate(10deg);
+}
+.mascot-pop.left {
+  right: auto;
+  left: max(24px, calc(50% - 680px));
+  flex-direction: row-reverse;
+  transform: translate(-80px, 10px) scale(0.4) rotate(-10deg);
+}
 .mascot-pop.in {
   opacity: 1;
   transform: translate(0, 0) scale(1) rotate(0);
+  pointer-events: auto;
+}
+.mascot-pop.out {
+  opacity: 0;
+  transform: translate(40px, -20px) scale(0.7) rotate(4deg);
+}
+.mascot-pop.left.out {
+  transform: translate(-40px, -20px) scale(0.7) rotate(-4deg);
 }
 .mascot-pop .m-char {
   width: 72px;
@@ -1482,44 +1501,9 @@ a:hover { text-decoration: underline; }
   border-color: rgba(47,179,154,0.3) !important;
 }
 
-/* Placement variants */
-.mascot-pop--editorial {
-  top: -36px;
-  right: 24px;
-  --mx: 20px;
-}
-.mascot-pop--platform {
-  top: 48px;
-  left: -20px;
-  --mx: -30px;
-}
-.mascot-pop--outcomes {
-  top: 24px;
-  right: 8%;
-  --mx: 30px;
-}
-.mascot-pop--compliance {
-  top: 36px;
-  left: 4%;
-  --mx: -30px;
-}
-.mascot-pop--team {
-  top: -24px;
-  right: 6%;
-  --mx: 20px;
-}
-.mascot-pop--final {
-  top: -48px;
-  left: 50%;
-  transform: translate(-50%, 30px) scale(0.3) rotate(-8deg);
-  --mx: 0;
-}
-.mascot-pop--final.in {
-  transform: translate(-50%, 0) scale(1) rotate(0);
-}
-
-@media (max-width: 900px) {
-  .mascot-pop { display: none; } /* keep mobile clean */
+/* Hide below desktop widths — mascot needs gutter space to sit in */
+@media (max-width: 1280px) {
+  .mascot-pop { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .mascot-pop,
@@ -3045,7 +3029,7 @@ a:hover { text-decoration: underline; }
   </div>
 
   <div class="editorial" style="position: relative;">
-    <div class="mascot-pop mascot-pop--editorial right" data-scene="editorial" aria-hidden="true">
+    <div class="mascot-pop left" data-scene="editorial" aria-hidden="true">
       <img class="m-char" src="./assets/mascot.png" alt="">
       <div class="m-bubble">Three moves. I'll walk you through each one.</div>
     </div>
@@ -3070,17 +3054,17 @@ a:hover { text-decoration: underline; }
        SECTION · THE PLATFORM (what AchieveDXP is)
        ======================================================== -->
   <section class="section" id="platform" style="position: relative;">
-    <div class="mascot-pop mascot-pop--platform" data-scene="platform" aria-hidden="true">
+    <div class="mascot-pop" data-scene="platform" aria-hidden="true">
       <img class="m-char" src="./assets/mascot.png" alt="">
-      <div class="m-bubble">Five things. One platform. No more vendor patchwork.</div>
+      <div class="m-bubble">Every system talks. Every record follows — even after release.</div>
     </div>
     <div class="section-head">
       <div class="section-eyebrow-col">
         <div class="section-kicker">AchieveDXP · The Platform</div>
       </div>
       <div>
-        <h2 class="section-headline">A unified learning platform, purpose-built for corrections.</h2>
-        <p class="section-lead">AchieveDXP seamlessly integrates every learning application an agency already uses — GED, CTE, college pathways, reentry — into one centralized, secure platform. One learner record. One reporting surface. One contract. Personalized pathways, actionable insights, and outcomes grant reviewers can verify.</p>
+        <h2 class="section-headline">One platform for every system an agency runs. One record for every learner — for life.</h2>
+        <p class="section-lead">AchieveDXP integrates hundreds of systems — SIS, OMS, JMS, identity providers, learning content, secure delivery, monitoring — into a single fabric. Rostering and de-rostering sync automatically. Reporting maps to grant metrics. And the learner record follows the individual through transfers, through reentry, and into lifetime access to their transcripts, certifications, and diplomas. Education continues after release.</p>
       </div>
     </div>
 
@@ -3126,42 +3110,58 @@ a:hover { text-decoration: underline; }
       <div class="cap">
         <div class="idx">01</div>
         <div>
-          <div class="name">Unified learner records across every app</div>
-          <div class="desc">A single transcript-grade record that follows the learner across GED, Coursera, iCEV, Ascend Math, accredited university pathways, and 90+ other providers — not 20 disconnected logins and 20 disconnected reports.</div>
+          <div class="name">Agency-system integration fabric</div>
+          <div class="desc">Pre-built connectors to your SIS, OMS, JMS, and identity provider. Learner records, housing data, rosters, and enrollments flow automatically — no CSV uploads, no dual data entry, no drift between your systems of record.</div>
         </div>
-        <div class="tag">Core</div>
+        <div class="tag">Integration</div>
       </div>
       <div class="cap">
         <div class="idx">02</div>
         <div>
-          <div class="name">Streamlined provisioning & rostering</div>
-          <div class="desc">Automated account creation, movement-aware rostering, and offline-tolerant access. Learners keep progress across housing transfers, pod changes, and facility moves.</div>
+          <div class="name">Automated rostering & de-rostering</div>
+          <div class="desc">Accounts provision on intake and de-provision on release or transfer — driven by your OMS/JMS signals. Movement-aware rostering preserves progress through pod changes and facility moves without manual reconciliation.</div>
         </div>
         <div class="tag">Operational</div>
       </div>
       <div class="cap">
         <div class="idx">03</div>
         <div>
-          <div class="name">Real-time analytics aligned to grant metrics</div>
-          <div class="desc">Teacher dashboards, program-level outcomes, and agency-level reports mapped to NRS (AEFLA), Perkins V, and WIOA indicators — the exact evidence reviewers ask for on renewals.</div>
+          <div class="name">Secure content delivery & monitoring</div>
+          <div class="desc">Corrections-hardened content delivery integrated with agency monitoring systems. Activity logging, session recording, keyword watchlists, and incident routing — fully compatible with your existing monitoring stack.</div>
         </div>
-        <div class="tag">Reporting</div>
+        <div class="tag">Security</div>
       </div>
       <div class="cap">
         <div class="idx">04</div>
         <div>
-          <div class="name">Infrastructure delivered by iT1</div>
-          <div class="desc">Corrections-grade devices, network design, and secure deployment — not a software-only vendor handing you a link. iT1's public-sector team owns hardware, network, and rollout under one accountability line.</div>
+          <div class="name">Grant-aligned reporting out of the box</div>
+          <div class="desc">Teacher dashboards, program-level outcomes, agency-level reports mapped to NRS (AEFLA), Perkins V, and WIOA indicators — the exact evidence reviewers ask for on renewal. Plus real-time analytics for program leaders.</div>
         </div>
-        <div class="tag">Infrastructure</div>
+        <div class="tag">Reporting</div>
       </div>
       <div class="cap">
         <div class="idx">05</div>
         <div>
-          <div class="name">50+ learning apps integrated out of the box</div>
-          <div class="desc">Coursera, iCEV, Essential Education, NROC, Ascend Math, GoEducate, accredited universities, 90+ content providers. Pre-contracted, pre-integrated, single sign-on.</div>
+          <div class="name">Hundreds of integrations, pre-built</div>
+          <div class="desc">SIS, OMS, JMS, identity, content (Coursera, iCEV, Essential Education, NROC, Ascend Math, GoEducate, accredited universities, 90+ more), monitoring systems. Pre-contracted, pre-integrated, single sign-on across the whole stack.</div>
         </div>
         <div class="tag">Ecosystem</div>
+      </div>
+      <div class="cap">
+        <div class="idx">06</div>
+        <div>
+          <div class="name">Lifetime learner access — the reentry moment</div>
+          <div class="desc">Returning citizens retain access to their AchieveDXP account after release. Transcripts, certifications, diplomas, and program records follow them home — verifiable, portable, employer-shareable. Education doesn't end at the gate.</div>
+        </div>
+        <div class="tag">Reentry</div>
+      </div>
+      <div class="cap">
+        <div class="idx">07</div>
+        <div>
+          <div class="name">Infrastructure delivered by iT1</div>
+          <div class="desc">Corrections-grade devices, network design, and secure deployment — not a software-only vendor. iT1's public-sector team owns hardware, network, and rollout under one accountability line.</div>
+        </div>
+        <div class="tag">Infrastructure</div>
       </div>
     </div>
   </section>
@@ -3171,7 +3171,7 @@ a:hover { text-decoration: underline; }
        ======================================================== -->
   <section class="section dark" id="outcomes">
     <div class="inner" style="position: relative;">
-      <div class="mascot-pop mascot-pop--outcomes on-dark right" data-scene="outcomes" aria-hidden="true">
+      <div class="mascot-pop on-dark" data-scene="outcomes" aria-hidden="true">
         <img class="m-char" src="./assets/mascot.png" alt="">
         <div class="m-bubble">Reviewers reward evidence. Here's what works.</div>
       </div>
@@ -3219,50 +3219,50 @@ a:hover { text-decoration: underline; }
        SECTION · COMPLIANCE
        ======================================================== -->
   <section class="section" id="compliance" style="position: relative;">
-    <div class="mascot-pop mascot-pop--compliance" data-scene="compliance" aria-hidden="true">
+    <div class="mascot-pop left" data-scene="compliance" aria-hidden="true">
       <img class="m-char" src="./assets/mascot.png" alt="">
-      <div class="m-bubble">Every box your auditor will ask about. Already checked.</div>
+      <div class="m-bubble">Every box your auditor will ask about. 1,028 controls. 100% ready.</div>
     </div>
     <div class="section-head">
       <div class="section-eyebrow-col">
-        <div class="section-kicker">Compliance · Standards</div>
+        <div class="section-kicker">Compliance · Continuously monitored</div>
       </div>
       <div>
-        <h2 class="section-headline">Built to the standards corrections auditors already enforce.</h2>
-        <p class="section-lead">AchieveDXP operates inside the federal and state compliance envelope agencies already live in. No exceptions carved out. No compensating controls negotiated.</p>
+        <h2 class="section-headline">Five audited frameworks. 1,028 controls. 100&#37; ready — continuously.</h2>
+        <p class="section-lead">AchieveDXP operates inside the federal and state compliance envelope agencies already live in. Every control is continuously monitored via <strong style="color:var(--navy)">Drata</strong> — no point-in-time attestations, no gaps, no exceptions carved out. FedRAMP authorization puts AchieveDXP on the short list of corrections-ready platforms cleared for federal cloud.</p>
       </div>
     </div>
 
     <div class="badge-grid">
       <div class="badge-tile">
-        <div class="std">CIPA</div>
-        <div class="std-sub">Children's Internet Protection Act</div>
-        <div class="std-desc">Required filtering and internet-access controls for any K–12 or juvenile-facility learning environment.</div>
+        <div class="std">FedRAMP</div>
+        <div class="std-sub">Federal cloud authorization</div>
+        <div class="std-desc">U.S. government's standardized authorization for cloud systems. 323 requirements · 293 controls · 100&#37; ready. Cleared for federal corrections deployments.</div>
       </div>
       <div class="badge-tile">
         <div class="std">HIPAA</div>
-        <div class="std-sub">Health Information Privacy</div>
-        <div class="std-desc">Protected handling of health-adjacent learner data — SUD program enrollment, reentry case files, medical education records.</div>
+        <div class="std-sub">Health information privacy</div>
+        <div class="std-desc">Protected handling of health-adjacent learner data — SUD program enrollment, reentry case files, medical education records. 201 requirements · 113 controls · 100&#37; ready.</div>
       </div>
       <div class="badge-tile">
-        <div class="std">FERPA</div>
-        <div class="std-sub">Educational Records Privacy</div>
-        <div class="std-desc">Family Educational Rights and Privacy Act compliance for student transcripts, credentials, and transfer records.</div>
-      </div>
-      <div class="badge-tile">
-        <div class="std">SOC 2</div>
-        <div class="std-sub">Type II · Annual audit</div>
-        <div class="std-desc">Independent attestation of security, availability, and confidentiality controls — the audit your CIO already asks about.</div>
-      </div>
-      <div class="badge-tile">
-        <div class="std">ISO 27001</div>
-        <div class="std-sub">Information Security Management</div>
-        <div class="std-desc">International standard for information security management systems — required for most federal procurement paths.</div>
+        <div class="std">ISO 27001:2022</div>
+        <div class="std-sub">Information security management</div>
+        <div class="std-desc">International standard for information security management systems — required for most federal procurement paths. 123 requirements · 170 controls · 100&#37; ready.</div>
       </div>
       <div class="badge-tile">
         <div class="std">NIST SP 800-53</div>
-        <div class="std-sub">Federal security controls</div>
-        <div class="std-desc">Federal information system security and privacy controls — the baseline DOJ, ED, and HHS grant-funded systems must meet.</div>
+        <div class="std-sub">Federal security &amp; privacy controls</div>
+        <div class="std-desc">The baseline DOJ, ED, and HHS grant-funded systems must meet. 370 requirements · 308 controls · 100&#37; ready.</div>
+      </div>
+      <div class="badge-tile">
+        <div class="std">SOC 2</div>
+        <div class="std-sub">Type II · independent audit</div>
+        <div class="std-desc">Independent attestation of security, availability, and confidentiality controls — the audit your CIO already asks about. 61 requirements · 144 controls · 100&#37; ready.</div>
+      </div>
+      <div class="badge-tile" style="background: linear-gradient(135deg, rgba(11,42,74,0.05), rgba(47,179,154,0.05)); border: 1px solid rgba(47,179,154,0.25);">
+        <div class="std" style="font-family: 'Fraunces', serif; font-size: 36px; font-variant-numeric: tabular-nums;">1,028</div>
+        <div class="std-sub" style="color: var(--teal-dark);">Controls · five frameworks</div>
+        <div class="std-desc">Continuously monitored via Drata. 1,078 requirements evaluated. Zero exceptions. The audit trail is live, not point-in-time — ask for a compliance report at any moment.</div>
       </div>
     </div>
   </section>
@@ -3271,7 +3271,7 @@ a:hover { text-decoration: underline; }
        SECTION · THE JOINT iT1 + NUCLEOS TEAM
        ======================================================== -->
   <section class="section" id="team" style="position: relative;">
-    <div class="mascot-pop mascot-pop--team right" data-scene="team" aria-hidden="true">
+    <div class="mascot-pop left" data-scene="team" aria-hidden="true">
       <img class="m-char" src="./assets/mascot.png" alt="">
       <div class="m-bubble">Real agencies. Already running. Today.</div>
     </div>
@@ -3354,7 +3354,7 @@ a:hover { text-decoration: underline; }
        ======================================================== -->
   <section class="section dark">
     <div class="inner final-cta" style="position: relative;">
-      <div class="mascot-pop mascot-pop--final on-dark" data-scene="final" aria-hidden="true">
+      <div class="mascot-pop on-dark" data-scene="final" aria-hidden="true">
         <img class="m-char" src="./assets/mascot.png" alt="" style="width: 96px;">
         <div class="m-bubble">Let's go! ✨</div>
       </div>
@@ -5507,24 +5507,36 @@ function initMascotPops() {
   const pops = Array.from(document.querySelectorAll('.mascot-pop'));
   if (!pops.length) return;
 
-  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Pair each mascot with its containing section so the observer
+  // tracks section visibility (mascot itself is fixed-position and
+  // would always be "visible" to an observer).
+  const pairs = pops.map(pop => {
+    const section = pop.closest('section.section, .editorial, .final-cta') || pop.parentElement;
+    return { pop, section };
+  }).filter(p => p.section);
 
   const observer = new IntersectionObserver((entries) => {
+    // Process this batch, then enforce "only one active at a time" —
+    // the last section that became intersecting wins.
     entries.forEach(entry => {
+      const pair = pairs.find(p => p.section === entry.target);
+      if (!pair) return;
       if (entry.isIntersecting) {
-        // stagger: tiny delay per pop so back-to-back sections don't collide
-        const delay = reduce ? 0 : Math.min(200, (entry.target.dataset.delay ? parseInt(entry.target.dataset.delay) : 0));
-        setTimeout(() => entry.target.classList.add('in'), delay);
-        observer.unobserve(entry.target);
+        // Hide all others, then show this one
+        pairs.forEach(p => { if (p.pop !== pair.pop) p.pop.classList.remove('in'); });
+        pair.pop.classList.add('in');
+      } else {
+        pair.pop.classList.remove('in');
       }
     });
   }, {
     root: null,
-    rootMargin: "0px 0px -10% 0px", // trigger when 10% of section is visible from bottom
-    threshold: 0.15
+    // Activate when the section's middle band is in the viewport's middle 40%.
+    rootMargin: "-30% 0px -30% 0px",
+    threshold: 0
   });
 
-  pops.forEach(el => observer.observe(el));
+  pairs.forEach(p => observer.observe(p.section));
 }
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", bootLanding);
