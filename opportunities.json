@@ -78,25 +78,6 @@
     },
     {
       "source": "grants_gov",
-      "source_id": "361501",
-      "opp_number": "O-BJA-2025-172542",
-      "title": "BJA FY25 Edward Byrne Memorial Justice Assistance Grant (JAG) Program &ndash; Local Formula",
-      "agency": "USDOJ-OJP-BJA",
-      "agency_code": "USDOJ-OJP-BJA",
-      "cfda": "16.738",
-      "aln_all": [
-        "16.738"
-      ],
-      "status": "posted",
-      "doc_type": "synopsis",
-      "post_date": "03/13/2026",
-      "close_date": "04/21/2026",
-      "award_ceiling": null,
-      "award_floor": null,
-      "source_url": "https://www.grants.gov/search-results-detail/361501"
-    },
-    {
-      "source": "grants_gov",
       "source_id": "361617",
       "opp_number": "O-OJJDP-2025-172525",
       "title": "OJJDP FY25 Family-Based Alternative Justice",
@@ -113,25 +94,6 @@
       "award_ceiling": null,
       "award_floor": null,
       "source_url": "https://www.grants.gov/search-results-detail/361617"
-    },
-    {
-      "source": "grants_gov",
-      "source_id": "361546",
-      "opp_number": "O-BJA-2025-172571",
-      "title": "BJA FY25 Invited to Apply&mdash;Sex Offender Registration and Notification Act (SORNA)",
-      "agency": "USDOJ-OJP-BJA",
-      "agency_code": "USDOJ-OJP-BJA",
-      "cfda": "16.738",
-      "aln_all": [
-        "16.738"
-      ],
-      "status": "posted",
-      "doc_type": "synopsis",
-      "post_date": "03/19/2026",
-      "close_date": "04/21/2026",
-      "award_ceiling": null,
-      "award_floor": null,
-      "source_url": "https://www.grants.gov/search-results-detail/361546"
     },
     {
       "source": "grants_gov",
@@ -267,7 +229,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-04-22T03:19:18.099Z",
+  "last_synced_at": "2026-04-22T08:28:22.237Z",
   "source": "grants.gov Search2",
-  "count": 13
+  "count": 11
 }
