@@ -882,26 +882,27 @@ function restart() {
 // ============================================================
 // SCORING
 // ============================================================
-function computeReadinessScore() {
+function computeReadinessScore(withAchieveDXP) {
+  const w = !!withAchieveDXP;
   let score = 30; // base
   const gaps = [];
 
-  // Infrastructure
-  if (state.infra.includes('tablets')) score += 6;
+  // Infrastructure — AchieveDXP + iT1 Hardware-as-a-Service closes these
+  if (state.infra.includes('tablets') || w) score += 6;
   else gaps.push({
     t: "Device access",
     b: "Residents need secure, locked-down tablets or devices for education delivery. Without them, reviewers see a program they can't run at scale.",
     fix: "AchieveDXP plus iT1 Hardware-as-a-Service deploys tablets without capex — making the program grant-reportable from day one."
   });
 
-  if (state.infra.includes('network')) score += 6;
+  if (state.infra.includes('network') || w) score += 6;
   else gaps.push({
     t: "Network & connectivity",
     b: "Education-space Wi-Fi or a dedicated network is a prerequisite for most federal awards. Without it, applications stall at feasibility review.",
     fix: "iT1's infrastructure team (inside AchieveDXP) runs the site survey, designs the network, and installs it — scoped inside your grant budget."
   });
 
-  if (state.infra.includes('lms')) score += 6;
+  if (state.infra.includes('lms') || w) score += 6;
   else gaps.push({
     t: "Central learning platform",
     b: "Reviewers expect a single learner record across programs. Without a platform, your reporting is multiple spreadsheets and reviewer red flags.",
@@ -909,32 +910,33 @@ function computeReadinessScore() {
   });
 
   if (state.infra.includes('staff')) score += 4;
-  if (state.infra.includes('partners')) score += 5;
+  if (state.infra.includes('partners') || w) score += 5;
 
-  // Program clarity
-  if (state.goals.length >= 2) score += 6;
-  if (state.goals.length >= 4) score += 4;
+  // Program clarity — AchieveDXP enables multi-program breadth on one platform
+  if (state.goals.length >= 2 || w) score += 6;
+  if (state.goals.length >= 4 || w) score += 4;
   else if (state.goals.length <= 1) gaps.push({
     t: "Program scope",
     b: "Narrow program scope limits the grants you qualify for. Federal reviewers reward programs that combine education, workforce, and reentry.",
     fix: "AchieveDXP lets you run GED, CTE, post-secondary, and reentry programming on one platform — broadening your grant-eligible footprint without multiplying vendors."
   });
 
-  // Partnerships
+  // Partnerships — AchieveDXP ships with named, evidence-based partners pre-integrated
   const hasOther = state.existingPartnersOther && state.existingPartnersOther.trim().length > 0;
   const hasPartners = (state.existingPartners.length > 0 && !state.existingPartners.includes('none')) || hasOther;
-  if (hasPartners) score += 8;
+  if (hasPartners || w) score += 8;
   else gaps.push({
     t: "Evidence-based partners",
     b: "Grant reviewers want named, evidence-based content partners. Without them, your application reads as untested.",
     fix: "AchieveDXP comes pre-integrated with Coursera, iCEV, Ascend Math, NROC, GoEducate, and accredited universities — named partners reviewers already trust."
   });
-  if (state.existingPartners.length >= 3) score += 4;
+  if (state.existingPartners.length >= 3 || w) score += 4;
 
-  // Grant experience
+  // Grant experience — AchieveDXP's boilerplate + Nucleos track record substitutes for past-performance
   if (state.grantExp === 'active') score += 10;
   else if (state.grantExp === 'past') score += 6;
   else if (state.grantExp === 'applied') score += 3;
+  else if (state.grantExp === 'first' && w) score += 6;
 
   if (state.grantExp === 'first') gaps.push({
     t: "Grant experience",
@@ -942,8 +944,8 @@ function computeReadinessScore() {
     fix: "AchieveDXP's grant toolkit, pre-written boilerplate, and Nucleos implementation track record substitute for past-performance narrative on your first few applications."
   });
 
-  // Reporting
-  if (state.infra.includes('lms') || state.existingPartners.length >= 2) score += 4;
+  // Reporting — AchieveDXP guarantees NRS-aligned reporting out of the box
+  if (state.infra.includes('lms') || state.existingPartners.length >= 2 || w) score += 4;
   else gaps.push({
     t: "Reporting & outcomes",
     b: "Every federal corrections education grant now requires outcome data. If you can't produce it, you can't sustain funding.",
@@ -961,8 +963,13 @@ function computeReadinessScore() {
   score = Math.min(score, 97);
   score = Math.max(score, 20);
 
-  window.__lastReadinessScore = score;
+  if (!w) window.__lastReadinessScore = score;
   return { score, gaps: gaps.slice(0, 5) };
+}
+function readinessLabel(score) {
+  return score >= 80 ? "READY TO APPLY"
+       : score >= 65 ? "NEARLY READY"
+       : score >= 50 ? "MODERATE GAPS" : "SIGNIFICANT GAPS";
 }
 
 // ============================================================
@@ -1060,6 +1067,88 @@ function generateResults() {
   renderNarrative();
   initTabs();
   encodePlanToHash();
+  renderNextStepCTAs();
+}
+// ============================================================
+// PER-TAB "NEXT STEP" EMAIL CTAs — each panel's CTA opens a mailto:
+// pre-filled with context for the iT1 + Nucleos team, with the
+// shareable plan URL so the team sees the exact report.
+// ============================================================
+const NEXT_STEP_CTAS = {
+  readiness: {
+    headline: "Turn this readiness score into a 15-minute review.",
+    blurb: "A Nucleos advisor walks the gaps with you and confirms which matched grants fit first.",
+    button: "Email me a readiness review →",
+    subject: "Review my AchieveDXP readiness report",
+    ask: "I just ran the Grant Navigator and I'd like a 15-minute call to walk the gaps and prioritize which matched grants to go after first."
+  },
+  grants: {
+    headline: "Walk through your matched grant stack with a human.",
+    blurb: "We'll confirm eligibility, pull the current deadlines, and flag the one or two we think you'll win first.",
+    button: "Email me a grants walkthrough →",
+    subject: "Walk me through my matched grants",
+    ask: "I'd like a short call to walk the matched grant stack — which two we'd apply for first, and what the prep timeline looks like."
+  },
+  stack: {
+    headline: "Pressure-test your funding stack.",
+    blurb: "We'll review the layered funding model and confirm what each source will actually cover under the iT1 + Nucleos SOW.",
+    button: "Email me a stack review →",
+    subject: "Review my funding stack",
+    ask: "Can we walk through the proposed funding stack and confirm which AchieveDXP line items each source covers? I want a grounded view of the gap before we scope an SOW."
+  },
+  program: {
+    headline: "Refine your program design with a specialist.",
+    blurb: "Nucleos program leads help you tune the component mix to your population, budget, and grant targets.",
+    button: "Email me a program design review →",
+    subject: "Discuss my program design",
+    ask: "Could we review the program build I've drafted and tighten it for the specific grants we're targeting?"
+  },
+  gap: {
+    headline: "Close the funding gap.",
+    blurb: "The team helps you layer in the right secondary and foundation sources to close the delta in year one.",
+    button: "Email me on closing the gap →",
+    subject: "Help close my funding gap",
+    ask: "I'd like help structuring the secondary and foundation sources to close the funding gap in year one."
+  }
+};
+function renderNextStepCTAs() {
+  const agency = state.agencyName || "our agency";
+  const program = state.programName || "Corrections Education Program";
+  const score = state._score || 0;
+  const scoreWith = state._scoreWith || 0;
+  const planUrl = (location.origin && !location.origin.startsWith("null"))
+    ? (location.origin + location.pathname + location.hash)
+    : "";
+  document.querySelectorAll('.next-step-cta[data-ctx]').forEach(el => {
+    const ctx = el.dataset.ctx;
+    const cfg = NEXT_STEP_CTAS[ctx];
+    if (!cfg) return;
+    const bodyLines = [
+      `Hi team,`,
+      ``,
+      `I just ran the AchieveDXP Grant Navigator for ${agency} (${program}).`,
+      `Readiness today: ${score}/100. With AchieveDXP: ${scoreWith}/100.`,
+      ``,
+      cfg.ask,
+      ``,
+      planUrl ? `Shareable report: ${planUrl}` : `(Shareable report URL will be attached once the plan is finalized.)`,
+      ``,
+      `${state.contactName || "[Your name]"}`,
+      `${state.contactRole || "[Your role]"}`,
+      state.contactEmail || "",
+      state.contactPhone || ""
+    ].filter(Boolean);
+    const subject = `${cfg.subject} — ${agency}`;
+    const href = `mailto:publicsafety@it1.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
+    el.innerHTML = `
+      <div class="ns-inner">
+        <div class="ns-text">
+          <div class="ns-head">${escapeHtml(cfg.headline)}</div>
+          <div class="ns-blurb">${escapeHtml(cfg.blurb)}</div>
+        </div>
+        <a class="btn btn-primary ns-btn" href="${href}">${escapeHtml(cfg.button)}</a>
+      </div>`;
+  });
 }
 
 function renderHeader() {
@@ -1093,17 +1182,16 @@ function goalLabel(g) {
 }
 
 function renderReadiness() {
-  const { score, gaps } = computeReadinessScore();
+  const { score, gaps } = computeReadinessScore(false);
+  const { score: scoreWith } = computeReadinessScore(true);
+  const delta = Math.max(0, scoreWith - score);
   state._score = score;
+  state._scoreWith = scoreWith;
   state._gaps = gaps;
 
-  // Animate gauge
+  // Animate gauge with today's score
   drawGauge(score);
-  const label =
-    score >= 80 ? "READY TO APPLY" :
-    score >= 65 ? "NEARLY READY" :
-    score >= 50 ? "MODERATE GAPS" : "SIGNIFICANT GAPS";
-  document.getElementById('scoreLabel').textContent = label;
+  document.getElementById('scoreLabel').textContent = readinessLabel(score);
 
   const summary =
     score >= 80 ? "You're in strong position. AchieveDXP accelerates your next application and tightens reporting." :
@@ -1111,6 +1199,30 @@ function renderReadiness() {
     score >= 50 ? "Real gaps to close. The good news: AchieveDXP fills most of them inside one contract." :
                   "Starting from a foundation stage. AchieveDXP gives you a platform, partners, infrastructure, and reporting as one deployment — which is exactly the capability grant reviewers want to see.";
   document.getElementById('scoreSummaryText').textContent = summary;
+
+  // With-AchieveDXP lift callout
+  const lift = document.getElementById('scoreLift');
+  if (lift) {
+    if (delta > 0) {
+      lift.innerHTML = `
+        <div class="lift-row">
+          <div class="lift-today">
+            <div class="lift-num">${score}</div>
+            <div class="lift-cap">Today</div>
+          </div>
+          <div class="lift-arrow" aria-hidden="true">→</div>
+          <div class="lift-with">
+            <div class="lift-num">${scoreWith}</div>
+            <div class="lift-cap">With AchieveDXP</div>
+          </div>
+          <div class="lift-delta">+${delta}</div>
+        </div>
+        <div class="lift-sub">${readinessLabel(score)} → <strong>${readinessLabel(scoreWith)}</strong></div>`;
+      lift.classList.add('show');
+    } else {
+      lift.classList.remove('show');
+    }
+  }
 
   const list = document.getElementById('gapsList');
   if (gaps.length === 0) {
@@ -1120,7 +1232,7 @@ function renderReadiness() {
       <div class="gap-item">
         <div class="title">${escapeHtml(g.t)} <span class="tag">GAP</span></div>
         <div class="body">${escapeHtml(g.b)}</div>
-        <div class="fix">${escapeHtml(g.fix)}</div>
+        <div class="fix"><span class="fix-tag">✓ Fixed by AchieveDXP</span> ${escapeHtml(g.fix)}</div>
       </div>`).join('');
   }
 }
@@ -1179,6 +1291,7 @@ function renderGrants() {
     agencyLabel(state.agencyType) + " in " + ((US_STATES.find(s=>s[0]===state.stateCode)||["",""])[1] || "your state") + ".";
 
   renderLiveFeedBanner();
+  renderPeerBenchmark();
 
   list.innerHTML = matches.map((g, idx) => {
     const fresh = freshnessFor(g, idx);
@@ -1620,9 +1733,62 @@ function buildSustainability() {
   return `Sustainability is designed into the program from day one. AchieveDXP's platform cost is eligible across Second Chance Act, AEFLA, Perkins V, WIOA, Byrne JAG, and multiple state and foundation sources — meaning the program can shift funding sources as cycles rotate without disruption. During year one, ${state.agencyName || "the agency"} will establish baseline outcomes and develop the data story to support re-application and expansion. In years two and three, state-administered formula funds (AEFLA, Perkins V) transition to primary funding, supplemented by discretionary grants for expansion. By year three, the program is embedded in the agency's operating budget as a core education function, supported by ongoing grant dollars and demonstrated outcomes. AchieveDXP produces the longitudinal evidence — credentials earned, time on task, persistence, and linked reentry outcomes — that funders and legislators rely on to sustain appropriations.`;
 }
 
+function buildLOI() {
+  const stateName = (US_STATES.find(s => s[0] === state.stateCode) || ["",""])[1] || "the state";
+  const agency = state.agencyName || "Your agency";
+  const program = state.programName || "Corrections Education Program";
+  const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const score = state._score || 0;
+  const scoreWith = state._scoreWith || 0;
+  const topGrants = (state._grants || []).slice(0, 3).map(g => `  • ${g.name} (${g.agency}) — typical range ${fmtRange(g.range)}`).join("\n") || "  • (matched grants listed in the Funding Plan report)";
+  const popSize = popLabel(state.populationSize) || "the planned population";
+  return `${today}
+
+TO:        Budget Office / Executive Leadership / Approving Authority
+FROM:      ${state.contactName || "[Your name]"}, ${state.contactRole || "[Your role]"}
+RE:        Letter of Intent — ${program}
+
+Purpose
+-------
+${agency} intends to launch ${program} to serve ${popSize} in ${stateName}, using a grant-funded deployment of the AchieveDXP platform procured through the iT1 + Nucleos contract vehicle. This letter requests your acknowledgement so the iT1 + Nucleos team can return a binding Statement of Work.
+
+Why this approach
+-----------------
+1.  One procurement, five layers. AchieveDXP consolidates platform licensing, corrections-grade devices (iT1), secure network installation, pre-integrated content and credential partners, and grant-aligned reporting under one contract — not five separate vendor negotiations.
+
+2.  Grant-eligible today. Our current grant-readiness posture is ${score}/100. With AchieveDXP in place, our modeled readiness rises to ${scoreWith}/100 — the difference is exactly what reviewers score on (unified reporting, named partners, evidence of capability).
+
+3.  Fundable with existing sources. The matched grant stack includes:
+${topGrants}
+
+Compliance posture
+------------------
+The platform operates inside the federal and state compliance envelope this agency already requires — SOC 2 audited, with controls continuously monitored across the frameworks federal reviewers expect.
+
+Requested action
+----------------
+Please acknowledge that (a) this program aligns with agency strategic priorities, (b) procurement should proceed under an existing federal vehicle (GSA / SEWP V / NASPO ValuePoint / state cooperative), and (c) ${state.contactName || "the program lead"} is authorized to receive a binding SOW from iT1 + Nucleos.
+
+Next steps, if approved
+-----------------------
+1.  iT1 + Nucleos return a fixed-fee Statement of Work within one business day.
+2.  Agency submits grant application(s) using AchieveDXP's reviewer-ready narrative and boilerplate (included).
+3.  Deployment begins on award — hardware, network, and platform commissioned end-to-end by iT1.
+
+Contact
+-------
+${state.contactName || "[Your name]"}
+${state.contactRole || "[Your role]"}
+${state.contactEmail || "[your email]"}${state.contactPhone ? "\n" + state.contactPhone : ""}
+
+iT1 + Nucleos public safety team · publicsafety@it1.com · (877) 777-5995
+`;
+}
 function renderNarrative() {
   document.getElementById('narrativeBox').textContent = buildNarrative();
   document.getElementById('sustBox').textContent = buildSustainability();
+  const loi = document.getElementById('loiBox');
+  if (loi) loi.textContent = buildLOI();
 }
 
 // ============================================================
@@ -1638,6 +1804,112 @@ function initTabs() {
       document.querySelector('.panel[data-panel="' + target + '"]').classList.add('active');
     });
   });
+}
+
+// ============================================================
+// PEER BENCHMARK — qualitative social proof by agency type, using
+// already-documented deployments (Wyoming DOC, Virginia DOC, SF County
+// Jail). No fabricated dollar figures.
+// ============================================================
+const PEER_BENCHMARKS = {
+  state_doc: {
+    headline: "State DOCs like yours are already shipping AchieveDXP.",
+    body: "Wyoming Department of Corrections and Virginia Department of Corrections run the platform across multiple facilities today — and use the same grant-reporting stack this plan recommends.",
+    refs: ["Wyoming DOC", "Virginia DOC"]
+  },
+  county_jail: {
+    headline: "County jails are already running AchieveDXP at scale.",
+    body: "San Francisco County Jail has been live on the platform for years, using AchieveDXP's unified learner record to report outcomes back to funders with zero manual spreadsheet work.",
+    refs: ["SF County Jail"]
+  },
+  juvenile: {
+    headline: "Juvenile agencies use this stack for pre- and post-release education.",
+    body: "Deployments across state juvenile justice agencies — including CA-aligned programs — run the same platform, partner catalog, and reporting layer this plan recommends.",
+    refs: ["State juvenile agencies"]
+  },
+  community: {
+    headline: "Community corrections use this stack to sustain post-release education.",
+    body: "The iT1 + Nucleos partnership ships AchieveDXP into reentry and parole programs so learning continues after release — the sustainability story funders expect.",
+    refs: ["iT1 + Nucleos reentry deployments"]
+  },
+  other: {
+    headline: "Multi-agency deployments run on this stack today.",
+    body: "Agencies combining corrections, education, and workforce all deploy AchieveDXP as a single platform through the iT1 + Nucleos contract vehicle — one procurement covering hardware, network, platform, and content partners.",
+    refs: ["iT1 + Nucleos multi-agency"]
+  }
+};
+function renderPeerBenchmark() {
+  const el = document.getElementById('peerBenchmark');
+  if (!el) return;
+  const data = PEER_BENCHMARKS[state.agencyType] || PEER_BENCHMARKS.other;
+  el.hidden = false;
+  el.innerHTML = `
+    <div class="pb-label">Agencies like yours</div>
+    <div class="pb-head">${escapeHtml(data.headline)}</div>
+    <div class="pb-body">${escapeHtml(data.body)}</div>
+    <div class="pb-refs">${data.refs.map(r => `<span class="pb-chip">${escapeHtml(r)}</span>`).join('')}</div>`;
+}
+
+// ============================================================
+// GRANT DEADLINES — client-side .ics generator. Each matched grant
+// becomes a VEVENT with a placeholder date (45d for near, 120d for
+// non-near), a description that includes the source URL, and a
+// 30-day reminder. Users update specific deadlines when confirmed.
+// ============================================================
+function icsEscape(s) {
+  return String(s || "").replace(/\\/g, "\\\\").replace(/\n/g, "\\n")
+    .replace(/,/g, "\\,").replace(/;/g, "\\;");
+}
+function icsDate(d) {
+  const pad = n => String(n).padStart(2, '0');
+  return d.getUTCFullYear() + pad(d.getUTCMonth() + 1) + pad(d.getUTCDate())
+    + 'T' + pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + pad(d.getUTCSeconds()) + 'Z';
+}
+function downloadDeadlinesICS() {
+  const matches = state._grants || matchGrants();
+  if (!matches.length) { showToast("Render the report first"); return; }
+  const now = new Date();
+  const uidRoot = now.getTime();
+  const lines = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//AchieveDXP Grant Navigator//EN",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH"
+  ];
+  matches.forEach((g, i) => {
+    const offsetDays = g.near ? 45 : 120;
+    const when = new Date(now.getTime() + offsetDays * 24 * 60 * 60 * 1000);
+    when.setUTCHours(15, 0, 0, 0);
+    const end = new Date(when.getTime() + 60 * 60 * 1000);
+    const src = sourceUrlFor(g) || "";
+    const desc = `${g.why}\n\nCadence: ${g.cadence}\nTypical range: ${fmtRange(g.range)}\nAgency: ${g.agency}\nCFDA: ${g.cfda}${src ? `\nSource: ${src}` : ''}\n\n(Placeholder reminder — verify the exact solicitation deadline on the source site and update this event.)`;
+    lines.push(
+      "BEGIN:VEVENT",
+      `UID:${uidRoot}-${i}@achievedxp-grant-navigator`,
+      `DTSTAMP:${icsDate(now)}`,
+      `DTSTART:${icsDate(when)}`,
+      `DTEND:${icsDate(end)}`,
+      `SUMMARY:${icsEscape(g.name + ' — deadline check')}`,
+      `DESCRIPTION:${icsEscape(desc)}`,
+      src ? `URL:${src}` : "",
+      "BEGIN:VALARM",
+      "ACTION:DISPLAY",
+      "TRIGGER:-P30D",
+      `DESCRIPTION:${icsEscape(g.name + ' deadline in 30 days')}`,
+      "END:VALARM",
+      "END:VEVENT"
+    );
+  });
+  lines.push("END:VCALENDAR");
+  const blob = new Blob([lines.filter(Boolean).join("\r\n") + "\r\n"], { type: "text/calendar" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = "achievedxp-grant-deadlines.ics";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  showToast("Calendar file downloaded");
 }
 
 // ============================================================
@@ -1667,6 +1939,18 @@ async function copyText(txt, msg) {
 }
 function copyNarrative() { copyText(buildNarrative(), "Narrative copied"); }
 function copySustainability() { copyText(buildSustainability(), "Sustainability paragraph copied"); }
+function copyLOI() { copyText(buildLOI(), "Letter of intent copied"); }
+function downloadLOI() {
+  const agency = (state.agencyName || "agency").toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || "agency";
+  const blob = new Blob([buildLOI()], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `loi-${agency}-achievedxp.txt`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  showToast("LOI downloaded");
+}
 function copyBoilerplate(gid) {
   const g = GRANTS.find(gg => gg.id === gid);
   if (!g) return;

@@ -621,6 +621,7 @@
         <div class="score-summary">
           <div class="score-summary-title">What this score means</div>
           <p id="scoreSummaryText">This is your grant-readiness position today, before adding AchieveDXP. We score across eligibility, infrastructure, program clarity, partnerships, reporting capability, and timing.</p>
+          <div class="score-lift" id="scoreLift" aria-live="polite"></div>
         </div>
       </div>
       <div>
@@ -642,6 +643,7 @@
         <span class="badge">NIST 800-53</span>
       </div>
     </div>
+    <div class="next-step-cta" data-ctx="readiness"></div>
   </div>
 
   <!-- PANEL: ACHIEVEDXP ACQUISITION PLAN -->
@@ -751,6 +753,15 @@
         <button class="btn btn-teal btn-sm" onclick="copySustainability()">Copy sustainability paragraph</button>
       </div>
     </div>
+    <div class="card">
+      <div class="card-title">Letter of Intent — ready to forward internally</div>
+      <div class="card-desc">A pre-drafted LOI you can send to your CFO, sheriff, commissioner, or board — the internal approval step that unblocks the SOW. Edit, don't rewrite.</div>
+      <div class="narrative-box" id="loiBox">—</div>
+      <div class="copy-btn-wrap">
+        <button class="btn btn-teal btn-sm" onclick="copyLOI()">Copy LOI</button>
+        <button class="btn btn-secondary btn-sm" onclick="downloadLOI()">Download as .txt</button>
+      </div>
+    </div>
   </div>
 
   <!-- PANEL: GRANTS -->
@@ -769,8 +780,13 @@
     <div class="card" style="background:linear-gradient(135deg, rgba(47,179,154,0.08) 0%, rgba(11,42,74,0.03) 100%); border-color: rgba(47,179,154,0.3);">
       <div class="card-title" id="grantsCardTitle">Your matched grant stack</div>
       <div class="card-desc" id="grantsCardDesc">Ranked by fit, eligibility, and timing for your agency.</div>
+      <div class="peer-benchmark" id="peerBenchmark" hidden></div>
+      <div class="grants-actions">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="downloadDeadlinesICS()">📅 Add deadlines to my calendar (.ics)</button>
+      </div>
     </div>
     <div class="grants-list" id="grantsList"></div>
+    <div class="next-step-cta" data-ctx="grants"></div>
   </div>
 
   <!-- PANEL: STACK -->
@@ -850,6 +866,7 @@
         <li><strong style="color:var(--navy);">Scalable expansion:</strong> Add a new population or program without a new RFP. The platform and its integrations scale with you.</li>
       </ul>
     </div>
+    <div class="next-step-cta" data-ctx="stack"></div>
   </div>
 
   <!-- PANEL: PROGRAM BUILDER -->
@@ -865,6 +882,7 @@
         <div class="components" id="builderComponents"></div>
       </div>
     </div>
+    <div class="next-step-cta" data-ctx="program"></div>
   </div>
 
   <!-- PANEL: GAP CALC -->
@@ -899,6 +917,7 @@
       <div class="card-title" style="margin-top:24px;">Recommended grants to close the gap</div>
       <div class="grants-list" id="gapRecs" style="margin-top:12px;"></div>
     </div>
+    <div class="next-step-cta" data-ctx="gap"></div>
   </div>
 
 
