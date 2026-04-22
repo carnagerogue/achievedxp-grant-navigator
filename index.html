@@ -943,6 +943,302 @@ a:hover { text-decoration: underline; }
   text-transform: uppercase;
   margin-top: 4px;
 }
+
+/* ============================================================
+   ACQUISITION PANEL (AchieveDXP procurement plan)
+   ============================================================ */
+.acq-hero {
+  background:
+    radial-gradient(ellipse 700px 250px at 15% 0%, rgba(47,179,154,0.22), transparent 60%),
+    radial-gradient(ellipse 500px 250px at 90% 100%, rgba(232,119,34,0.12), transparent 60%),
+    linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+  color: #fff;
+  border-radius: 18px;
+  padding: 36px 40px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(47,179,154,0.2);
+  box-shadow: var(--shadow-lg);
+}
+.acq-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse at 30% 50%, black 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at 30% 50%, black 20%, transparent 75%);
+  pointer-events: none;
+}
+.acq-hero > * { position: relative; z-index: 1; }
+.acq-hero .acq-kicker {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--teal-light);
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.acq-hero .acq-kicker::before {
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 8px rgba(47,179,154,0.6);
+}
+.acq-hero h3 {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: clamp(28px, 3.5vw, 38px);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: #fff;
+  margin-bottom: 14px;
+  max-width: 780px;
+}
+.acq-hero h3 .accent {
+  font-style: italic;
+  background: linear-gradient(135deg, #5FC9B5, #2FB39A, #8ED9C8);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.acq-hero p {
+  font-size: 16px;
+  color: rgba(255,255,255,0.78);
+  line-height: 1.6;
+  max-width: 680px;
+}
+.acq-items {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.acq-item {
+  background: #fff;
+  border: 1px solid rgba(11,42,74,0.08);
+  border-radius: 14px;
+  padding: 24px 26px;
+  position: relative;
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.acq-item:hover {
+  border-color: rgba(47,179,154,0.3);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+.acq-item .acq-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  color: var(--teal-dark);
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+.acq-item .acq-title {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: var(--navy);
+  line-height: 1.25;
+  margin-bottom: 10px;
+}
+.acq-item .acq-range {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  color: var(--navy);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.acq-item .acq-range .unit {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: var(--grey-500);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+.acq-item .acq-desc {
+  font-size: 13.5px;
+  color: var(--grey-700);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+.acq-item .acq-funding {
+  padding-top: 14px;
+  border-top: 1px solid rgba(11,42,74,0.06);
+  font-size: 12px;
+  color: var(--grey-700);
+  line-height: 1.5;
+}
+.acq-item .acq-funding strong {
+  display: block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--teal-dark);
+  font-weight: 600;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+/* Procurement path timeline */
+.acq-path {
+  background: #fff;
+  border: 1px solid rgba(11,42,74,0.08);
+  border-radius: 14px;
+  padding: 28px 32px;
+  margin-bottom: 32px;
+}
+.acq-path .acq-path-head {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  color: var(--teal-dark);
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 18px;
+}
+.acq-path-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  position: relative;
+}
+.acq-path-grid::before {
+  content: "";
+  position: absolute;
+  left: 32px; right: 32px;
+  top: 20px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--teal), var(--navy));
+  opacity: 0.3;
+  z-index: 0;
+}
+.acq-step {
+  position: relative;
+  padding-right: 20px;
+  z-index: 1;
+}
+.acq-step:last-child { padding-right: 0; }
+.acq-step .dot {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1.5px solid var(--teal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--teal-dark);
+  margin-bottom: 14px;
+  box-shadow: 0 2px 8px -2px rgba(47,179,154,0.3);
+}
+.acq-step .step-title {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--navy);
+  line-height: 1.3;
+  margin-bottom: 6px;
+}
+.acq-step .step-body {
+  font-size: 13px;
+  color: var(--grey-700);
+  line-height: 1.5;
+}
+
+/* Vehicles strip for the acquisition panel */
+.acq-vehicles-block {
+  background: var(--grey-50);
+  border: 1px solid rgba(11,42,74,0.06);
+  border-radius: 14px;
+  padding: 24px 28px;
+  margin-bottom: 32px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 28px;
+  align-items: center;
+}
+.acq-vehicles-block .acq-vehicles-title {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--navy);
+  line-height: 1.4;
+  max-width: 280px;
+}
+.acq-vehicles-block .vehicles { margin-top: 0; }
+
+/* Procurement CTA block */
+.acq-cta {
+  background:
+    radial-gradient(ellipse 500px 200px at 80% 100%, rgba(47,179,154,0.18), transparent 60%),
+    linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+  color: #fff;
+  border-radius: 16px;
+  padding: 36px 40px;
+  display: grid;
+  grid-template-columns: 1.4fr auto;
+  gap: 32px;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(47,179,154,0.2);
+}
+.acq-cta .acq-cta-title {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.acq-cta .acq-cta-body {
+  font-size: 14px;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.6;
+  max-width: 500px;
+}
+.acq-cta .btn-primary {
+  white-space: nowrap;
+}
+.acq-cta-sent {
+  background: rgba(47,179,154,0.14);
+  border: 1px solid rgba(47,179,154,0.4);
+  color: var(--teal-light);
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.acq-cta-sent::before {
+  content: "✓";
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--teal);
+}
 .hero .cta-row {
   display: flex;
   justify-content: center;
@@ -2716,13 +3012,14 @@ a:hover { text-decoration: underline; }
 
   <div class="tab-bar" id="tabBar">
     <button class="tab active" data-tab="readiness">Readiness Score <span class="tab-num">1</span></button>
-    <button class="tab" data-tab="grants">Grants <span class="tab-num">2</span></button>
-    <button class="tab" data-tab="stack">Funding Stack <span class="tab-num">3</span></button>
-    <button class="tab" data-tab="program">Program Builder <span class="tab-num">4</span></button>
-    <button class="tab" data-tab="gap">Gap Calculator <span class="tab-num">5</span></button>
-    <button class="tab" data-tab="partners">Partners <span class="tab-num">6</span></button>
-    <button class="tab" data-tab="roadmap">Roadmap <span class="tab-num">7</span></button>
-    <button class="tab" data-tab="narrative">Narrative <span class="tab-num">8</span></button>
+    <button class="tab" data-tab="acquisition">AchieveDXP Plan <span class="tab-num">2</span></button>
+    <button class="tab" data-tab="grants">Grants <span class="tab-num">3</span></button>
+    <button class="tab" data-tab="stack">Funding Stack <span class="tab-num">4</span></button>
+    <button class="tab" data-tab="program">Program Builder <span class="tab-num">5</span></button>
+    <button class="tab" data-tab="gap">Gap Calculator <span class="tab-num">6</span></button>
+    <button class="tab" data-tab="partners">Partners <span class="tab-num">7</span></button>
+    <button class="tab" data-tab="roadmap">Roadmap <span class="tab-num">8</span></button>
+    <button class="tab" data-tab="narrative">Narrative <span class="tab-num">9</span></button>
   </div>
 
   <!-- PANEL: READINESS -->
@@ -2760,6 +3057,90 @@ a:hover { text-decoration: underline; }
         <span class="badge">ISO 27001</span>
         <span class="badge">NIST 800-53</span>
       </div>
+    </div>
+  </div>
+
+  <!-- PANEL: ACHIEVEDXP ACQUISITION PLAN -->
+  <div class="panel" data-panel="acquisition">
+    <div class="acq-hero">
+      <div class="acq-kicker">Your funded path to AchieveDXP</div>
+      <h3>Your matched grants are built to fund the <span class="accent">acquisition and deployment</span> of AchieveDXP.</h3>
+      <p id="acqHeroBody">The funding plan on the next tabs isn't abstract — it maps directly to the AchieveDXP product stack. Platform licensing, corrections-grade devices, network deployment, and content partners are all procurable under a single iT1 + Nucleos contract vehicle, paid for by the grants we just matched to your agency.</p>
+    </div>
+
+    <div class="acq-items">
+      <div class="acq-item">
+        <div class="acq-label">Line 01 · Platform</div>
+        <div class="acq-title">AchieveDXP platform licensing</div>
+        <div class="acq-range">$80–$150<span class="unit">per learner / year</span></div>
+        <div class="acq-desc">Unified learner record, account provisioning, real-time analytics, 50+ pre-integrated learning apps, teacher dashboards, grant-aligned reporting (NRS / Perkins V / WIOA).</div>
+        <div class="acq-funding"><strong>Typical grant coverage</strong>AEFLA · Perkins V · Second Chance Act · Byrne JAG pass-through · SAMHSA block grant</div>
+      </div>
+      <div class="acq-item">
+        <div class="acq-label">Line 02 · Devices</div>
+        <div class="acq-title">Corrections-grade tablets &amp; kiosks (iT1)</div>
+        <div class="acq-range">$350–$500<span class="unit">per device</span></div>
+        <div class="acq-desc">Secure, corrections-hardened endpoints. Delivered, imaged, asset-tagged, and deployed by the iT1 public-sector team. Refresh cycle built into the 3-year plan.</div>
+        <div class="acq-funding"><strong>Typical grant coverage</strong>Byrne JAG capital · Second Chance Act · State capital · WIOA Title I allocations</div>
+      </div>
+      <div class="acq-item">
+        <div class="acq-label">Line 03 · Network + deployment</div>
+        <div class="acq-title">Secure network design &amp; installation</div>
+        <div class="acq-range">$15K–$50K<span class="unit">fixed per facility</span></div>
+        <div class="acq-desc">iT1 network engineers design, install, and commission the secure data path. FIPS-aligned, CIPA-compliant, fully documented for auditor sign-off.</div>
+        <div class="acq-funding"><strong>Typical grant coverage</strong>Byrne JAG · State capital · Justice Reinvestment · Smart Reentry</div>
+      </div>
+      <div class="acq-item">
+        <div class="acq-label">Line 04 · Content &amp; credentials</div>
+        <div class="acq-title">50+ integrated learning applications</div>
+        <div class="acq-range">Bundled<span class="unit">into platform licensing</span></div>
+        <div class="acq-desc">Coursera, iCEV, Essential Education, NROC, Ascend Math, GoEducate, accredited universities, 90+ other providers. Pre-contracted, single sign-on, one invoice.</div>
+        <div class="acq-funding"><strong>Typical grant coverage</strong>AEFLA · Perkins V · Second Chance Pell · Vocational Rehabilitation</div>
+      </div>
+    </div>
+
+    <div class="acq-path">
+      <div class="acq-path-head">Procurement path · 60–90 days from first call to active learners</div>
+      <div class="acq-path-grid">
+        <div class="acq-step">
+          <div class="dot">01</div>
+          <div class="step-title">Intro call</div>
+          <div class="step-body">Joint iT1 + Nucleos team reviews your matched grant stack and readiness score. One 30-minute call.</div>
+        </div>
+        <div class="acq-step">
+          <div class="dot">02</div>
+          <div class="step-title">Statement of Work + quote</div>
+          <div class="step-body">Fixed-fee SOW scoped to your agency's population, facility count, and target grants. Binding line-item pricing.</div>
+        </div>
+        <div class="acq-step">
+          <div class="dot">03</div>
+          <div class="step-title">Grant application</div>
+          <div class="step-body">Submit using AchieveDXP's reviewer-ready narrative, boilerplate, and evidence of capability — already done.</div>
+        </div>
+        <div class="acq-step">
+          <div class="dot">04</div>
+          <div class="step-title">Deploy &amp; onboard</div>
+          <div class="step-body">Procured under your existing contract vehicle. iT1 handles hardware, network, and commissioning end-to-end.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="acq-vehicles-block">
+      <div class="acq-vehicles-title">Procure under existing federal vehicles — no new cycle required.</div>
+      <div class="vehicles">
+        <div class="vehicle">GSA</div>
+        <div class="vehicle">SEWP V</div>
+        <div class="vehicle">NASPO ValuePoint</div>
+        <div class="vehicle">State cooperative</div>
+      </div>
+    </div>
+
+    <div class="acq-cta" id="acqCta">
+      <div>
+        <div class="acq-cta-title">Ready to turn this plan into a Statement of Work?</div>
+        <div class="acq-cta-body">The iT1 + Nucleos team will scope line-item pricing, confirm contract-vehicle eligibility for your agency, and return a binding SOW within one business day. No obligation.</div>
+      </div>
+      <button class="btn btn-primary" id="acqCtaBtn" onclick="requestSOW()">Request SOW  →</button>
     </div>
   </div>
 
@@ -3535,6 +3916,50 @@ function buildLeadPayload() {
     existing_partners: allPartners || "(none)",
     readiness_score: (window.__lastReadinessScore != null ? String(window.__lastReadinessScore) : "(pending)")
   };
+}
+
+// ============================================================
+// PROCUREMENT SOW REQUEST
+// Fires a second, tagged POST to the same endpoint. The sales team
+// recognizes these as procurement-ready (vs. the initial info-capture).
+// ============================================================
+function requestSOW() {
+  const btn = document.getElementById('acqCtaBtn');
+  const block = document.getElementById('acqCta');
+  if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+
+  const base = buildLeadPayload();
+  const payload = Object.assign({}, base, {
+    _subject: `SOW REQUEST — ${state.agencyName || "(unnamed)"} — AchieveDXP`,
+    request_type: "procurement_sow",
+    requested_at: new Date().toISOString()
+  });
+
+  // Persist to localStorage backup as well
+  try {
+    const key = "achievedxp_sow_requests";
+    const queue = JSON.parse(localStorage.getItem(key) || "[]");
+    queue.push(payload);
+    localStorage.setItem(key, JSON.stringify(queue).slice(0, 1000000));
+  } catch (_) {}
+
+  fetch(LEAD_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+    body: JSON.stringify(payload)
+  }).then(res => {
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    return res.json();
+  }).then(() => {
+    if (block) {
+      block.innerHTML = '<div class="acq-cta-sent">SOW request sent · The iT1 + Nucleos team will contact ' + escapeHtml(state.contactName || "you") + ' within one business day at ' + escapeHtml(state.contactEmail || "your email") + '.</div>';
+    }
+    showToast("SOW request sent");
+  }).catch(err => {
+    console.warn("[AchieveDXP] SOW request failed:", err);
+    if (btn) { btn.disabled = false; btn.textContent = "Request SOW  →"; }
+    showToast("Couldn't send — try again or email leads@nucleos.com");
+  });
 }
 
 function submitLead() {
