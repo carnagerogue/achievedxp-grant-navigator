@@ -1388,6 +1388,146 @@ a:hover { text-decoration: underline; }
 @media (max-width: 640px) {
   .wizard-mascot { width: 56px; top: 14px; right: 16px; }
 }
+
+/* ============================================================
+   MASCOT · DISNEY-MAGIC POP-INS
+   Each landing section can host a <div class="mascot-pop"> that
+   appears with a spring when the section enters the viewport.
+   ============================================================ */
+.mascot-pop {
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(var(--mx, 0), 30px) scale(0.3) rotate(-8deg);
+  transition:
+    opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 900ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  width: auto;
+  max-width: 280px;
+}
+.mascot-pop.right { flex-direction: row-reverse; }
+.mascot-pop.in {
+  opacity: 1;
+  transform: translate(0, 0) scale(1) rotate(0);
+}
+.mascot-pop .m-char {
+  width: 72px;
+  height: auto;
+  flex-shrink: 0;
+  filter: drop-shadow(0 8px 18px rgba(47,179,154,0.22));
+  animation: mascot-float 4s ease-in-out infinite;
+  animation-delay: 900ms;
+  pointer-events: auto;
+  transition: transform 200ms ease-out;
+}
+.mascot-pop .m-char:hover { transform: scale(1.05) rotate(-3deg); }
+@keyframes mascot-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-5px); }
+}
+.mascot-pop .m-bubble {
+  position: relative;
+  background: #fff;
+  border: 1px solid rgba(11,42,74,0.1);
+  border-radius: 14px;
+  padding: 10px 14px;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--navy);
+  line-height: 1.35;
+  box-shadow: 0 4px 14px -4px rgba(11,42,74,0.14);
+  max-width: 220px;
+  opacity: 0;
+  transform: translateY(6px) scale(0.9);
+  transition: opacity 400ms 360ms var(--ease-out), transform 400ms 360ms var(--ease-out);
+}
+.mascot-pop.in .m-bubble {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+/* Dark-section variant: light bubble, more translucent */
+.mascot-pop.on-dark .m-bubble {
+  background: rgba(255,255,255,0.96);
+  border-color: rgba(47,179,154,0.3);
+  box-shadow: 0 6px 20px -4px rgba(0,0,0,0.35);
+}
+/* Bubble pointer (small triangle pointing at mascot) */
+.mascot-pop .m-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: 14px;
+  left: -7px;
+  width: 12px; height: 12px;
+  background: inherit;
+  border-left: 1px solid rgba(11,42,74,0.1);
+  border-bottom: 1px solid rgba(11,42,74,0.1);
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
+.mascot-pop.right .m-bubble::after {
+  left: auto;
+  right: -7px;
+  border-left: 0;
+  border-bottom: 0;
+  border-right: 1px solid rgba(11,42,74,0.1);
+  border-top: 1px solid rgba(11,42,74,0.1);
+}
+.mascot-pop.on-dark .m-bubble::after {
+  border-color: rgba(47,179,154,0.3) !important;
+}
+
+/* Placement variants */
+.mascot-pop--editorial {
+  top: -36px;
+  right: 24px;
+  --mx: 20px;
+}
+.mascot-pop--platform {
+  top: 48px;
+  left: -20px;
+  --mx: -30px;
+}
+.mascot-pop--outcomes {
+  top: 24px;
+  right: 8%;
+  --mx: 30px;
+}
+.mascot-pop--compliance {
+  top: 36px;
+  left: 4%;
+  --mx: -30px;
+}
+.mascot-pop--team {
+  top: -24px;
+  right: 6%;
+  --mx: 20px;
+}
+.mascot-pop--final {
+  top: -48px;
+  left: 50%;
+  transform: translate(-50%, 30px) scale(0.3) rotate(-8deg);
+  --mx: 0;
+}
+.mascot-pop--final.in {
+  transform: translate(-50%, 0) scale(1) rotate(0);
+}
+
+@media (max-width: 900px) {
+  .mascot-pop { display: none; } /* keep mobile clean */
+}
+@media (prefers-reduced-motion: reduce) {
+  .mascot-pop,
+  .mascot-pop .m-bubble,
+  .mascot-pop .m-char { transition: opacity 200ms linear; animation: none; }
+  .mascot-pop:not(.in) { opacity: 0; }
+  .mascot-pop.in { transform: none; opacity: 1; }
+}
 .hero .cta-row {
   display: flex;
   justify-content: center;
@@ -2904,7 +3044,11 @@ a:hover { text-decoration: underline; }
     </div>
   </div>
 
-  <div class="editorial">
+  <div class="editorial" style="position: relative;">
+    <div class="mascot-pop mascot-pop--editorial right" data-scene="editorial" aria-hidden="true">
+      <img class="m-char" src="./assets/mascot.png" alt="">
+      <div class="m-bubble">Three moves. I'll walk you through each one.</div>
+    </div>
     <div class="lane">
       <div class="num">01 · DISCOVER</div>
       <h3>Match the right funding</h3>
@@ -2925,7 +3069,11 @@ a:hover { text-decoration: underline; }
   <!-- ========================================================
        SECTION · THE PLATFORM (what AchieveDXP is)
        ======================================================== -->
-  <section class="section" id="platform">
+  <section class="section" id="platform" style="position: relative;">
+    <div class="mascot-pop mascot-pop--platform" data-scene="platform" aria-hidden="true">
+      <img class="m-char" src="./assets/mascot.png" alt="">
+      <div class="m-bubble">Five things. One platform. No more vendor patchwork.</div>
+    </div>
     <div class="section-head">
       <div class="section-eyebrow-col">
         <div class="section-kicker">AchieveDXP · The Platform</div>
@@ -3022,7 +3170,11 @@ a:hover { text-decoration: underline; }
        SECTION · OUTCOMES (dark canvas)
        ======================================================== -->
   <section class="section dark" id="outcomes">
-    <div class="inner">
+    <div class="inner" style="position: relative;">
+      <div class="mascot-pop mascot-pop--outcomes on-dark right" data-scene="outcomes" aria-hidden="true">
+        <img class="m-char" src="./assets/mascot.png" alt="">
+        <div class="m-bubble">Reviewers reward evidence. Here's what works.</div>
+      </div>
       <div class="section-head">
         <div class="section-eyebrow-col">
           <div class="section-kicker">Outcomes · Published evidence</div>
@@ -3066,7 +3218,11 @@ a:hover { text-decoration: underline; }
   <!-- ========================================================
        SECTION · COMPLIANCE
        ======================================================== -->
-  <section class="section" id="compliance">
+  <section class="section" id="compliance" style="position: relative;">
+    <div class="mascot-pop mascot-pop--compliance" data-scene="compliance" aria-hidden="true">
+      <img class="m-char" src="./assets/mascot.png" alt="">
+      <div class="m-bubble">Every box your auditor will ask about. Already checked.</div>
+    </div>
     <div class="section-head">
       <div class="section-eyebrow-col">
         <div class="section-kicker">Compliance · Standards</div>
@@ -3114,7 +3270,11 @@ a:hover { text-decoration: underline; }
   <!-- ========================================================
        SECTION · THE JOINT iT1 + NUCLEOS TEAM
        ======================================================== -->
-  <section class="section" id="team">
+  <section class="section" id="team" style="position: relative;">
+    <div class="mascot-pop mascot-pop--team right" data-scene="team" aria-hidden="true">
+      <img class="m-char" src="./assets/mascot.png" alt="">
+      <div class="m-bubble">Real agencies. Already running. Today.</div>
+    </div>
     <div class="section-head">
       <div class="section-eyebrow-col">
         <div class="section-kicker">The Joint Team · iT1 + Nucleos</div>
@@ -3193,7 +3353,11 @@ a:hover { text-decoration: underline; }
        SECTION · FINAL CTA
        ======================================================== -->
   <section class="section dark">
-    <div class="inner final-cta">
+    <div class="inner final-cta" style="position: relative;">
+      <div class="mascot-pop mascot-pop--final on-dark" data-scene="final" aria-hidden="true">
+        <img class="m-char" src="./assets/mascot.png" alt="" style="width: 96px;">
+        <div class="m-bubble">Let's go! ✨</div>
+      </div>
       <div class="section-kicker" style="justify-content: center; margin-bottom: 24px;">Ready · Launch</div>
       <h2>See your full funding stack in <span class="accent">under five minutes.</span></h2>
       <p class="sub">Ten questions. A matched grant stack across five funding layers, a component-level program design, and a reviewer-ready narrative. No account, no email wall.</p>
@@ -5329,6 +5493,38 @@ function installLogos() {
 function bootLanding() {
   installLogos();
   initOptions();
+  initMascotPops();
+}
+
+// ============================================================
+// MASCOT POP-INS — Disney-magic section transitions
+// As each section containing a .mascot-pop scrolls into view,
+// the mascot springs in from below with a small speech bubble.
+// The animation is skipped when prefers-reduced-motion is set.
+// ============================================================
+function initMascotPops() {
+  if (!("IntersectionObserver" in window)) return;
+  const pops = Array.from(document.querySelectorAll('.mascot-pop'));
+  if (!pops.length) return;
+
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        // stagger: tiny delay per pop so back-to-back sections don't collide
+        const delay = reduce ? 0 : Math.min(200, (entry.target.dataset.delay ? parseInt(entry.target.dataset.delay) : 0));
+        setTimeout(() => entry.target.classList.add('in'), delay);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    root: null,
+    rootMargin: "0px 0px -10% 0px", // trigger when 10% of section is visible from bottom
+    threshold: 0.15
+  });
+
+  pops.forEach(el => observer.observe(el));
 }
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", bootLanding);
