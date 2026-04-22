@@ -779,52 +779,137 @@ a:hover { text-decoration: underline; }
 }
 .final-cta .cta-row { justify-content: center; }
 
-/* Platform visual panel */
-.platform-visual {
+/* Unified stack schematic (replaces the old illustrated platform-visual) */
+.unified-stack {
   position: relative;
   margin: 16px 0 72px;
-  border-radius: 18px;
+  border-radius: 20px;
   overflow: hidden;
-  background: linear-gradient(135deg, #071A30 0%, #0B2A4A 100%);
-  border: 1px solid rgba(11,42,74,0.08);
+  background:
+    radial-gradient(ellipse 700px 250px at 15% 0%, rgba(47,179,154,0.16), transparent 65%),
+    radial-gradient(ellipse 500px 200px at 90% 100%, rgba(232,119,34,0.07), transparent 65%),
+    linear-gradient(180deg, #071A30 0%, #0B2A4A 100%);
+  border: 1px solid rgba(47,179,154,0.18);
   box-shadow: var(--shadow-lg);
-  aspect-ratio: 16 / 7;
-  min-height: 280px;
-}
-.platform-visual img {
-  width: 100%; height: 100%;
-  object-fit: contain;
-  object-position: center;
-  display: block;
-  padding: 24px;
-}
-.platform-visual .pv-overlay {
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
-  padding: 28px 32px;
-  background: linear-gradient(180deg, transparent, rgba(7,26,48,0.92));
+  padding: 44px 48px;
   color: #fff;
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-  gap: 24px;
+}
+.unified-stack::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at 30% 30%, black 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at 30% 30%, black 20%, transparent 75%);
+  pointer-events: none;
+}
+.unified-stack > * { position: relative; z-index: 1; }
+.us-head {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 32px;
+  align-items: baseline;
+  margin-bottom: 32px;
   flex-wrap: wrap;
 }
-.platform-visual .pv-cap {
+.us-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  color: var(--teal-light);
+  text-transform: uppercase;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.us-title {
   font-family: "Fraunces", Georgia, serif;
   font-size: 22px;
   font-weight: 500;
   letter-spacing: -0.015em;
-  max-width: 560px;
+  line-height: 1.35;
+  color: #fff;
+  max-width: 640px;
+}
+.us-layers {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.us-layer {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  gap: 20px;
+  align-items: center;
+  padding: 16px 22px;
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-left: 3px solid var(--tint, var(--teal));
+  border-radius: 10px;
+  transition: transform var(--dur) var(--ease), background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.us-layer:hover {
+  background: rgba(255,255,255,0.06);
+  transform: translateX(3px);
+  border-color: rgba(255,255,255,0.14);
+  border-left-color: var(--tint, var(--teal));
+}
+.us-layer-num {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--tint, var(--teal-light));
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.us-layer-name {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: #fff;
   line-height: 1.3;
 }
-.platform-visual .pv-meta {
+.us-layer-meta {
   font-family: "JetBrains Mono", monospace;
-  font-size: 10.5px;
-  letter-spacing: 0.18em;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: rgba(255,255,255,0.55);
+  text-align: right;
+  line-height: 1.5;
+  max-width: 480px;
+}
+.us-foot {
+  margin-top: 24px;
+  padding: 16px 22px;
+  background: rgba(47,179,154,0.08);
+  border: 1px solid rgba(47,179,154,0.22);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.us-foot .us-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 10px rgba(47,179,154,0.7);
+  animation: lf-pulse 2s infinite;
+  flex-shrink: 0;
+}
+.us-foot-txt {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
   color: var(--teal-light);
   text-transform: uppercase;
   font-weight: 500;
+}
+@media (max-width: 768px) {
+  .unified-stack { padding: 28px 24px; }
+  .us-layer { grid-template-columns: auto 1fr; padding: 14px 16px; }
+  .us-layer-meta { grid-column: 1 / -1; text-align: left; padding-top: 4px; max-width: none; }
 }
 
 /* Testimonial cards */
@@ -2628,11 +2713,41 @@ a:hover { text-decoration: underline; }
       </div>
     </div>
 
-    <div class="platform-visual">
-      <img src="./assets/hero-learners.png" alt="Learners using AchieveDXP across facilities" loading="lazy">
-      <div class="pv-overlay">
-        <div class="pv-cap">A single platform across every learner, every app, every facility in the agency.</div>
-        <div class="pv-meta">Unified · Secure · Grant-ready</div>
+    <div class="unified-stack">
+      <div class="us-head">
+        <div class="us-label">One procurement · five layers</div>
+        <div class="us-title">AchieveDXP is what happens when the five things agencies used to buy separately procure together.</div>
+      </div>
+      <div class="us-layers">
+        <div class="us-layer" style="--tint: #F5B82E">
+          <div class="us-layer-num">LAYER 05</div>
+          <div class="us-layer-name">Reporting &amp; outcomes</div>
+          <div class="us-layer-meta">NRS · Perkins V · WIOA · Post-release outcomes</div>
+        </div>
+        <div class="us-layer" style="--tint: #8B5CF6">
+          <div class="us-layer-num">LAYER 04</div>
+          <div class="us-layer-name">Compliance &amp; standards</div>
+          <div class="us-layer-meta">SOC 2 · ISO 27001 · FERPA · HIPAA · CIPA · NIST 800-53</div>
+        </div>
+        <div class="us-layer" style="--tint: #2FB39A">
+          <div class="us-layer-num">LAYER 03</div>
+          <div class="us-layer-name">Platform</div>
+          <div class="us-layer-meta">Unified learner record · SSO · Dashboards · Real-time analytics</div>
+        </div>
+        <div class="us-layer" style="--tint: #5FC9B5">
+          <div class="us-layer-num">LAYER 02</div>
+          <div class="us-layer-name">Infrastructure · iT1</div>
+          <div class="us-layer-meta">Corrections-grade devices · Secure network · Deployment · Support</div>
+        </div>
+        <div class="us-layer" style="--tint: #E87722">
+          <div class="us-layer-num">LAYER 01</div>
+          <div class="us-layer-name">Content &amp; credentials</div>
+          <div class="us-layer-meta">Coursera · iCEV · NROC · Ascend · Universities · 90+ partners</div>
+        </div>
+      </div>
+      <div class="us-foot">
+        <div class="us-dot"></div>
+        <div class="us-foot-txt">One contract vehicle · one invoice · one accountable team</div>
       </div>
     </div>
 
