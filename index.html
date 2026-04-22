@@ -3413,6 +3413,49 @@ a:hover { text-decoration: underline; }
 .pill.teal { background: rgba(47,179,154,0.15); color: var(--teal-dark); }
 .pill.orange { background: rgba(232,119,34,0.15); color: var(--orange-dark); }
 
+/* Resume banner (sticky, only shown when saved wizard progress exists) */
+.resume-banner {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  color: #fff;
+  padding: 10px 20px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  box-shadow: 0 2px 12px rgba(11,42,74,0.18);
+}
+.resume-banner.show { display: flex; }
+.resume-banner .rb-msg { opacity: 0.92; }
+.resume-banner .rb-btn {
+  background: var(--teal);
+  color: var(--navy);
+  border: none;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 160ms var(--ease), box-shadow 160ms var(--ease);
+}
+.resume-banner .rb-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(47,179,154,0.4); }
+.resume-banner .rb-dismiss {
+  background: transparent;
+  color: rgba(255,255,255,0.78);
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.resume-banner .rb-dismiss:hover { color: #fff; border-color: rgba(255,255,255,0.6); }
+
 /* Responsive */
 @media (max-width: 900px) {
   .app { padding: 16px 20px 80px; }
@@ -3430,6 +3473,12 @@ a:hover { text-decoration: underline; }
 
 <!-- LANDING -->
 <div id="landing">
+  <!-- Resume banner — hidden unless localStorage has saved wizard progress -->
+  <div class="resume-banner" id="resumeBanner" role="region" aria-label="Resume saved progress">
+    <span class="rb-msg" id="resumeMsg">You have unfinished answers from a previous session.</span>
+    <button type="button" class="rb-btn" id="resumeBtn">Resume where you left off</button>
+    <button type="button" class="rb-dismiss" id="resumeDismiss">Start fresh</button>
+  </div>
   <!-- Single mascot floater — moves between landing sections based on scroll -->
   <div class="mascot-floater" id="mascotFloater" aria-hidden="true">
     <img class="m-char" src="./assets/mascot.png" alt="">
@@ -3810,7 +3859,7 @@ a:hover { text-decoration: underline; }
     <div class="wizard-mascot" aria-hidden="true"><img src="./assets/mascot.png" alt=""></div>
     <h2 id="wizardTitle">Tell us about your agency</h2>
     <div class="subtitle">Your answers shape your matched grants, funding stack, and program design.</div>
-    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-bar" id="progressBar" role="progressbar" aria-label="Wizard progress" aria-valuemin="0" aria-valuemax="10" aria-valuenow="1"><div class="progress-fill" id="progressFill"></div></div>
   </div>
   <div class="wizard-body">
 
@@ -3957,7 +4006,7 @@ a:hover { text-decoration: underline; }
       <div class="field-row">
         <div class="field">
           <label>Agency name <span style="color:var(--orange)">*</span></label>
-          <input class="text-input" id="agencyName" placeholder="e.g. Kent County Sheriff's Office" required>
+          <input class="text-input" id="agencyName" placeholder="e.g. Kent County Sheriff's Office" required aria-required="true">
         </div>
         <div class="field">
           <label>Program name <span class="muted" style="font-weight:400">(optional)</span></label>
@@ -3967,17 +4016,17 @@ a:hover { text-decoration: underline; }
       <div class="field-row">
         <div class="field">
           <label>Your name <span style="color:var(--orange)">*</span></label>
-          <input class="text-input" id="contactName" placeholder="First and last name" required autocomplete="name">
+          <input class="text-input" id="contactName" placeholder="First and last name" required aria-required="true" autocomplete="name">
         </div>
         <div class="field">
           <label>Your role <span style="color:var(--orange)">*</span></label>
-          <input class="text-input" id="contactRole" placeholder="e.g. Director of Reentry Programs" required autocomplete="organization-title">
+          <input class="text-input" id="contactRole" placeholder="e.g. Director of Reentry Programs" required aria-required="true" autocomplete="organization-title">
         </div>
       </div>
       <div class="field-row">
         <div class="field">
           <label>Work email <span style="color:var(--orange)">*</span></label>
-          <input class="text-input" id="contactEmail" type="email" placeholder="you@agency.gov" required autocomplete="email">
+          <input class="text-input" id="contactEmail" type="email" placeholder="you@agency.gov" required aria-required="true" autocomplete="email">
         </div>
         <div class="field">
           <label>Phone <span class="muted" style="font-weight:400">(optional)</span></label>
@@ -4007,6 +4056,7 @@ a:hover { text-decoration: underline; }
     <div class="ctas">
       <button class="btn btn-primary" onclick="window.print()">Download PDF (Print)</button>
       <button class="btn btn-secondary" onclick="copyFullReport()">Copy full report</button>
+      <button class="btn btn-secondary" onclick="copyShareLink(this)">Copy share link</button>
       <button class="btn btn-ghost" style="color:white; background:rgba(255,255,255,0.1);" onclick="restart()">↺ Start over</button>
     </div>
   </div>
@@ -4468,6 +4518,115 @@ if (typeof window !== "undefined") {
   window.addEventListener('DOMContentLoaded', bootLiveFeed);
 }
 
+const PROGRESS_KEY = "achievedxp_wizard_progress_v1";
+const PROGRESS_FIELDS = [
+  "step","agencyType","stateCode","populationSize","goals","infra","budget",
+  "grantExp","timeline","existingPartners","existingPartnersOther",
+  "agencyName","programName","contactName","contactRole","contactEmail","contactPhone"
+];
+function saveProgress() {
+  try {
+    const snap = {};
+    PROGRESS_FIELDS.forEach(k => { snap[k] = state[k]; });
+    snap._ts = Date.now();
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify(snap));
+  } catch (_) { /* quota or private mode */ }
+}
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(PROGRESS_KEY);
+    if (!raw) return null;
+    const snap = JSON.parse(raw);
+    if (!snap || typeof snap !== "object") return null;
+    return snap;
+  } catch (_) { return null; }
+}
+function clearProgress() {
+  try { localStorage.removeItem(PROGRESS_KEY); } catch (_) {}
+}
+
+// Shareable plan URL — encodes the answers (no contact info) into a URL hash
+// so a user can share a read-only copy of their plan with a colleague.
+const SHARE_FIELDS = [
+  "agencyType","stateCode","populationSize","goals","infra","budget",
+  "grantExp","timeline","existingPartners","existingPartnersOther",
+  "agencyName","programName"
+];
+function encodePlanToHash() {
+  try {
+    const snap = {};
+    SHARE_FIELDS.forEach(k => { snap[k] = state[k]; });
+    const json = JSON.stringify(snap);
+    const b64 = btoa(unescape(encodeURIComponent(json)))
+      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    history.replaceState(null, '', '#plan=' + b64);
+  } catch (_) { /* ignore */ }
+}
+function decodePlanFromHash() {
+  try {
+    const m = /[#&]plan=([A-Za-z0-9_\-]+)/.exec(location.hash || "");
+    if (!m) return null;
+    const b64 = m[1].replace(/-/g, '+').replace(/_/g, '/');
+    const pad = b64.length % 4 ? '='.repeat(4 - (b64.length % 4)) : '';
+    const json = decodeURIComponent(escape(atob(b64 + pad)));
+    const snap = JSON.parse(json);
+    return (snap && typeof snap === "object") ? snap : null;
+  } catch (_) { return null; }
+}
+function copyShareLink(btn) {
+  const url = location.href;
+  const restore = () => { if (btn) { btn.textContent = btn.dataset.origLabel || "Copy share link"; } };
+  const flash = () => {
+    if (!btn) return;
+    btn.dataset.origLabel = btn.dataset.origLabel || btn.textContent;
+    btn.textContent = "Link copied";
+    setTimeout(restore, 1600);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(flash).catch(() => flash());
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = url; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (_) {}
+    document.body.removeChild(ta); flash();
+  }
+}
+function hasMeaningfulProgress(snap) {
+  if (!snap) return false;
+  if ((snap.step || 1) > 1) return true;
+  return !!(snap.agencyType || snap.stateCode || snap.populationSize
+    || (Array.isArray(snap.goals) && snap.goals.length)
+    || (Array.isArray(snap.infra) && snap.infra.length));
+}
+function restoreStateFromSnap(snap) {
+  PROGRESS_FIELDS.forEach(k => { if (k in snap) state[k] = snap[k]; });
+  // Reflect selection/inputs in the DOM
+  document.querySelectorAll('.option-grid').forEach(grid => {
+    const field = grid.dataset.field;
+    const type = grid.dataset.type;
+    grid.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    if (type === 'single' && state[field]) {
+      const el = grid.querySelector(`.option[data-value="${state[field]}"]`);
+      if (el) el.classList.add('selected');
+    } else if (type === 'multi' && Array.isArray(state[field])) {
+      state[field].forEach(v => {
+        const el = grid.querySelector(`.option[data-value="${v}"]`);
+        if (el) el.classList.add('selected');
+      });
+    }
+    if (typeof syncOptionAria === 'function') syncOptionAria(grid);
+  });
+  const sel = document.getElementById('stateSelect');
+  if (sel && state.stateCode) sel.value = state.stateCode;
+  [["agencyName","agencyName"],["programName","programName"],
+   ["contactName","contactName"],["contactRole","contactRole"],
+   ["contactEmail","contactEmail"],["contactPhone","contactPhone"],
+   ["partnersOther","existingPartnersOther"]].forEach(([id, key]) => {
+    const el = document.getElementById(id);
+    if (el && state[key]) el.value = state[key];
+  });
+}
+
 const state = {
   step: 1,
   total: 10,
@@ -4545,7 +4704,7 @@ const GRANTS = [
     cfda: "84.063",
     range: [200000, 2500000],
     cadence: "Rolling / Institutional approval",
-    eligible: ["state_doc","federal_bop","county_jail","community"],
+    eligible: ["state_doc","county_jail","community"],
     focus: ["postsec","ged","cte"],
     why: "Pell for incarcerated students is now permanent law. AchieveDXP is the delivery layer accredited college partners use to run approved Prison Education Programs behind the wire.",
     pop: ["sm","md","lg","xl","xxl"],
@@ -4713,7 +4872,7 @@ const GRANTS = [
     cfda: "—",
     range: [100000, 500000],
     cadence: "Rolling / by invitation",
-    eligible: ["state_doc","federal_bop","community"],
+    eligible: ["state_doc","community"],
     focus: ["postsec","cte","ged","digital"],
     why: "Largest private funder of postsecondary-in-prison education. AchieveDXP's accredited partner model and outcomes reporting align to Ascendium priorities.",
     pop: ["md","lg","xl","xxl"],
@@ -4813,10 +4972,23 @@ const PARTNERS = [
 // ============================================================
 // UI: OPTION SELECTION
 // ============================================================
+function syncOptionAria(grid) {
+  const type = grid.dataset.type;
+  grid.querySelectorAll('.option').forEach(o => {
+    o.setAttribute('aria-checked', o.classList.contains('selected') ? 'true' : 'false');
+    o.setAttribute('role', type === 'single' ? 'radio' : 'checkbox');
+  });
+}
 function initOptions() {
   document.querySelectorAll('.option-grid').forEach(grid => {
     const field = grid.dataset.field;
     const type = grid.dataset.type;
+    // Give the grid a landmark role + label from the nearest h3
+    const stepEl = grid.closest('.step');
+    const labelEl = stepEl && stepEl.querySelector('h3');
+    grid.setAttribute('role', type === 'single' ? 'radiogroup' : 'group');
+    if (labelEl) grid.setAttribute('aria-label', labelEl.textContent.trim());
+    syncOptionAria(grid);
     grid.querySelectorAll('.option').forEach(opt => {
       opt.addEventListener('click', () => {
         if (type === 'single') {
@@ -4843,6 +5015,8 @@ function initOptions() {
             state[field] = state[field].filter(v => v !== opt.dataset.value);
           }
         }
+        syncOptionAria(grid);
+        saveProgress();
       });
     });
   });
@@ -4854,19 +5028,19 @@ function initOptions() {
     o.value = code; o.textContent = name;
     sel.appendChild(o);
   });
-  sel.addEventListener('change', e => state.stateCode = e.target.value);
+  sel.addEventListener('change', e => { state.stateCode = e.target.value; saveProgress(); });
 
-  document.getElementById('agencyName').addEventListener('input', e => state.agencyName = e.target.value.trim());
-  document.getElementById('programName').addEventListener('input', e => state.programName = e.target.value.trim());
-  document.getElementById('contactName').addEventListener('input', e => state.contactName = e.target.value.trim());
-  const contactRoleEl = document.getElementById('contactRole');
-  if (contactRoleEl) contactRoleEl.addEventListener('input', e => state.contactRole = e.target.value.trim());
-  const contactEmailEl = document.getElementById('contactEmail');
-  if (contactEmailEl) contactEmailEl.addEventListener('input', e => state.contactEmail = e.target.value.trim());
-  const contactPhoneEl = document.getElementById('contactPhone');
-  if (contactPhoneEl) contactPhoneEl.addEventListener('input', e => state.contactPhone = e.target.value.trim());
-  const partnersOtherEl = document.getElementById('partnersOther');
-  if (partnersOtherEl) partnersOtherEl.addEventListener('input', e => state.existingPartnersOther = e.target.value.trim());
+  const onInput = (id, key) => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', e => { state[key] = e.target.value.trim(); saveProgress(); });
+  };
+  onInput('agencyName', 'agencyName');
+  onInput('programName', 'programName');
+  onInput('contactName', 'contactName');
+  onInput('contactRole', 'contactRole');
+  onInput('contactEmail', 'contactEmail');
+  onInput('contactPhone', 'contactPhone');
+  onInput('partnersOther', 'existingPartnersOther');
 }
 
 // Basic RFC-5322-ish email validation (good-enough for form gating; server should still validate)
@@ -4898,6 +5072,8 @@ function showStep(n) {
 function updateProgress() {
   const pct = (state.step / state.total) * 100;
   document.getElementById('progressFill').style.width = pct + '%';
+  const bar = document.getElementById('progressBar');
+  if (bar) bar.setAttribute('aria-valuenow', String(state.step));
 }
 function validateStep() {
   const required = {
@@ -4929,11 +5105,13 @@ function nextStep() {
   if (state.step < state.total) {
     state.step++;
     showStep(state.step);
+    saveProgress();
     window.scrollTo({top: 0, behavior: 'smooth'});
   } else {
     // Final step: compute results first (sets readiness score), then fire lead POST.
     generateResults();
     submitLead();
+    clearProgress();
   }
 }
 
@@ -5059,10 +5237,12 @@ function prevStep() {
   if (state.step > 1) {
     state.step--;
     showStep(state.step);
+    saveProgress();
     window.scrollTo({top: 0, behavior: 'smooth'});
   }
 }
 function restart() {
+  clearProgress();
   Object.assign(state, {
     step: 1, agencyType: null, stateCode: null, populationSize: null,
     goals: [], infra: [], budget: null, grantExp: null, timeline: null,
@@ -5078,6 +5258,7 @@ function restart() {
   document.getElementById('results').classList.remove('active');
   document.getElementById('wizard').style.display = 'none';
   document.getElementById('landing').style.display = 'block';
+  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
   showStep(1);
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
@@ -5247,6 +5428,7 @@ function buildStack(grants) {
 // ============================================================
 function generateResults() {
   document.getElementById('wizard').style.display = 'none';
+  document.getElementById('landing').style.display = 'none';
   const results = document.getElementById('results');
   results.classList.add('active');
   window.scrollTo({top: 0, behavior: 'smooth'});
@@ -5261,6 +5443,7 @@ function generateResults() {
   renderRoadmap();
   renderNarrative();
   initTabs();
+  encodePlanToHash();
 }
 
 function renderHeader() {
@@ -5278,7 +5461,6 @@ function agencyLabel(t) {
     state_doc: "State DOC",
     county_jail: "County Jail",
     juvenile: "Juvenile Justice",
-    federal_bop: "Federal BOP",
     community: "Community Corrections",
     other: "Multi-agency"
   }[t] || t;
@@ -5932,6 +6114,37 @@ function bootLanding() {
   initMascotFloater();
   initStackReveal();
   initSceneReveals();
+  initResumeBanner();
+  // Shared plan URL (#plan=...) — render report directly, skip landing/wizard
+  const shared = decodePlanFromHash();
+  if (shared) {
+    SHARE_FIELDS.forEach(k => { if (k in shared) state[k] = shared[k]; });
+    generateResults();
+  }
+}
+function initResumeBanner() {
+  const banner = document.getElementById('resumeBanner');
+  const btn = document.getElementById('resumeBtn');
+  const dismiss = document.getElementById('resumeDismiss');
+  const msg = document.getElementById('resumeMsg');
+  if (!banner || !btn || !dismiss) return;
+  const snap = loadProgress();
+  if (!hasMeaningfulProgress(snap)) return;
+  const step = snap.step || 1;
+  msg.textContent = `You have unfinished answers from a previous session (step ${step} of ${state.total}).`;
+  banner.classList.add('show');
+  btn.addEventListener('click', () => {
+    restoreStateFromSnap(snap);
+    banner.classList.remove('show');
+    document.getElementById('landing').style.display = 'none';
+    document.getElementById('wizard').style.display = 'block';
+    showStep(state.step || 1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  dismiss.addEventListener('click', () => {
+    clearProgress();
+    banner.classList.remove('show');
+  });
 }
 
 // ============================================================
