@@ -147,8 +147,12 @@ a:hover { text-decoration: underline; }
 /* ------------ DARK HERO CANVAS ------------ */
 .hero-canvas {
   position: relative;
-  margin: -24px -32px 48px;
-  padding: 0 32px 64px;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  margin-top: -24px;
+  margin-bottom: 48px;
+  padding: 0 0 72px 0;
   background:
     radial-gradient(ellipse 900px 500px at 20% 0%, rgba(47,179,154,0.18), transparent 65%),
     radial-gradient(ellipse 900px 500px at 80% 100%, rgba(232,119,34,0.09), transparent 65%),
@@ -193,9 +197,14 @@ a:hover { text-decoration: underline; }
   position: relative;
   z-index: 2;
   text-align: center;
-  max-width: 1100px;
+  max-width: 1120px;
   margin: 0 auto;
-  padding: 56px 0 0;
+  padding: 56px 32px 0;
+}
+.hero-canvas .top-bar {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 28px 32px 0;
 }
 .hero .kicker {
   display: inline-flex;
@@ -2207,7 +2216,9 @@ function renderHeroTelemetry() {
     sync.textContent = "LIVE";
   }
   if (openEl) openEl.textContent = opps.length;
-  if (alnsEl) alnsEl.textContent = (LIVE_FEED.opportunities ? new Set(LIVE_FEED.opportunities.map(o => o.cfda).filter(Boolean)).size || 16 : 16);
+  // "ALNs tracked" is the size of the corrections ALN list the refresh script queries
+  // every day — a product constant (16), not the count of ALNs with hits today.
+  if (alnsEl) alnsEl.textContent = "16";
 }
 
 async function refreshLiveFeed() {
