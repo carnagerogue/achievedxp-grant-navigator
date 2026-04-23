@@ -70,12 +70,10 @@ async function bootLiveFeed() {
   }
 }
 
-// Landing-page telemetry: live ticker + proof counts fed from LIVE_FEED
+// Landing-page telemetry: live ticker (when present) + proof counts.
+// The hero ticker was removed in an earlier commit, but the proof-row
+// stats below it are still in the markup — populate them unconditionally.
 function renderHeroTelemetry() {
-  const track = document.getElementById('teleTrack');
-  const sync = document.getElementById('teleSync');
-  if (!track || !sync) return;
-
   const opps  = (LIVE_FEED.opportunities || []).filter(o => o.title);
   const awds  = (LIVE_FEED.awards || []).filter(a => a.recipient);
   const fnds  = (LIVE_FEED.foundations || []).filter(f => f.name);
@@ -109,7 +107,10 @@ function renderHeroTelemetry() {
   if (awdSub && awdTotal)  awdSub.textContent = `USASpending · ${fmtMoney(awdTotal)} nationwide (24 mo.)`;
   if (fndSub && fndAssets) fndSub.textContent = `ProPublica · ${fmtMoney(fndAssets)} in assets`;
 
-  // ----- Unified telemetry ticker: interleave all four data sources -----
+  // ----- Telemetry ticker: only render if its DOM is still present -----
+  const track = document.getElementById('teleTrack');
+  const sync = document.getElementById('teleSync');
+  if (!track || !sync) return;
   if (!opps.length && !awds.length && !fnds.length) {
     track.textContent = "Offline — showing cached baseline.";
     sync.textContent = "BASELINE";
