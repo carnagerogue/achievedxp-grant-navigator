@@ -86,8 +86,54 @@ function normalize(hit, aln) {
     close_date: hit.closeDate || null,
     award_ceiling: null,
     award_floor: null,
+    synopsis: null,
+    funding_url: null,
     source_url: "https://www.grants.gov/search-results-detail/" + oppId
   };
+}
+
+// Hydrate a single opportunity with ceiling/floor/synopsis from fetchOpportunity.
+// Tolerates individual failures — returns the original opp on error so the
+// aggregate refresh never loses data from a per-call hiccup.
+async function hydrateOpportunity(opp) {
+  const id = Number(opp.source_id);
+  if (!id || isNaN(id)) return opp;
+  try {
+    const res = await fetch("https://api.grants.gov/v1/api/fetchOpportunity", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "User-Agent": UA },
+      body: JSON.stringify({ opportunityId: id })
+    });
+    if (!res.ok) return opp;
+    const data = await res.json();
+    if (!data || data.errorcode !== 0) return opp;
+    const syn = (data.data && (data.data.synopsis || data.data.forecast)) || {};
+    return {
+      ...opp,
+      award_ceiling: (syn.awardCeiling != null ? Number(syn.awardCeiling) : null),
+      award_floor:   (syn.awardFloor   != null ? Number(syn.awardFloor)   : null),
+      synopsis:      (syn.synopsisDesc || "").slice(0, 600) || null,
+      funding_url:   syn.fundingDescLinkUrl || null
+    };
+  } catch (_) {
+    return opp;
+  }
+}
+
+// Hydrate in small batches to avoid stampeding grants.gov.
+async function hydrateAll(opps) {
+  const out = [];
+  const BATCH = 4;
+  const DELAY_MS = 150;
+  for (let i = 0; i < opps.length; i += BATCH) {
+    const batch = opps.slice(i, i + BATCH);
+    const hydrated = await Promise.all(batch.map(hydrateOpportunity));
+    out.push(...hydrated);
+    if (i + BATCH < opps.length) {
+      await new Promise(r => setTimeout(r, DELAY_MS));
+    }
+  }
+  return out;
 }
 
 export async function fetchAllOpportunities() {
@@ -113,7 +159,14 @@ export async function fetchAllOpportunities() {
       deduped.push(o);
     }
   }
-  return { opportunities: deduped, alns_searched: CORRECTIONS_ALNS, errors };
+
+  // Hydrate each opportunity with ceiling/floor/synopsis via fetchOpportunity.
+  console.error(`  hydrating ${deduped.length} opportunities via fetchOpportunity…`);
+  const hydrated = await hydrateAll(deduped);
+  const ceilingCount = hydrated.filter(o => o.award_ceiling != null).length;
+  console.error(`  hydration: ${ceilingCount}/${hydrated.length} got award ceilings`);
+
+  return { opportunities: hydrated, alns_searched: CORRECTIONS_ALNS, errors };
 }
 
 // Standalone usage: `node scripts/refresh-grants.mjs` — writes opportunities.json

@@ -1107,6 +1107,34 @@ function fmtRange(arr) {
   return "$" + arr[0].toLocaleString() + " – $" + arr[1].toLocaleString();
 }
 
+// Format a dollar ceiling/floor compactly: 12500000 → "$12.5M", 750000 → "$750K"
+function fmtMoneyCompact(n) {
+  if (n == null || isNaN(n) || n <= 0) return null;
+  if (n >= 1_000_000_000) return "$" + (n / 1_000_000_000).toFixed(1).replace(/\.0$/, "") + "B";
+  if (n >= 1_000_000)     return "$" + (n / 1_000_000).toFixed(1).replace(/\.0$/, "") + "M";
+  if (n >= 1_000)         return "$" + Math.round(n / 1_000) + "K";
+  return "$" + n;
+}
+
+// Prefer live grants.gov ceiling/floor; fall back to curated static range.
+// Returns { label, value, isLive } for display on the grant card.
+function liveRangeFor(g) {
+  const live = g.cfda ? LIVE_FEED.byCfda.get(g.cfda) : null;
+  if (!live) return { label: "Typical range", value: fmtRange(g.range), isLive: false };
+  const ceil  = live.award_ceiling;
+  const floor = live.award_floor;
+  if (ceil && ceil > 0) {
+    const ceilStr  = fmtMoneyCompact(ceil);
+    const floorStr = (floor != null && floor > 0) ? fmtMoneyCompact(floor) : null;
+    return {
+      label: "Live award size",
+      value: floorStr ? `${floorStr} – ${ceilStr}` : `up to ${ceilStr}`,
+      isLive: true
+    };
+  }
+  return { label: "Typical range", value: fmtRange(g.range), isLive: false };
+}
+
 // ============================================================
 // FUNDING STACK STRATEGY
 // ============================================================
@@ -1501,7 +1529,7 @@ function renderGrants() {
         <span class="match-badge ${matchClass(g.fit)}">${matchLabel(g.fit)}</span>
       </div>
       <div class="grant-meta">
-        <div class="grant-meta-item"><strong>Typical range</strong>${fmtRange(g.range)}</div>
+        <div class="grant-meta-item"><strong>${liveRangeFor(g).label}</strong>${liveRangeFor(g).value}${liveRangeFor(g).isLive ? '<span class="live-pill">live</span>' : ''}</div>
         <div class="grant-meta-item"><strong>Cadence</strong>${escapeHtml(g.cadence)}</div>
         <div class="grant-meta-item"><strong>Source</strong>${escapeHtml(g.tag)}</div>
       </div>
@@ -2370,12 +2398,229 @@ function bootLanding() {
   initStackReveal();
   initSceneReveals();
   initResumeBanner();
+  initStateRouting();
+  initFundingMap();
   // Shared plan URL (#plan=...) — render report directly, skip landing/wizard
   const shared = decodePlanFromHash();
   if (shared) {
     SHARE_FIELDS.forEach(k => { if (k in shared) state[k] = shared[k]; });
     generateResults();
   }
+}
+
+// ============================================================
+// LIVE FUNDING MAP — tile cartogram of all 50 states + DC,
+// positioned at approximate geographic coords. Color intensity
+// scales to each state's USASpending total (last 24 months) for
+// the tracked corrections ALNs. Click navigates to ?state=XX.
+// ============================================================
+const STATE_TILES = [
+  // { code, row (1-8), col (1-12) }
+  { code:"ME", row:1, col:12 },
+  { code:"VT", row:2, col:10 }, { code:"NH", row:2, col:11 },
+  { code:"WA", row:2, col:2 },  { code:"ID", row:3, col:3 },  { code:"MT", row:2, col:4 },
+  { code:"ND", row:2, col:5 },  { code:"MN", row:3, col:6 },  { code:"WI", row:3, col:7 },
+  { code:"MI", row:3, col:8 },  { code:"NY", row:3, col:10 }, { code:"MA", row:3, col:11 },
+  { code:"RI", row:3, col:12 },
+  { code:"OR", row:3, col:2 },
+  { code:"SD", row:3, col:5 },  { code:"IL", row:4, col:7 },  { code:"IN", row:4, col:8 },
+  { code:"OH", row:4, col:9 },  { code:"PA", row:4, col:10 }, { code:"NJ", row:4, col:11 },
+  { code:"CT", row:4, col:12 },
+  { code:"WY", row:4, col:4 },  { code:"IA", row:4, col:6 },
+  { code:"CA", row:5, col:2 },  { code:"NV", row:4, col:3 },  { code:"UT", row:5, col:3 },
+  { code:"CO", row:5, col:4 },  { code:"NE", row:5, col:5 },  { code:"MO", row:5, col:6 },
+  { code:"KY", row:5, col:7 },  { code:"WV", row:5, col:9 },  { code:"VA", row:5, col:10 },
+  { code:"MD", row:5, col:11 }, { code:"DE", row:5, col:12 },
+  { code:"AZ", row:6, col:3 },  { code:"NM", row:6, col:4 },  { code:"KS", row:6, col:5 },
+  { code:"AR", row:6, col:6 },  { code:"TN", row:6, col:7 },  { code:"NC", row:6, col:9 },
+  { code:"SC", row:6, col:10 }, { code:"DC", row:6, col:11 },
+  { code:"OK", row:7, col:5 },  { code:"LA", row:7, col:6 },  { code:"MS", row:7, col:7 },
+  { code:"AL", row:7, col:8 },  { code:"GA", row:7, col:9 },  { code:"FL", row:8, col:9 },
+  { code:"AK", row:7, col:1 },  { code:"HI", row:8, col:1 },  { code:"TX", row:8, col:5 }
+];
+
+function initFundingMap() {
+  const grid = document.getElementById('fmapGrid');
+  const totalsEl = document.getElementById('fmapTotals');
+  const rangeEl = document.getElementById('fmapRange');
+  const tooltip = document.getElementById('fmapTooltip');
+  if (!grid) return;
+
+  // Render tiles first so the grid appears even before data loads
+  grid.innerHTML = STATE_TILES.map(t => {
+    const name = (US_STATES.find(s => s[0] === t.code) || [t.code, t.code])[1];
+    return `<button type="button" class="fmap-tile fm-0" data-code="${t.code}"
+      style="grid-row: ${t.row}; grid-column: ${t.col};"
+      data-name="${name}" aria-label="${name}: awards loading">
+      <span class="fmap-tile-code">${t.code}</span>
+    </button>`;
+  }).join('');
+
+  // Wait a tick for LIVE_FEED to be populated by bootLiveFeed
+  const paint = () => {
+    const awards = (LIVE_FEED.awards || []).filter(a => a.state);
+    if (!awards.length) { setTimeout(paint, 500); return; }
+
+    // Group totals by state
+    const byState = new Map();
+    for (const a of awards) {
+      const s = a.state;
+      if (!byState.has(s)) byState.set(s, { total: 0, count: 0, items: [] });
+      const b = byState.get(s);
+      b.total += (a.amount || 0);
+      b.count += 1;
+      b.items.push(a);
+    }
+    for (const b of byState.values()) {
+      b.items.sort((x, y) => (y.amount || 0) - (x.amount || 0));
+    }
+
+    const totals = [...byState.values()].map(b => b.total).filter(v => v > 0);
+    const maxT = Math.max(1, ...totals);
+    const minT = Math.min(...totals.filter(v => v > 0));
+
+    const fmt = (n) => {
+      if (n >= 1e9) return "$" + (n / 1e9).toFixed(1).replace(/\.0$/, "") + "B";
+      if (n >= 1e6) return "$" + (n / 1e6).toFixed(0) + "M";
+      if (n >= 1e3) return "$" + Math.round(n / 1e3) + "K";
+      return "$" + n;
+    };
+
+    if (rangeEl) rangeEl.textContent = `${fmt(minT)} → ${fmt(maxT)}`;
+
+    const tiles = grid.querySelectorAll('.fmap-tile');
+    tiles.forEach(tile => {
+      const code = tile.dataset.code;
+      const b = byState.get(code);
+      if (!b || !b.total) {
+        tile.classList.remove('fm-1','fm-2','fm-3','fm-4');
+        tile.classList.add('fm-0');
+        tile.setAttribute('aria-label', `${tile.dataset.name}: no tracked awards`);
+        return;
+      }
+      // Log-scale bucketing into 5 levels
+      const pct = b.total / maxT;
+      const cls = pct > 0.5 ? 'fm-4' : pct > 0.25 ? 'fm-3' : pct > 0.1 ? 'fm-2' : 'fm-1';
+      tile.classList.remove('fm-0','fm-1','fm-2','fm-3','fm-4');
+      tile.classList.add(cls);
+      tile.setAttribute('aria-label',
+        `${tile.dataset.name}: ${fmt(b.total)} across ${b.count} awards`);
+    });
+
+    // Tooltip + click handlers
+    const showTip = (tile) => {
+      if (!tooltip) return;
+      const code = tile.dataset.code;
+      const b = byState.get(code);
+      const name = tile.dataset.name;
+      if (!b || !b.total) {
+        tooltip.innerHTML = `<div class="tt-head">${name}</div><div class="tt-sub">No tracked awards in the last 24 months.</div>`;
+      } else {
+        const topItems = b.items.slice(0, 3).map(a =>
+          `<div class="tt-item"><span class="tt-amt">${a.amount_display || fmt(a.amount)}</span> · ${escapeHtml((a.recipient || '').slice(0, 44))}</div>`
+        ).join('');
+        tooltip.innerHTML = `
+          <div class="tt-head">${name} · <span class="tt-code">${code}</span></div>
+          <div class="tt-total">${fmt(b.total)} <span class="tt-sub">across ${b.count} awards</span></div>
+          <div class="tt-items">${topItems}</div>
+          <div class="tt-cta">Click to load ${name} context →</div>
+        `;
+      }
+      const rect = tile.getBoundingClientRect();
+      const gridRect = grid.getBoundingClientRect();
+      tooltip.style.left = (rect.left - gridRect.left + rect.width / 2) + 'px';
+      tooltip.style.top  = (rect.top  - gridRect.top  - 10) + 'px';
+      tooltip.setAttribute('aria-hidden', 'false');
+      tooltip.classList.add('show');
+    };
+    const hideTip = () => {
+      if (!tooltip) return;
+      tooltip.classList.remove('show');
+      tooltip.setAttribute('aria-hidden', 'true');
+    };
+    tiles.forEach(tile => {
+      tile.addEventListener('mouseenter', () => showTip(tile));
+      tile.addEventListener('focus',       () => showTip(tile));
+      tile.addEventListener('mouseleave', hideTip);
+      tile.addEventListener('blur',        hideTip);
+      tile.addEventListener('click', () => {
+        const code = tile.dataset.code;
+        if (code) {
+          const url = new URL(window.location.href);
+          url.searchParams.set('state', code);
+          url.hash = '';
+          window.location.assign(url.toString());
+        }
+      });
+    });
+
+    // Aggregate totals strip
+    const grandTotal = totals.reduce((s, t) => s + t, 0);
+    const activeStates = totals.length;
+    if (totalsEl) {
+      totalsEl.innerHTML = `
+        <div class="ft-row">
+          <div><span class="ft-big">${fmt(grandTotal)}</span> <span class="ft-cap">flowing nationwide</span></div>
+          <div><span class="ft-big">${activeStates}</span> <span class="ft-cap">states with tracked awards</span></div>
+          <div><span class="ft-big">${awards.length}</span> <span class="ft-cap">individual awards</span></div>
+        </div>
+      `;
+    }
+  };
+  paint();
+}
+
+// ============================================================
+// STATE ROUTING — ?state=NV pre-fills the wizard with Nevada,
+// swaps the hero kicker to a state-branded variant, and seeds
+// LIVE_FEED SAA context so a DOC director landing from a
+// state-specific URL sees their own data immediately.
+// ============================================================
+function initStateRouting() {
+  let code = null;
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const raw = (params.get('state') || '').toUpperCase().trim();
+    if (raw && /^[A-Z]{2}$/.test(raw) && US_STATES.some(s => s[0] === raw)) {
+      code = raw;
+    }
+  } catch (_) {}
+  if (!code) return;
+
+  // Seed wizard state so step 2 is pre-answered
+  state.stateCode = code;
+  try { saveProgress(); } catch (_) {}
+
+  // Swap hero kicker to state-branded variant
+  const stateName = (US_STATES.find(s => s[0] === code) || ["", code])[1];
+  const kicker = document.querySelector('.hero .kicker');
+  if (kicker && stateName) {
+    kicker.textContent = `Built for ${stateName} · Corrections agencies`;
+  }
+
+  // Add a slim state banner above the hero CTAs
+  const ctaRow = document.querySelector('.hero .cta-row');
+  if (ctaRow && stateName) {
+    const banner = document.createElement('div');
+    banner.className = 'state-banner';
+    banner.innerHTML = `
+      <span class="sb-flag" data-code="${code}">${code}</span>
+      <span class="sb-txt">Welcome, ${stateName} — your SAA and peer-award data are pre-loaded for your state.</span>
+    `;
+    ctaRow.parentNode.insertBefore(banner, ctaRow);
+  }
+
+  // Preselect the state dropdown once data loads
+  const applySelect = () => {
+    const sel = document.getElementById('stateSelect');
+    if (sel && code && sel.value !== code) sel.value = code;
+  };
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    applySelect();
+  } else {
+    window.addEventListener('DOMContentLoaded', applySelect);
+  }
+  setTimeout(applySelect, 400);
 }
 function initResumeBanner() {
   const banner = document.getElementById('resumeBanner');

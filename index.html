@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;600&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="styles.css?v=2026-04-23d">
+<link rel="stylesheet" href="styles.css?v=2026-04-23e">
 </head>
 <body>
 <div class="app">
@@ -211,6 +211,40 @@
   </section>
 
   <!-- ========================================================
+       SECTION · LIVE FUNDING MAP
+       Tile cartogram of the U.S. colored by peer-award $ totals
+       per state (USASpending, last 24 months). Click a tile to
+       filter the whole experience to that state.
+       ======================================================== -->
+  <section class="section" id="funding-map" data-scene="funding-map">
+    <div class="section-head">
+      <div class="section-eyebrow-col">
+        <div class="section-kicker">Live funding map · USASpending</div>
+      </div>
+      <div>
+        <h2 class="section-headline">Where corrections funding is flowing — right now.</h2>
+        <p class="section-lead">Every federal award under the sixteen ALNs AchieveDXP tracks, plotted by state. Color intensity = dollars flowing to that state in the last 24 months. Click a state to see its administering agency and recent awards.</p>
+      </div>
+    </div>
+    <div class="fmap-wrap">
+      <div class="fmap-legend">
+        <span class="fmap-legend-label">Awards last 24 mo.</span>
+        <span class="fmap-scale">
+          <span class="fmap-swatch fm-0"></span>
+          <span class="fmap-swatch fm-1"></span>
+          <span class="fmap-swatch fm-2"></span>
+          <span class="fmap-swatch fm-3"></span>
+          <span class="fmap-swatch fm-4"></span>
+        </span>
+        <span class="fmap-legend-range" id="fmapRange">— → —</span>
+      </div>
+      <div class="fmap-grid" id="fmapGrid" role="figure" aria-label="U.S. funding map tile cartogram"></div>
+      <div class="fmap-tooltip" id="fmapTooltip" role="tooltip" aria-hidden="true"></div>
+      <div class="fmap-totals" id="fmapTotals"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================
        SECTION · OUTCOMES (dark canvas)
        ======================================================== -->
   <section class="section dark" id="outcomes" data-scene="outcomes">
@@ -384,6 +418,46 @@
         <div class="dep">
           <img src="./assets/dxp-launch.png" alt="AchieveDXP platform launch" loading="lazy">
           <div class="dep-cap">AchieveDXP platform launch<span class="dep-meta">Nucleos · iT1 Company · 2024</span></div>
+        </div>
+      </div>
+
+      <!-- Customer logo wall: typographic agency wordmarks in a consistent treatment -->
+      <div class="logo-wall">
+        <div class="lw-head">
+          <div class="lw-label">Deployed at</div>
+          <div class="lw-count"><span class="lw-big">6</span> agencies · <span class="lw-big">4</span> states · <span class="lw-big">1</span> U.S. territory</div>
+        </div>
+        <div class="lw-grid">
+          <div class="lw-cell" data-state="WY">
+            <div class="lw-code">WY</div>
+            <div class="lw-name">Wyoming<br>Department of Corrections</div>
+            <div class="lw-sub">Statewide · 2024</div>
+          </div>
+          <div class="lw-cell" data-state="VA">
+            <div class="lw-code">VA</div>
+            <div class="lw-name">Virginia<br>Department of Corrections</div>
+            <div class="lw-sub">17.6% recidivism cohort</div>
+          </div>
+          <div class="lw-cell" data-state="CA">
+            <div class="lw-code">SF</div>
+            <div class="lw-name">San Francisco<br>County Jail</div>
+            <div class="lw-sub">Free tablet program · 2024</div>
+          </div>
+          <div class="lw-cell" data-state="VI">
+            <div class="lw-code">VI</div>
+            <div class="lw-name">U.S. Virgin Islands<br>Bureau of Corrections</div>
+            <div class="lw-sub">Territorial deployment</div>
+          </div>
+          <div class="lw-cell" data-state="NM">
+            <div class="lw-code">NM</div>
+            <div class="lw-name">Gordon Bernell<br>Correctional Charter</div>
+            <div class="lw-sub">Charter school model</div>
+          </div>
+          <div class="lw-cell" data-state="CA">
+            <div class="lw-code">YU</div>
+            <div class="lw-name">Yuba County<br>Office of Education</div>
+            <div class="lw-sub">Juvenile facility</div>
+          </div>
         </div>
       </div>
     </div>
@@ -1013,6 +1087,6 @@
   </div>
 </div>
 </div>
-<script defer src="app.js?v=2026-04-23d"></script>
+<script defer src="app.js?v=2026-04-23e"></script>
 </body>
 </html>

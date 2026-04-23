@@ -3899,6 +3899,370 @@ a:hover { text-decoration: underline; }
    Rendered inside the Grants tab below the grant-matches list.
    ============================================================ */
 
+/* ============================================================
+   LIVE FUNDING MAP — tile cartogram of the U.S.
+   ============================================================ */
+.fmap-wrap {
+  position: relative;
+  margin-top: 16px;
+}
+.fmap-legend {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  color: var(--grey-500);
+  text-transform: uppercase;
+}
+.fmap-legend-label { color: var(--teal-dark); font-weight: 600; }
+.fmap-scale { display: inline-flex; gap: 2px; }
+.fmap-swatch { width: 16px; height: 10px; border-radius: 2px; }
+.fmap-legend-range {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 13px;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+  text-transform: none;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.fmap-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  gap: 4px;
+  aspect-ratio: 16 / 10;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 12px;
+  background: linear-gradient(180deg, rgba(11,42,74,0.02), transparent);
+  border: 1px solid rgba(11,42,74,0.06);
+  border-radius: 14px;
+}
+.fmap-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(11,42,74,0.08);
+  border-radius: 6px;
+  background: rgba(11,42,74,0.03);
+  cursor: pointer;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--grey-500);
+  transition: transform 160ms var(--ease), box-shadow 160ms var(--ease), background 160ms var(--ease), color 160ms var(--ease);
+  outline: none;
+  padding: 0;
+  user-select: none;
+}
+.fmap-tile:hover,
+.fmap-tile:focus-visible {
+  transform: translateY(-2px) scale(1.08);
+  box-shadow: 0 6px 14px -4px rgba(11,42,74,0.25);
+  z-index: 2;
+}
+.fmap-tile:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+.fmap-tile.fm-0 { background: rgba(11,42,74,0.03); color: rgba(11,42,74,0.35); }
+.fmap-tile.fm-1 { background: rgba(47,179,154,0.18); color: var(--teal-dark); border-color: rgba(47,179,154,0.3); }
+.fmap-tile.fm-2 { background: rgba(47,179,154,0.38); color: var(--navy); border-color: rgba(47,179,154,0.5); }
+.fmap-tile.fm-3 { background: rgba(47,179,154,0.6); color: #fff; border-color: rgba(47,179,154,0.7); }
+.fmap-tile.fm-4 {
+  background: linear-gradient(135deg, #2FB39A, #228574);
+  color: #fff;
+  border-color: rgba(47,179,154,0.95);
+  box-shadow: 0 0 12px rgba(47,179,154,0.4);
+}
+.fmap-swatch.fm-0 { background: rgba(11,42,74,0.08); }
+.fmap-swatch.fm-1 { background: rgba(47,179,154,0.2); }
+.fmap-swatch.fm-2 { background: rgba(47,179,154,0.4); }
+.fmap-swatch.fm-3 { background: rgba(47,179,154,0.65); }
+.fmap-swatch.fm-4 { background: #228574; }
+
+.fmap-tooltip {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  background: #0B2A4A;
+  color: #fff;
+  padding: 14px 18px;
+  border-radius: 10px;
+  box-shadow: 0 12px 32px -8px rgba(11,42,74,0.45), 0 0 0 1px rgba(47,179,154,0.25);
+  min-width: 280px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 180ms ease;
+  z-index: 20;
+  font-family: "Inter", sans-serif;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.fmap-tooltip.show { opacity: 1; }
+.fmap-tooltip .tt-head {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  margin-bottom: 6px;
+}
+.fmap-tooltip .tt-code {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: rgba(47,179,154,0.95);
+  font-weight: 700;
+}
+.fmap-tooltip .tt-total {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 8px;
+}
+.fmap-tooltip .tt-total .tt-sub {
+  font-family: "Inter", sans-serif;
+  font-size: 11.5px;
+  color: rgba(255,255,255,0.6);
+  font-weight: 400;
+  margin-left: 4px;
+}
+.fmap-tooltip .tt-sub { color: rgba(255,255,255,0.6); font-size: 12px; }
+.fmap-tooltip .tt-items {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.fmap-tooltip .tt-item {
+  font-size: 11.5px;
+  color: rgba(255,255,255,0.82);
+  margin-bottom: 3px;
+  line-height: 1.35;
+}
+.fmap-tooltip .tt-amt {
+  font-family: "JetBrains Mono", monospace;
+  color: rgba(47,179,154,0.95);
+  font-weight: 700;
+  font-size: 11px;
+  margin-right: 4px;
+}
+.fmap-tooltip .tt-cta {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(255,255,255,0.14);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(47,179,154,0.95);
+  font-weight: 600;
+}
+
+.fmap-totals {
+  margin-top: 24px;
+  padding: 18px 22px;
+  background: linear-gradient(135deg, rgba(47,179,154,0.06), rgba(11,42,74,0.03));
+  border: 1px solid rgba(47,179,154,0.2);
+  border-radius: 12px;
+}
+.fmap-totals .ft-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  align-items: baseline;
+  text-align: center;
+}
+.fmap-totals .ft-big {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  color: var(--navy);
+  font-variant-numeric: tabular-nums;
+}
+.fmap-totals .ft-cap {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  color: var(--grey-500);
+  text-transform: uppercase;
+  margin-left: 6px;
+}
+
+@media (max-width: 780px) {
+  .fmap-grid { aspect-ratio: 14 / 10; }
+  .fmap-tile { font-size: 9px; }
+  .fmap-totals .ft-row { grid-template-columns: 1fr; gap: 8px; }
+}
+
+/* State-routing banner — appears when ?state=XX is in the URL */
+.state-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 auto 18px;
+  padding: 8px 14px 8px 8px;
+  background: rgba(47,179,154,0.08);
+  border: 1px solid rgba(47,179,154,0.28);
+  border-radius: 999px;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  color: rgba(255,255,255,0.92);
+  backdrop-filter: blur(10px);
+  max-width: 640px;
+}
+.state-banner .sb-flag {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--teal);
+  color: #fff;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  box-shadow: 0 0 10px rgba(47,179,154,0.55);
+}
+.state-banner .sb-txt {
+  font-size: 12.5px;
+  letter-spacing: -0.005em;
+  color: rgba(255,255,255,0.82);
+}
+
+/* Customer logo wall — typographic agency wordmarks in the team section */
+.logo-wall {
+  margin-top: 40px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(11,42,74,0.08);
+}
+.lw-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.lw-label {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--teal-dark);
+  font-weight: 600;
+}
+.lw-count {
+  font-family: "Inter", sans-serif;
+  font-size: 13.5px;
+  color: var(--grey-700);
+  letter-spacing: -0.005em;
+}
+.lw-count .lw-big {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 22px;
+  color: var(--navy);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin: 0 2px;
+  font-variant-numeric: tabular-nums;
+}
+.lw-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1px;
+  background: rgba(11,42,74,0.08);
+  border: 1px solid rgba(11,42,74,0.08);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.lw-cell {
+  background: #fff;
+  padding: 22px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+  transition: background 220ms var(--ease), transform 220ms var(--ease);
+  cursor: default;
+  position: relative;
+}
+.lw-cell:hover {
+  background: linear-gradient(180deg, rgba(47,179,154,0.05), rgba(47,179,154,0.01));
+  transform: translateY(-2px);
+}
+.lw-cell::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--teal), var(--navy));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 300ms var(--ease);
+}
+.lw-cell:hover::after { transform: scaleX(1); }
+.lw-code {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px; height: 36px;
+  border: 1.5px solid rgba(11,42,74,0.18);
+  border-radius: 8px;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--navy);
+  background: rgba(11,42,74,0.03);
+}
+.lw-name {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--navy);
+  line-height: 1.25;
+  margin-top: 4px;
+}
+.lw-sub {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--grey-500);
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-top: auto;
+  padding-top: 4px;
+}
+@media (max-width: 1100px) { .lw-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 640px)  { .lw-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* "LIVE" pill next to real ceiling/floor values pulled from grants.gov */
+.live-pill {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 7px;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--teal);
+  border-radius: 4px;
+  vertical-align: middle;
+  box-shadow: 0 0 8px rgba(47,179,154,0.6);
+  animation: live-pulse 2s ease-in-out infinite;
+}
+@keyframes live-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(47,179,154,0.6); }
+  50%      { box-shadow: 0 0 0 4px rgba(47,179,154,0); }
+}
+
 .saa-card { border-left: 4px solid var(--teal); }
 .saa-row {
   display: grid;
