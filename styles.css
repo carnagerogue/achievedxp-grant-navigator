@@ -4130,7 +4130,49 @@ a:hover { text-decoration: underline; }
   color: rgba(255,255,255,0.82);
 }
 
-/* Customer logo wall — typographic agency wordmarks in the team section */
+/* Aggregate reference strip — replaces the named-client logo wall for discretion */
+.reference-strip {
+  margin-top: 40px;
+  padding: 28px 32px;
+  background: linear-gradient(135deg, rgba(47,179,154,0.04), rgba(11,42,74,0.02));
+  border: 1px solid rgba(47,179,154,0.2);
+  border-radius: 14px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 28px;
+  align-items: start;
+}
+.reference-strip .rs-label {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  color: var(--teal-dark);
+  text-transform: uppercase;
+  font-weight: 600;
+  white-space: nowrap;
+  padding-top: 2px;
+}
+.reference-strip .rs-body {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--grey-700);
+  letter-spacing: -0.005em;
+}
+.reference-strip .rs-body a {
+  color: var(--teal-dark);
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(47,179,154,0.35);
+}
+.reference-strip .rs-body a:hover {
+  border-bottom-style: solid;
+}
+@media (max-width: 640px) {
+  .reference-strip { grid-template-columns: 1fr; gap: 12px; padding: 20px 22px; }
+}
+
+/* Legacy (retained for any inline fallback) — kept minimal */
 .logo-wall {
   margin-top: 40px;
   padding-top: 32px;
