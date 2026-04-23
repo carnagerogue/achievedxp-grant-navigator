@@ -2399,7 +2399,6 @@ function bootLanding() {
   initSceneReveals();
   initResumeBanner();
   initStateRouting();
-  initFundingMap();
   // Shared plan URL (#plan=...) — render report directly, skip landing/wizard
   const shared = decodePlanFromHash();
   if (shared) {
