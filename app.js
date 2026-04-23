@@ -106,7 +106,7 @@ function renderHeroTelemetry() {
 
   const awdTotal  = awds.reduce((s, a) => s + (a.amount || 0), 0);
   const fndAssets = fnds.reduce((s, f) => s + (f.total_assets || 0), 0);
-  if (awdSub && awdTotal)  awdSub.textContent = `USASpending · ${fmtMoney(awdTotal)} flowing`;
+  if (awdSub && awdTotal)  awdSub.textContent = `USASpending · ${fmtMoney(awdTotal)} nationwide (24 mo.)`;
   if (fndSub && fndAssets) fndSub.textContent = `ProPublica · ${fmtMoney(fndAssets)} in assets`;
 
   // ----- Unified telemetry ticker: interleave all four data sources -----
@@ -1642,6 +1642,21 @@ function renderReadiness() {
     const todayVec = computeReadinessVector(false);
     const withVec  = computeReadinessVector(true);
     renderReadinessRadar(todayVec, withVec);
+    // A11y fallback — populate the hidden <table> with the same numbers
+    const tbody = document.querySelector('#radarTable tbody');
+    if (tbody) {
+      const rows = [
+        ["Eligibility",    todayVec.eligibility,    withVec.eligibility],
+        ["Infrastructure", todayVec.infrastructure, withVec.infrastructure],
+        ["Programs",       todayVec.programs,       withVec.programs],
+        ["Partners",       todayVec.partners,       withVec.partners],
+        ["Reporting",      todayVec.reporting,      withVec.reporting],
+        ["Timing",         todayVec.timing,         withVec.timing]
+      ];
+      tbody.innerHTML = rows.map(r =>
+        `<tr><th scope="row">${r[0]}</th><td>${Math.round(r[1])}</td><td>${Math.round(r[2])}</td></tr>`
+      ).join('');
+    }
   } catch (e) { console.warn("radar render failed:", e); }
 
   // Lift breakdown — where the +N comes from
@@ -1927,9 +1942,31 @@ function renderSaa() {
   const entry = saa && saa.states ? saa.states[code] : null;
   if (!entry) { card.hidden = true; return; }
   card.hidden = false;
-  const verifyTag = entry.verify
-    ? '<span class="saa-verify" title="Nucleos should confirm this entry before sharing externally">Verify before use</span>'
-    : '';
+
+  // Unverified entries never expose their specific contact — show a safe
+  // placeholder and route the prospect to Nucleos for the current source.
+  if (entry.verify) {
+    host.innerHTML = `
+      <div class="saa-row">
+        <div>
+          <div class="saa-label">State</div>
+          <div class="saa-state">${escapeHtml(entry.name)}</div>
+        </div>
+        <div>
+          <div class="saa-label">Administering agency</div>
+          <div class="saa-agency" style="font-style:italic; color: var(--grey-700);">
+            The iT1 + Nucleos team will provide the verified ${escapeHtml(entry.name)} administering-agency contact in your Statement of Work.
+          </div>
+          <a class="saa-url" href="mailto:leads@nucleos.com?subject=SAA%20contact%20for%20${encodeURIComponent(entry.name)}">
+            request verified contact via leads@nucleos.com ↗
+          </a>
+        </div>
+      </div>
+      <div class="saa-note">Byrne JAG, WIOA allocations, and most federal corrections pass-through funds flow through this office. AchieveDXP's grant toolkit includes boilerplate pre-approved by multiple SAAs.</div>
+    `;
+    return;
+  }
+
   host.innerHTML = `
     <div class="saa-row">
       <div>
@@ -1937,7 +1974,7 @@ function renderSaa() {
         <div class="saa-state">${escapeHtml(entry.name)}</div>
       </div>
       <div>
-        <div class="saa-label">Administering agency ${verifyTag}</div>
+        <div class="saa-label">Administering agency</div>
         <div class="saa-agency">${escapeHtml(entry.agency)}</div>
         ${entry.url ? `<a class="saa-url" href="${escapeHtml(entry.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(entry.url.replace(/^https?:\/\//, ''))} ↗</a>` : ''}
       </div>
@@ -2672,153 +2709,6 @@ function bootLanding() {
     SHARE_FIELDS.forEach(k => { if (k in shared) state[k] = shared[k]; });
     generateResults();
   }
-}
-
-// ============================================================
-// LIVE FUNDING MAP — real geographic SVG of the continental U.S.
-// plus Alaska and Hawaii insets. Each <path id="US-XX"> is bound
-// to its USASpending peer-award total; color intensity scales by
-// dollar volume. Hover → tooltip with state name + total $ + top
-// recipients. Click → navigate to ?state=XX.
-// ============================================================
-async function initFundingMap() {
-  const mapHost = document.getElementById('fmapGrid');
-  const totalsEl = document.getElementById('fmapTotals');
-  const rangeEl = document.getElementById('fmapRange');
-  const tooltip = document.getElementById('fmapTooltip');
-  if (!mapHost) return;
-
-  // Load the SVG once and inject into the host container
-  let svgLoaded = false;
-  try {
-    // Cache-bust the SVG too — otherwise browser holds stale map after
-    // we regenerate the file with a new projection scale.
-    const res = await fetch('./assets/us-map.svg?v=2026-04-23k', { cache: 'no-cache' });
-    if (res.ok) {
-      const txt = await res.text();
-      mapHost.innerHTML = txt;
-      svgLoaded = true;
-    }
-  } catch (_) {}
-  if (!svgLoaded) {
-    mapHost.innerHTML = '<div class="fmap-fallback">Map unavailable — open in a browser that supports SVG.</div>';
-    return;
-  }
-
-  // Wait for LIVE_FEED.awards to be populated, then paint
-  const paint = () => {
-    const awards = (LIVE_FEED.awards || []).filter(a => a.state);
-    if (!awards.length) { setTimeout(paint, 500); return; }
-
-    // Group totals per state
-    const byState = new Map();
-    for (const a of awards) {
-      const s = a.state;
-      if (!byState.has(s)) byState.set(s, { total: 0, count: 0, items: [] });
-      const b = byState.get(s);
-      b.total += (a.amount || 0);
-      b.count += 1;
-      b.items.push(a);
-    }
-    for (const b of byState.values()) {
-      b.items.sort((x, y) => (y.amount || 0) - (x.amount || 0));
-    }
-
-    const totals = [...byState.values()].map(b => b.total).filter(v => v > 0);
-    const maxT = Math.max(1, ...totals);
-    const minT = Math.min(...totals.filter(v => v > 0));
-
-    const fmt = (n) => {
-      if (n >= 1e9) return "$" + (n / 1e9).toFixed(1).replace(/\.0$/, "") + "B";
-      if (n >= 1e6) return "$" + (n / 1e6).toFixed(0) + "M";
-      if (n >= 1e3) return "$" + Math.round(n / 1e3) + "K";
-      return "$" + n;
-    };
-
-    if (rangeEl) rangeEl.textContent = `${fmt(minT)} → ${fmt(maxT)}`;
-
-    // Bind data to each <path>
-    const paths = mapHost.querySelectorAll('path[data-code]');
-    paths.forEach(p => {
-      const code = p.dataset.code;
-      const b = byState.get(code);
-      p.classList.remove('fm-0','fm-1','fm-2','fm-3','fm-4');
-      if (!b || !b.total) {
-        p.classList.add('fm-0');
-      } else {
-        const pct = b.total / maxT;
-        const cls = pct > 0.5 ? 'fm-4' : pct > 0.25 ? 'fm-3' : pct > 0.1 ? 'fm-2' : 'fm-1';
-        p.classList.add(cls);
-      }
-    });
-
-    // Tooltip handlers
-    const showTip = (path) => {
-      if (!tooltip) return;
-      const code = path.dataset.code;
-      const name = path.dataset.name || code;
-      const b = byState.get(code);
-      if (!b || !b.total) {
-        tooltip.innerHTML = `<div class="tt-head">${escapeHtml(name)}</div><div class="tt-sub">No tracked awards in the last 24 months.</div>`;
-      } else {
-        const topItems = b.items.slice(0, 3).map(a =>
-          `<div class="tt-item"><span class="tt-amt">${a.amount_display || fmt(a.amount)}</span> · ${escapeHtml((a.recipient || '').slice(0, 44))}</div>`
-        ).join('');
-        tooltip.innerHTML = `
-          <div class="tt-head">${escapeHtml(name)} · <span class="tt-code">${code}</span></div>
-          <div class="tt-total">${fmt(b.total)} <span class="tt-sub">across ${b.count} awards</span></div>
-          <div class="tt-items">${topItems}</div>
-          <div class="tt-cta">Click to load ${escapeHtml(name)} context →</div>
-        `;
-      }
-      const rect = path.getBoundingClientRect();
-      const hostRect = mapHost.getBoundingClientRect();
-      tooltip.style.left = (rect.left + rect.width / 2 - hostRect.left) + 'px';
-      tooltip.style.top  = (rect.top  - hostRect.top  - 10) + 'px';
-      tooltip.setAttribute('aria-hidden', 'false');
-      tooltip.classList.add('show');
-    };
-    const hideTip = () => {
-      if (!tooltip) return;
-      tooltip.classList.remove('show');
-      tooltip.setAttribute('aria-hidden', 'true');
-    };
-    paths.forEach(path => {
-      path.addEventListener('mouseenter', () => showTip(path));
-      path.addEventListener('focus',       () => showTip(path));
-      path.addEventListener('mouseleave', hideTip);
-      path.addEventListener('blur',        hideTip);
-      path.addEventListener('click', () => {
-        const code = path.dataset.code;
-        if (code) {
-          const url = new URL(window.location.href);
-          url.searchParams.set('state', code);
-          url.hash = '';
-          window.location.assign(url.toString());
-        }
-      });
-      path.setAttribute('tabindex', '0');
-      path.setAttribute('role', 'button');
-      path.setAttribute('aria-label',
-        (byState.get(path.dataset.code)
-          ? `${path.dataset.name}: ${fmt(byState.get(path.dataset.code).total)} across ${byState.get(path.dataset.code).count} awards`
-          : `${path.dataset.name}: no tracked awards`));
-    });
-
-    // Aggregate totals strip
-    const grandTotal = totals.reduce((s, t) => s + t, 0);
-    const activeStates = totals.length;
-    if (totalsEl) {
-      totalsEl.innerHTML = `
-        <div class="ft-row">
-          <div><span class="ft-big">${fmt(grandTotal)}</span> <span class="ft-cap">flowing nationwide</span></div>
-          <div><span class="ft-big">${activeStates}</span> <span class="ft-cap">states with tracked awards</span></div>
-          <div><span class="ft-big">${awards.length}</span> <span class="ft-cap">individual awards</span></div>
-        </div>
-      `;
-    }
-  };
-  paint();
 }
 
 // ============================================================

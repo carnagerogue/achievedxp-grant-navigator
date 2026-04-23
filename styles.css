@@ -4313,6 +4313,71 @@ a:hover { text-decoration: underline; }
   color: rgba(255,255,255,0.82);
 }
 
+/* Screen-reader-only (clip-based, works everywhere, no layout impact) */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Site footer — privacy link + contact */
+.site-footer {
+  margin-top: 48px;
+  padding: 28px 32px;
+  border-top: 1px solid rgba(11,42,74,0.08);
+}
+.site-footer .sf-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.site-footer .sf-brand {
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  color: var(--grey-700);
+  letter-spacing: -0.005em;
+}
+.site-footer .sf-brand strong {
+  display: block;
+  color: var(--navy);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.site-footer .sf-brand .sf-sub {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  color: var(--grey-500);
+  text-transform: uppercase;
+}
+.site-footer .sf-links {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+}
+.site-footer .sf-links a {
+  color: var(--teal-dark);
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(47,179,154,0.35);
+  padding-bottom: 1px;
+}
+.site-footer .sf-links a:hover {
+  border-bottom-style: solid;
+}
+
 /* Aggregate reference strip — replaces the named-client logo wall for discretion */
 .reference-strip {
   margin-top: 40px;
