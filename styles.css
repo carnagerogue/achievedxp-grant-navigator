@@ -422,6 +422,49 @@ a:hover { text-decoration: underline; }
   margin-top: 8px;
   font-weight: 500;
 }
+.proof-row .stat .sub {
+  display: block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: rgba(255,255,255,0.4);
+  margin-top: 4px;
+  font-weight: 400;
+}
+
+/* Ticker source chips (grant/award/fnd/saa) */
+.telemetry .tele-ticker-track .op .src-chip {
+  display: inline-block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-right: 10px;
+  border: 1px solid;
+  text-transform: uppercase;
+}
+.telemetry .tele-ticker-track .op .src-chip.src-grant {
+  color: rgba(47,179,154,0.95);
+  background: rgba(47,179,154,0.10);
+  border-color: rgba(47,179,154,0.35);
+}
+.telemetry .tele-ticker-track .op .src-chip.src-award {
+  color: rgba(245,184,46,0.95);
+  background: rgba(245,184,46,0.10);
+  border-color: rgba(245,184,46,0.35);
+}
+.telemetry .tele-ticker-track .op .src-chip.src-fnd {
+  color: rgba(139,92,246,0.95);
+  background: rgba(139,92,246,0.10);
+  border-color: rgba(139,92,246,0.35);
+}
+.telemetry .tele-ticker-track .op .src-chip.src-saa {
+  color: rgba(232,119,34,0.95);
+  background: rgba(232,119,34,0.10);
+  border-color: rgba(232,119,34,0.35);
+}
 
 /* Editorial 3-up below the hero (no cards, no icons — copy only) */
 .editorial {

@@ -74,25 +74,108 @@ async function bootLiveFeed() {
 function renderHeroTelemetry() {
   const track = document.getElementById('teleTrack');
   const sync = document.getElementById('teleSync');
-  const openEl = document.getElementById('proofOpen');
-  const alnsEl = document.getElementById('proofAlns');
   if (!track || !sync) return;
-  const opps = (LIVE_FEED.opportunities || []).filter(o => o.title);
-  if (!opps.length) {
+
+  const opps  = (LIVE_FEED.opportunities || []).filter(o => o.title);
+  const awds  = (LIVE_FEED.awards || []).filter(a => a.recipient);
+  const fnds  = (LIVE_FEED.foundations || []).filter(f => f.name);
+  const saaStates = LIVE_FEED.saa && LIVE_FEED.saa.states
+    ? Object.keys(LIVE_FEED.saa.states) : [];
+
+  // ----- Proof-row stats (populated from live data) -----
+  const el = (id) => document.getElementById(id);
+  const openEl   = el('proofOpen');
+  const awdEl    = el('proofAwards');
+  const fndEl    = el('proofFnd');
+  const saaEl    = el('proofSaa');
+  const awdSub   = el('proofAwardsSub');
+  const fndSub   = el('proofFndSub');
+
+  const fmtMoney = (n) => {
+    if (!n) return "—";
+    if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`;
+    if (n >= 1_000_000)     return `$${(n / 1_000_000).toFixed(0)}M`;
+    if (n >= 1_000)         return `$${Math.round(n / 1_000)}K`;
+    return `$${n}`;
+  };
+
+  if (openEl) openEl.textContent = opps.length || "0";
+  if (awdEl)  awdEl.textContent  = awds.length || "0";
+  if (fndEl)  fndEl.textContent  = fnds.length || "0";
+  if (saaEl)  saaEl.textContent  = saaStates.length || "0";
+
+  const awdTotal  = awds.reduce((s, a) => s + (a.amount || 0), 0);
+  const fndAssets = fnds.reduce((s, f) => s + (f.total_assets || 0), 0);
+  if (awdSub && awdTotal)  awdSub.textContent = `USASpending · ${fmtMoney(awdTotal)} flowing`;
+  if (fndSub && fndAssets) fndSub.textContent = `ProPublica · ${fmtMoney(fndAssets)} in assets`;
+
+  // ----- Unified telemetry ticker: interleave all four data sources -----
+  if (!opps.length && !awds.length && !fnds.length) {
     track.textContent = "Offline — showing cached baseline.";
     sync.textContent = "BASELINE";
-    if (openEl) openEl.textContent = "13";
     return;
   }
-  // Duplicate the content so the CSS scroll wraps seamlessly.
-  const build = (list) => list.map(o => {
-    const aln = (o.cfda || "").padEnd(6, " ");
-    const agency = (o.agency_code || o.agency || "").replace(/&mdash;/g, "—");
-    const title = (o.title || "").replace(/&mdash;/g, "—");
-    return `<span class="op"><span class="aln">ALN ${aln}</span><span class="title">${title.slice(0, 72)}</span><span class="arrow">→</span><span class="agency">${agency}</span></span>`;
-  }).join("");
-  track.innerHTML = build(opps) + build(opps);
-  // Sync timestamp: human format for mono strip
+
+  const pad   = (s, n) => (s || "").toString().padEnd(n, " ");
+  const short = (s, n) => {
+    const t = (s || "").replace(/&mdash;/g, "—");
+    return t.length > n ? t.slice(0, n - 1) + "…" : t;
+  };
+
+  const opItems = opps.map(o => ({
+    src: "GRANT", srcClass: "grant",
+    left: `ALN ${pad(o.cfda, 6)}`,
+    mid:  short(o.title, 68),
+    right: (o.agency_code || o.agency || "").replace(/&mdash;/g, "—")
+  }));
+  const awItems = awds.slice(0, 20).map(a => ({
+    src: "AWARD", srcClass: "award",
+    left: a.amount_display || "$—",
+    mid:  short(a.recipient, 60),
+    right: `${a.aln || "—"}${a.state ? ` · ${a.state}` : ""}`
+  }));
+  const fnItems = fnds.map(f => ({
+    src: "FND", srcClass: "fnd",
+    left: f.name ? short(f.name, 36) : "",
+    mid:  short(f.pitch, 64),
+    right: f.total_assets ? fmtMoney(f.total_assets) + " assets" : ""
+  }));
+  const saItems = saaStates.slice(0, 12).map(code => {
+    const e = LIVE_FEED.saa.states[code];
+    return {
+      src: "SAA", srcClass: "saa",
+      left: code,
+      mid:  short(e.agency, 68),
+      right: e.name
+    };
+  });
+
+  // Interleave so the ticker cycles across sources rather than grouping
+  const interleaved = [];
+  const cursors = { op: 0, aw: 0, fn: 0, sa: 0 };
+  const pools   = { op: opItems, aw: awItems, fn: fnItems, sa: saItems };
+  const order   = ["op", "aw", "op", "fn", "op", "aw", "sa"];
+  const maxItems = opItems.length + awItems.length + fnItems.length + saItems.length;
+  let spun = 0;
+  while (interleaved.length < maxItems && spun < maxItems * 4) {
+    const key = order[spun % order.length];
+    if (cursors[key] < pools[key].length) {
+      interleaved.push(pools[key][cursors[key]++]);
+    }
+    spun++;
+  }
+
+  const render = (list) => list.map(o => `
+    <span class="op">
+      <span class="src-chip src-${o.srcClass}">${o.src}</span>
+      <span class="aln">${o.left}</span>
+      <span class="title">${o.mid}</span>
+      <span class="arrow">→</span>
+      <span class="agency">${o.right}</span>
+    </span>
+  `).join("");
+  track.innerHTML = render(interleaved) + render(interleaved);
+
   if (LIVE_FEED.last_synced_at) {
     const d = new Date(LIVE_FEED.last_synced_at);
     const iso = d.toISOString().replace("T", " · ").replace(/\.\d+Z$/, " UTC");
@@ -100,10 +183,6 @@ function renderHeroTelemetry() {
   } else {
     sync.textContent = "LIVE";
   }
-  if (openEl) openEl.textContent = opps.length;
-  // "ALNs tracked" is the size of the corrections ALN list the refresh script queries
-  // every day — a product constant (16), not the count of ALNs with hits today.
-  if (alnsEl) alnsEl.textContent = "16";
 }
 
 async function refreshLiveFeed() {
