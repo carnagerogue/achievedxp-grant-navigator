@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;600&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="styles.css?v=2026-04-23l">
+<link rel="stylesheet" href="styles.css?v=2026-04-23m">
 </head>
 <body>
 <div class="app">
@@ -655,12 +655,32 @@
           <div class="score-summary-title">What this score means</div>
           <p id="scoreSummaryText">This is your grant-readiness position today, before adding AchieveDXP. We score across eligibility, infrastructure, program clarity, partnerships, reporting capability, and timing.</p>
           <div class="score-lift" id="scoreLift" aria-live="polite"></div>
+          <div class="funding-unlock" id="fundingUnlock"></div>
         </div>
       </div>
-      <div>
-        <div class="card-title" style="margin-bottom:12px;">Where AchieveDXP moves the needle</div>
-        <div class="gaps-list" id="gapsList"></div>
+      <div class="readiness-right">
+        <div class="radar-card">
+          <div class="card-title" style="margin-bottom:4px;">Readiness across six dimensions</div>
+          <div class="card-desc" style="margin-bottom:14px;">Today (outline) vs. With AchieveDXP (filled). The closer the polygon is to the edge, the stronger your position.</div>
+          <div class="radar-wrap">
+            <canvas id="readinessRadar" aria-label="Readiness radar chart"></canvas>
+          </div>
+          <div class="radar-legend">
+            <span class="rl-item rl-today"><span class="rl-dot"></span>Today</span>
+            <span class="rl-item rl-with"><span class="rl-dot"></span>With AchieveDXP</span>
+          </div>
+        </div>
+        <div class="lift-breakdown-card">
+          <div class="card-title" style="margin-bottom:4px;">Where the lift comes from</div>
+          <div class="card-desc" style="margin-bottom:14px;" id="liftBreakdownSub">Each AchieveDXP capability contributes concrete points to your readiness score.</div>
+          <div class="lift-breakdown" id="liftBreakdown"></div>
+        </div>
       </div>
+    </div>
+    <div class="gaps-section">
+      <div class="card-title" style="margin-bottom:8px;">Gaps AchieveDXP closes for you</div>
+      <div class="card-desc" style="margin-bottom:16px;">Each gap blocks a measurable amount of grant eligibility. The team closes every one in a single contract.</div>
+      <div class="gaps-list" id="gapsList"></div>
     </div>
     <div class="compliance-strip">
       <div>
@@ -1018,6 +1038,6 @@
   </div>
 </div>
 </div>
-<script defer src="app.js?v=2026-04-23l"></script>
+<script defer src="app.js?v=2026-04-23m"></script>
 </body>
 </html>

@@ -2548,6 +2548,189 @@ a:hover { text-decoration: underline; }
   grid-template-columns: 340px 1fr;
   gap: 24px;
   margin-bottom: 24px;
+  align-items: start;
+}
+
+/* Right column of the Readiness panel — radar + lift breakdown stack */
+.readiness-right {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ===== Radar card ===== */
+.radar-card {
+  background: var(--white);
+  border: 1px solid rgba(11,42,74,0.08);
+  border-radius: 16px;
+  padding: 24px 26px 20px;
+  box-shadow: var(--shadow-sm);
+}
+.radar-wrap {
+  position: relative;
+  height: 320px;
+  margin-top: 6px;
+}
+.radar-wrap canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+.radar-legend {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed rgba(11,42,74,0.08);
+}
+.rl-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--navy);
+  font-weight: 600;
+}
+.rl-item .rl-dot {
+  display: inline-block;
+  width: 12px; height: 12px;
+  border-radius: 3px;
+}
+.rl-today .rl-dot {
+  background: transparent;
+  border: 2px dashed rgba(11,42,74,0.65);
+}
+.rl-with .rl-dot {
+  background: rgba(47,179,154,0.35);
+  border: 2px solid var(--teal);
+}
+
+/* ===== Lift breakdown card ===== */
+.lift-breakdown-card {
+  background:
+    linear-gradient(135deg, rgba(47,179,154,0.04), transparent 60%),
+    var(--white);
+  border: 1px solid rgba(47,179,154,0.22);
+  border-radius: 16px;
+  padding: 24px 26px;
+  box-shadow: var(--shadow-sm);
+}
+.lift-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.lb-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 16px;
+  align-items: start;
+  padding: 12px 14px;
+  background: rgba(47,179,154,0.04);
+  border: 1px solid rgba(47,179,154,0.14);
+  border-radius: 10px;
+  transition: transform 180ms var(--ease), border-color 180ms var(--ease);
+}
+.lb-item:hover {
+  transform: translateX(2px);
+  border-color: rgba(47,179,154,0.32);
+}
+.lb-pts {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--teal-dark);
+  font-variant-numeric: tabular-nums;
+  min-width: 46px;
+  text-align: center;
+  line-height: 1.1;
+  padding-top: 2px;
+}
+.lb-label {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--navy);
+  letter-spacing: -0.005em;
+  margin-bottom: 3px;
+}
+.lb-desc {
+  font-size: 12.5px;
+  color: var(--grey-700);
+  line-height: 1.5;
+}
+.lb-empty {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  color: var(--grey-700);
+  line-height: 1.6;
+  padding: 16px 18px;
+  background: rgba(47,179,154,0.05);
+  border-left: 3px solid var(--teal);
+  border-radius: 8px;
+}
+
+/* ===== Funding unlock line in the score-card ===== */
+.funding-unlock {
+  display: none;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px dashed rgba(11,42,74,0.12);
+  text-align: center;
+}
+.funding-unlock.show { display: block; }
+.funding-unlock .fu-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--teal-dark);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.funding-unlock .fu-row {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.funding-unlock .fu-amount {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--navy);
+  font-variant-numeric: tabular-nums;
+}
+.funding-unlock .fu-with {
+  color: var(--teal-dark);
+  font-size: 32px;
+}
+.funding-unlock .fu-arrow {
+  color: var(--grey-400);
+  font-size: 18px;
+  font-weight: 400;
+}
+.funding-unlock .fu-caption {
+  font-size: 11.5px;
+  color: var(--grey-500);
+  line-height: 1.45;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+/* Gaps section — now full-width below the grid */
+.gaps-section {
+  margin-top: 8px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(11,42,74,0.08);
+}
+@media (max-width: 980px) {
+  .readiness-grid { grid-template-columns: 1fr; }
 }
 .score-card {
   background:
