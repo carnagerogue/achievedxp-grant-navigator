@@ -626,6 +626,8 @@
 <!-- RESULTS -->
 <div class="results" id="results">
 
+  <div class="print-banner" id="printBanner" aria-hidden="true">AchieveDXP Grant Navigator · plan generated for your agency</div>
+
   <div class="results-header">
     <a href="#" class="home-link results-home" onclick="returnToLanding(); return false;" aria-label="Back to home">
       <img class="logo-src-n" alt="Nucleos">
@@ -643,6 +645,56 @@
       <button class="btn btn-secondary" onclick="copyShareLink(this)">Copy share link</button>
       <button class="btn btn-ghost" style="color:white; background:rgba(255,255,255,0.1);" onclick="restart()">↺ Start over</button>
     </div>
+  </div>
+
+  <!-- TL;DR — default view of the report. Toggled with .results.view-full. -->
+  <div class="tldr" id="tldr">
+    <div class="tldr-grid">
+      <div class="tldr-score-card">
+        <div class="tldr-label">Grant readiness</div>
+        <div class="tldr-score-row">
+          <div class="tldr-today">
+            <div class="tldr-num" id="tldrScoreToday">—</div>
+            <div class="tldr-cap">today</div>
+          </div>
+          <div class="tldr-arrow" aria-hidden="true">→</div>
+          <div class="tldr-with">
+            <div class="tldr-num" id="tldrScoreWith">—</div>
+            <div class="tldr-cap">with AchieveDXP</div>
+          </div>
+          <div class="tldr-delta" id="tldrDelta">+0</div>
+        </div>
+        <div class="tldr-score-label" id="tldrScoreLabel">—</div>
+      </div>
+      <div class="tldr-funding-card">
+        <div class="tldr-label">Addressable funding · year 1</div>
+        <div class="tldr-funding-amount" id="tldrFundingAmount">$—</div>
+        <div class="tldr-funding-sub" id="tldrFundingSub">across the matched grant stack</div>
+      </div>
+    </div>
+
+    <div class="tldr-grants-card">
+      <div class="tldr-label">Top matched grants</div>
+      <div id="tldrGrants"></div>
+      <button class="tldr-grants-more" type="button" onclick="toggleReportView('full', 'grants')">See all matched grants →</button>
+    </div>
+
+    <div class="tldr-cta">
+      <div class="tldr-cta-text">
+        <div class="tldr-cta-head">Talk through this plan with the team.</div>
+        <div class="tldr-cta-blurb">A Nucleos specialist responds within one business day. Or call <a href="tel:8777775995">(877) 777-5995</a>.</div>
+      </div>
+      <button class="btn btn-primary tldr-cta-btn" type="button" onclick="openCallbackModal('primary')">📞 Request a call</button>
+    </div>
+
+    <div class="tldr-toggle">
+      <button class="btn btn-secondary" type="button" onclick="toggleReportView('full')">Explore the full plan →</button>
+      <span class="tldr-toggle-sub">Plan · grants · funding stack · program builder · gap · roadmap · narrative</span>
+    </div>
+  </div>
+
+  <div class="full-toggle" id="fullToggle">
+    <button class="btn btn-ghost" type="button" onclick="toggleReportView('summary')">← Back to summary</button>
   </div>
 
   <div class="tab-bar" id="tabBar">

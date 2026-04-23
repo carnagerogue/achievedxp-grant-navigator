@@ -1,0 +1,14 @@
+{
+  "name": "achievedxp-grant-navigator-tests",
+  "version": "1.0.0",
+  "description": "Playwright golden-path test for the AchieveDXP Grant Navigator. The site itself is static — this package only exists to run the e2e tests that protect the wizard → report → lead-submission flow against regressions.",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.47.0"
+  }
+}

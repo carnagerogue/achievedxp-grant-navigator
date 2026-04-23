@@ -5,3 +5,6 @@ node_modules/
 .env.*
 us-states-tmp.json
 live-check.svg
+test-results/
+playwright-report/
+playwright/.cache/

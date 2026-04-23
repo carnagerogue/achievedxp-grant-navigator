@@ -1372,6 +1372,7 @@ function generateResults() {
   window.scrollTo({top: 0, behavior: 'smooth'});
 
   renderHeader();
+  renderPrintBanner();
   renderReadiness();
   renderGrants();
   renderSaa();
@@ -1386,6 +1387,77 @@ function generateResults() {
   initTabs();
   encodePlanToHash();
   renderNextStepCTAs();
+  renderTLDR();
+  setReportView('summary');
+}
+
+// ============================================================
+// TL;DR — default report view. Pulls from already-rendered state
+// (_score, _scoreWith, _grants, _stack) and shows: readiness lift,
+// year-1 funding range, top 3 grants, primary CTA. Toggle hides
+// tab-bar/panels and shows this; "Explore the full plan" reverses.
+// ============================================================
+function renderTLDR() {
+  const today = state._score || 0;
+  const withDXP = state._scoreWith || 0;
+  const delta = Math.max(0, withDXP - today);
+  const $today = document.getElementById('tldrScoreToday');
+  const $with = document.getElementById('tldrScoreWith');
+  const $delta = document.getElementById('tldrDelta');
+  const $label = document.getElementById('tldrScoreLabel');
+  if ($today) $today.textContent = today || '—';
+  if ($with) $with.textContent = withDXP || '—';
+  if ($delta) $delta.textContent = delta > 0 ? `+${delta}` : '+0';
+  if ($label) $label.textContent = today ? `${readinessLabel(today)} → ${readinessLabel(withDXP)}` : '';
+
+  // Funding range from the stack render. state._stack.total = [low, high].
+  const stack = state._stack || { total: [0, 0] };
+  const [lo, hi] = stack.total || [0, 0];
+  const fmt = n => '$' + Math.round(n).toLocaleString();
+  const $fund = document.getElementById('tldrFundingAmount');
+  const $fundSub = document.getElementById('tldrFundingSub');
+  if ($fund) {
+    $fund.textContent = (lo || hi) ? `${fmt(lo)} – ${fmt(hi)}` : '$—';
+  }
+  if ($fundSub) {
+    const layerCount = (stack.layers || []).length;
+    $fundSub.textContent = layerCount
+      ? `Across ${layerCount} layered funding sources in your stack.`
+      : 'Across the matched grant stack.';
+  }
+
+  // Top 3 matched grants.
+  const grants = (state._grants || []).slice(0, 3);
+  const $grants = document.getElementById('tldrGrants');
+  if ($grants) {
+    if (!grants.length) {
+      $grants.innerHTML = '<div class="tldr-grant-empty">No matched grants yet — the live feed may be syncing.</div>';
+    } else {
+      $grants.innerHTML = grants.map(g => `
+        <div class="tldr-grant">
+          <div class="tldr-grant-name">${escapeHtml(g.name)}</div>
+          <div class="tldr-grant-meta">
+            <span class="tldr-grant-agency">${escapeHtml(g.agency)}</span>
+            <span class="tldr-grant-range">${escapeHtml(fmtRange(g.range))}</span>
+            <span class="tldr-grant-fit ${matchClass(g.fit)}">${escapeHtml(matchLabel(g.fit))}</span>
+          </div>
+        </div>`).join('');
+    }
+  }
+}
+function setReportView(mode) {
+  const results = document.getElementById('results');
+  if (!results) return;
+  results.classList.remove('view-summary', 'view-full');
+  results.classList.add(mode === 'full' ? 'view-full' : 'view-summary');
+}
+function toggleReportView(mode, jumpToTab) {
+  setReportView(mode);
+  if (jumpToTab) {
+    const t = document.querySelector(`.tab[data-tab="${jumpToTab}"]`);
+    if (t) t.click();
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 // ============================================================
 // PER-TAB "NEXT STEP" EMAIL CTAs — each panel's CTA opens a mailto:
@@ -1564,6 +1636,17 @@ document.addEventListener('keydown', e => {
   }
 });
 
+function renderPrintBanner() {
+  const el = document.getElementById('printBanner');
+  if (!el) return;
+  const stateName = (US_STATES.find(s => s[0] === state.stateCode) || ["",""])[1] || "";
+  const agency = state.agencyName || "AchieveDXP plan";
+  const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const url = (location.origin && !location.origin.startsWith("null"))
+    ? (location.origin + location.pathname) : "";
+  const parts = [agency, stateName, today, url].filter(Boolean);
+  el.textContent = parts.join(' · ');
+}
 function renderHeader() {
   const stateName = (US_STATES.find(s => s[0] === state.stateCode) || ["",""])[1];
   const agency = state.agencyName || "Your agency";
