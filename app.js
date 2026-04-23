@@ -2425,7 +2425,9 @@ async function initFundingMap() {
   // Load the SVG once and inject into the host container
   let svgLoaded = false;
   try {
-    const res = await fetch('./assets/us-map.svg', { cache: 'default' });
+    // Cache-bust the SVG too — otherwise browser holds stale map after
+    // we regenerate the file with a new projection scale.
+    const res = await fetch('./assets/us-map.svg?v=2026-04-23i', { cache: 'no-cache' });
     if (res.ok) {
       const txt = await res.text();
       mapHost.innerHTML = txt;
