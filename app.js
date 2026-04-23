@@ -16,6 +16,9 @@ const LIVE_FEED = {
   status: "booting",          // "booting" | "live" | "offline"
   last_synced_at: null,        // ISO string from the refresh script
   opportunities: [],           // normalized grants.gov hits
+  awards: [],                  // recent federal awards (USASpending.gov)
+  foundations: [],             // foundations active in corrections (ProPublica)
+  saa: null,                   // state administering agency map
   byCfda: new Map(),           // cfda -> most recent opportunity
   error: null
 };
@@ -39,6 +42,9 @@ async function loadFeed(cacheBust) {
 
 function applyFeed(data) {
   LIVE_FEED.opportunities = Array.isArray(data.opportunities) ? data.opportunities : [];
+  LIVE_FEED.awards        = Array.isArray(data.awards)        ? data.awards        : [];
+  LIVE_FEED.foundations   = Array.isArray(data.foundations)   ? data.foundations   : [];
+  LIVE_FEED.saa           = data.saa || null;
   LIVE_FEED.last_synced_at = data.last_synced_at || null;
   LIVE_FEED.byCfda = new Map();
   for (const opp of LIVE_FEED.opportunities) {
@@ -1065,6 +1071,9 @@ function generateResults() {
   renderHeader();
   renderReadiness();
   renderGrants();
+  renderSaa();
+  renderPeerAwards();
+  renderFoundations();
   renderStack();
   renderBuilder();
   renderGapCalc();
@@ -1515,10 +1524,161 @@ async function refreshMatches() {
   const ok = await refreshLiveFeed();
   renderLiveFeedBanner();
   renderGrants();
+  renderSaa();
+  renderPeerAwards();
+  renderFoundations();
   if (btn) {
     btn.disabled = false;
     btn.textContent = ok ? '↻ Refresh matches' : '↻ Retry (offline)';
   }
+}
+
+// ============================================================
+// EXPANDED FUNDING DATA — renders SAA directory, peer awards,
+// and foundations alongside the grants.gov matches. Sources:
+//   - SAA map       (static, scripts/saa-map.json)
+//   - Peer awards   (USASpending.gov, live)
+//   - Foundations   (IRS 990 via ProPublica, live)
+// Hidden if state.stateCode/goals not set, or if data missing.
+// ============================================================
+function renderSaa() {
+  const card = document.getElementById('saaCard');
+  const host = document.getElementById('saaContent');
+  if (!card || !host) return;
+  const saa = LIVE_FEED.saa;
+  const code = state.stateCode;
+  const entry = saa && saa.states ? saa.states[code] : null;
+  if (!entry) { card.hidden = true; return; }
+  card.hidden = false;
+  const verifyTag = entry.verify
+    ? '<span class="saa-verify" title="Nucleos should confirm this entry before sharing externally">Verify before use</span>'
+    : '';
+  host.innerHTML = `
+    <div class="saa-row">
+      <div>
+        <div class="saa-label">State</div>
+        <div class="saa-state">${escapeHtml(entry.name)}</div>
+      </div>
+      <div>
+        <div class="saa-label">Administering agency ${verifyTag}</div>
+        <div class="saa-agency">${escapeHtml(entry.agency)}</div>
+        ${entry.url ? `<a class="saa-url" href="${escapeHtml(entry.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(entry.url.replace(/^https?:\/\//, ''))} ↗</a>` : ''}
+      </div>
+    </div>
+    <div class="saa-note">Byrne JAG, WIOA allocations, and most federal corrections pass-through funds flow through this office. AchieveDXP's grant toolkit includes boilerplate pre-approved by multiple SAAs.</div>
+  `;
+}
+
+function renderPeerAwards() {
+  const card = document.getElementById('peerAwardsCard');
+  const host = document.getElementById('peerAwardsList');
+  if (!card || !host) return;
+  const all = LIVE_FEED.awards || [];
+  if (!all.length) { card.hidden = true; return; }
+
+  // Filter to ALNs that map to this agency's goals; fall back to top overall
+  // if the filtered set is small.
+  const goalsToAlns = {
+    ged:    ["84.002", "84.331", "16.812"],
+    cte:    ["84.048", "84.002"],
+    postsec:["84.331", "84.002"],
+    reentry:["16.812", "16.828", "16.203"],
+    digital:["84.002", "16.812"],
+    sud:    ["93.243", "93.959", "16.812"],
+    sel:    ["93.959", "16.812"],
+    juv_ed: ["16.540", "16.726"]
+  };
+  const relevantAlns = new Set();
+  (state.goals || []).forEach(g => (goalsToAlns[g] || []).forEach(a => relevantAlns.add(a)));
+  let filtered = relevantAlns.size
+    ? all.filter(a => relevantAlns.has(a.aln))
+    : all;
+  if (filtered.length < 6) filtered = all.slice(0, 12);
+  // Top 8 by amount
+  const top = filtered.slice(0, 8);
+
+  const totalDollars = top.reduce((s, a) => s + (a.amount || 0), 0);
+  const totalDisplay = totalDollars >= 1_000_000_000
+    ? `$${(totalDollars / 1_000_000_000).toFixed(1)}B`
+    : totalDollars >= 1_000_000
+    ? `$${(totalDollars / 1_000_000).toFixed(0)}M`
+    : `$${Math.round(totalDollars / 1_000)}K`;
+
+  host.innerHTML = `
+    <div class="pa-summary">
+      <div><span class="pa-big">${top.length}</span> peer awards shown · <span class="pa-big">${totalDisplay}</span> total · last 24 months</div>
+    </div>
+    <div class="pa-list">
+      ${top.map(a => `
+        <div class="pa-row">
+          <div class="pa-amt tabular">${escapeHtml(a.amount_display || ('$' + (a.amount || 0)))}</div>
+          <div class="pa-body">
+            <div class="pa-recipient">${escapeHtml(a.recipient || 'Unknown recipient')}</div>
+            <div class="pa-meta">
+              <span class="pa-aln">ALN ${escapeHtml(a.aln || '—')}</span>
+              <span class="pa-agency">${escapeHtml(a.awarding_sub_agency || a.awarding_agency || '—')}</span>
+              ${a.state ? `<span class="pa-state">${escapeHtml(a.state)}</span>` : ''}
+            </div>
+          </div>
+          ${a.source_url ? `<a class="pa-link" href="${escapeHtml(a.source_url)}" target="_blank" rel="noopener noreferrer" aria-label="Open on USASpending.gov">↗</a>` : ''}
+        </div>
+      `).join('')}
+    </div>
+  `;
+  card.hidden = false;
+}
+
+function renderFoundations() {
+  const card = document.getElementById('foundationsCard');
+  const host = document.getElementById('foundationsList');
+  if (!card || !host) return;
+  const all = LIVE_FEED.foundations || [];
+  if (!all.length) { card.hidden = true; return; }
+
+  // Filter to foundations whose `focus` overlaps with user's goals.
+  // Goals in state.goals map to focus tags on foundation seeds.
+  const goalToFocus = {
+    ged: ["adult_ed"], cte: ["workforce", "adult_ed"], postsec: ["postsec"],
+    reentry: ["reentry", "justice_reform"], digital: ["digital"],
+    sud: ["sud"], sel: ["reentry"], juv_ed: ["juv_ed", "justice_reform"]
+  };
+  const userFocus = new Set();
+  (state.goals || []).forEach(g => (goalToFocus[g] || []).forEach(f => userFocus.add(f)));
+  let matched = userFocus.size
+    ? all.filter(f => (f.focus || []).some(x => userFocus.has(x)))
+    : all;
+  if (matched.length < 4) matched = all;
+  const top = matched.slice(0, 9);
+
+  host.innerHTML = `
+    <div class="fnd-grid">
+      ${top.map(f => {
+        const assets = f.total_assets;
+        const assetDisplay = assets >= 1_000_000_000
+          ? `$${(assets / 1_000_000_000).toFixed(1)}B in assets`
+          : assets >= 1_000_000
+          ? `$${(assets / 1_000_000).toFixed(0)}M in assets`
+          : '';
+        return `
+          <div class="fnd-row">
+            <div class="fnd-head">
+              <div class="fnd-name">${escapeHtml(f.name || '')}</div>
+              ${assetDisplay ? `<div class="fnd-assets tabular">${escapeHtml(assetDisplay)}</div>` : ''}
+            </div>
+            <div class="fnd-pitch">${escapeHtml(f.pitch || '')}</div>
+            <div class="fnd-tags">${(f.focus || []).map(t => `<span class="fnd-tag">${escapeHtml(t.replace(/_/g, ' '))}</span>`).join('')}</div>
+            <div class="fnd-meta">
+              ${f.state ? `<span>${escapeHtml(f.state)}</span>` : ''}
+              ${f.latest_tax_year ? `<span>Latest 990: ${f.latest_tax_year}</span>` : ''}
+              ${f.source_url ? `<a href="${escapeHtml(f.source_url)}" target="_blank" rel="noopener noreferrer">ProPublica ↗</a>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+    <div class="fnd-note">Private foundations rarely post open RFPs to grants.gov. Nucleos can introduce you to program officers at the foundations most aligned with your matched goals.</div>
+  `;
+  card.hidden = false;
 }
 
 function renderStack() {

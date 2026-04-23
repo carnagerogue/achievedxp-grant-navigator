@@ -1,4 +1,4 @@
-name: Refresh grants.gov feed
+name: Refresh funding data (grants.gov + USASpending + ProPublica + SAA)
 
 on:
   schedule:
@@ -23,8 +23,8 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Pull latest grants.gov opportunities
-        run: node scripts/refresh-grants.mjs
+      - name: Pull unified funding data (all free sources)
+        run: node scripts/refresh-all.mjs
 
       - name: Commit refreshed feed (if changed)
         run: |
@@ -34,6 +34,6 @@ jobs:
             echo "No changes — skipping commit."
           else
             git add opportunities.json
-            git commit -m "chore(feed): refresh grants.gov opportunities ($(date -u +%Y-%m-%dT%H:%MZ))"
+            git commit -m "chore(feed): refresh funding data ($(date -u +%Y-%m-%dT%H:%MZ))"
             git push
           fi

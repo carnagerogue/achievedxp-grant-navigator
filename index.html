@@ -798,6 +798,28 @@
       </div>
     </div>
     <div class="grants-list" id="grantsList"></div>
+
+    <!-- Your state's administering agency (Byrne JAG pass-through) -->
+    <div class="card saa-card" id="saaCard" hidden>
+      <div class="card-title">Your state's administering agency</div>
+      <div class="card-desc">Most federal corrections dollars flow through your State Administering Agency (SAA), not grants.gov directly. Byrne JAG, WIOA Title I allocations, and state-matched programs are sub-granted from this office.</div>
+      <div id="saaContent"></div>
+    </div>
+
+    <!-- Peer agencies that recently won federal awards under your ALNs -->
+    <div class="card peer-awards-card" id="peerAwardsCard" hidden>
+      <div class="card-title">Peer agencies winning these grants today</div>
+      <div class="card-desc">Recent federal awards (last 24 months) under the same ALNs you're pursuing. Source: USASpending.gov.</div>
+      <div class="peer-awards-list" id="peerAwardsList"></div>
+    </div>
+
+    <!-- Foundations active in your focus area (private philanthropy) -->
+    <div class="card foundations-card" id="foundationsCard" hidden>
+      <div class="card-title">Foundations funding your focus areas</div>
+      <div class="card-desc">Private philanthropy active in corrections, reentry, and education. Not on grants.gov — pursued directly or through community foundations. Source: IRS 990 filings via ProPublica Nonprofit Explorer.</div>
+      <div class="foundations-list" id="foundationsList"></div>
+    </div>
+
     <div class="next-step-cta" data-ctx="grants"></div>
   </div>
 

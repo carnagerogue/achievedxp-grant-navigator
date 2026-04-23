@@ -90,17 +90,17 @@ function normalize(hit, aln) {
   };
 }
 
-async function main() {
+export async function fetchAllOpportunities() {
   const all = [];
   const errors = [];
   for (const aln of CORRECTIONS_ALNS) {
     try {
       const hits = await fetchAln(aln);
       for (const h of hits) all.push(normalize(h, aln));
-      console.error(`  ${aln}: ${hits.length} hits`);
+      console.error(`  grants.gov ${aln}: ${hits.length} hits`);
     } catch (e) {
       errors.push({ aln, error: String(e.message || e) });
-      console.error(`  ${aln}: ERROR ${e.message || e}`);
+      console.error(`  grants.gov ${aln}: ERROR ${e.message || e}`);
     }
   }
 
@@ -113,26 +113,34 @@ async function main() {
       deduped.push(o);
     }
   }
+  return { opportunities: deduped, alns_searched: CORRECTIONS_ALNS, errors };
+}
 
+// Standalone usage: `node scripts/refresh-grants.mjs` — writes opportunities.json
+// with ONLY grants.gov data. The orchestrator refresh-all.mjs is preferred for
+// production since it unions all sources.
+async function main() {
+  const { opportunities, alns_searched, errors } = await fetchAllOpportunities();
   const payload = {
-    opportunities: deduped,
-    alns_searched: CORRECTIONS_ALNS,
+    opportunities,
+    alns_searched,
     errors,
     last_synced_at: new Date().toISOString(),
     source: "grants.gov Search2",
-    count: deduped.length
+    count: opportunities.length
   };
-
   const here = dirname(fileURLToPath(import.meta.url));
   const out = join(here, "..", "opportunities.json");
   await writeFile(out, JSON.stringify(payload, null, 2) + "\n", "utf8");
-  console.error(`\nWrote ${deduped.length} opportunities to ${out}`);
+  console.error(`\nWrote ${opportunities.length} opportunities to ${out}`);
   if (errors.length) {
     console.error(`${errors.length} ALN(s) errored — see "errors" array in JSON`);
   }
 }
 
-main().catch((e) => {
-  console.error("FATAL:", e);
-  process.exit(1);
-});
+if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith('refresh-grants.mjs')) {
+  main().catch((e) => {
+    console.error("FATAL:", e);
+    process.exit(1);
+  });
+}
