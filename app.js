@@ -150,14 +150,17 @@ function renderHeroTelemetry() {
     };
   });
 
-  // Interleave so the ticker cycles across sources rather than grouping
+  // Interleave across sources. Cap total items low enough that each one
+  // spends real time in the viewport (~10-12 seconds at current animation
+  // speed) — readability > comprehensive rotation.
+  const TICKER_ITEM_CAP = 14;
   const interleaved = [];
   const cursors = { op: 0, aw: 0, fn: 0, sa: 0 };
   const pools   = { op: opItems, aw: awItems, fn: fnItems, sa: saItems };
   const order   = ["op", "aw", "op", "fn", "op", "aw", "sa"];
-  const maxItems = opItems.length + awItems.length + fnItems.length + saItems.length;
   let spun = 0;
-  while (interleaved.length < maxItems && spun < maxItems * 4) {
+  const hardCap = TICKER_ITEM_CAP * 4;
+  while (interleaved.length < TICKER_ITEM_CAP && spun < hardCap) {
     const key = order[spun % order.length];
     if (cursors[key] < pools[key].length) {
       interleaved.push(pools[key][cursors[key]++]);
