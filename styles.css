@@ -3946,7 +3946,7 @@ a:hover { text-decoration: underline; }
   display: block;
   width: 100%;
   height: auto;
-  max-height: 560px;
+  max-height: 640px;
 }
 .fmap-grid svg.us-map path {
   cursor: pointer;
