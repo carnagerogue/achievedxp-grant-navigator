@@ -2409,59 +2409,40 @@ function bootLanding() {
 }
 
 // ============================================================
-// LIVE FUNDING MAP — tile cartogram of all 50 states + DC,
-// positioned at approximate geographic coords. Color intensity
-// scales to each state's USASpending total (last 24 months) for
-// the tracked corrections ALNs. Click navigates to ?state=XX.
+// LIVE FUNDING MAP — real geographic SVG of the continental U.S.
+// plus Alaska and Hawaii insets. Each <path id="US-XX"> is bound
+// to its USASpending peer-award total; color intensity scales by
+// dollar volume. Hover → tooltip with state name + total $ + top
+// recipients. Click → navigate to ?state=XX.
 // ============================================================
-const STATE_TILES = [
-  // { code, row (1-8), col (1-12) }
-  { code:"ME", row:1, col:12 },
-  { code:"VT", row:2, col:10 }, { code:"NH", row:2, col:11 },
-  { code:"WA", row:2, col:2 },  { code:"ID", row:3, col:3 },  { code:"MT", row:2, col:4 },
-  { code:"ND", row:2, col:5 },  { code:"MN", row:3, col:6 },  { code:"WI", row:3, col:7 },
-  { code:"MI", row:3, col:8 },  { code:"NY", row:3, col:10 }, { code:"MA", row:3, col:11 },
-  { code:"RI", row:3, col:12 },
-  { code:"OR", row:3, col:2 },
-  { code:"SD", row:3, col:5 },  { code:"IL", row:4, col:7 },  { code:"IN", row:4, col:8 },
-  { code:"OH", row:4, col:9 },  { code:"PA", row:4, col:10 }, { code:"NJ", row:4, col:11 },
-  { code:"CT", row:4, col:12 },
-  { code:"WY", row:4, col:4 },  { code:"IA", row:4, col:6 },
-  { code:"CA", row:5, col:2 },  { code:"NV", row:4, col:3 },  { code:"UT", row:5, col:3 },
-  { code:"CO", row:5, col:4 },  { code:"NE", row:5, col:5 },  { code:"MO", row:5, col:6 },
-  { code:"KY", row:5, col:7 },  { code:"WV", row:5, col:9 },  { code:"VA", row:5, col:10 },
-  { code:"MD", row:5, col:11 }, { code:"DE", row:5, col:12 },
-  { code:"AZ", row:6, col:3 },  { code:"NM", row:6, col:4 },  { code:"KS", row:6, col:5 },
-  { code:"AR", row:6, col:6 },  { code:"TN", row:6, col:7 },  { code:"NC", row:6, col:9 },
-  { code:"SC", row:6, col:10 }, { code:"DC", row:6, col:11 },
-  { code:"OK", row:7, col:5 },  { code:"LA", row:7, col:6 },  { code:"MS", row:7, col:7 },
-  { code:"AL", row:7, col:8 },  { code:"GA", row:7, col:9 },  { code:"FL", row:8, col:9 },
-  { code:"AK", row:7, col:1 },  { code:"HI", row:8, col:1 },  { code:"TX", row:8, col:5 }
-];
-
-function initFundingMap() {
-  const grid = document.getElementById('fmapGrid');
+async function initFundingMap() {
+  const mapHost = document.getElementById('fmapGrid');
   const totalsEl = document.getElementById('fmapTotals');
   const rangeEl = document.getElementById('fmapRange');
   const tooltip = document.getElementById('fmapTooltip');
-  if (!grid) return;
+  if (!mapHost) return;
 
-  // Render tiles first so the grid appears even before data loads
-  grid.innerHTML = STATE_TILES.map(t => {
-    const name = (US_STATES.find(s => s[0] === t.code) || [t.code, t.code])[1];
-    return `<button type="button" class="fmap-tile fm-0" data-code="${t.code}"
-      style="grid-row: ${t.row}; grid-column: ${t.col};"
-      data-name="${name}" aria-label="${name}: awards loading">
-      <span class="fmap-tile-code">${t.code}</span>
-    </button>`;
-  }).join('');
+  // Load the SVG once and inject into the host container
+  let svgLoaded = false;
+  try {
+    const res = await fetch('./assets/us-map.svg', { cache: 'default' });
+    if (res.ok) {
+      const txt = await res.text();
+      mapHost.innerHTML = txt;
+      svgLoaded = true;
+    }
+  } catch (_) {}
+  if (!svgLoaded) {
+    mapHost.innerHTML = '<div class="fmap-fallback">Map unavailable — open in a browser that supports SVG.</div>';
+    return;
+  }
 
-  // Wait a tick for LIVE_FEED to be populated by bootLiveFeed
+  // Wait for LIVE_FEED.awards to be populated, then paint
   const paint = () => {
     const awards = (LIVE_FEED.awards || []).filter(a => a.state);
     if (!awards.length) { setTimeout(paint, 500); return; }
 
-    // Group totals by state
+    // Group totals per state
     const byState = new Map();
     for (const a of awards) {
       const s = a.state;
@@ -2488,48 +2469,44 @@ function initFundingMap() {
 
     if (rangeEl) rangeEl.textContent = `${fmt(minT)} → ${fmt(maxT)}`;
 
-    const tiles = grid.querySelectorAll('.fmap-tile');
-    tiles.forEach(tile => {
-      const code = tile.dataset.code;
+    // Bind data to each <path>
+    const paths = mapHost.querySelectorAll('path[data-code]');
+    paths.forEach(p => {
+      const code = p.dataset.code;
       const b = byState.get(code);
+      p.classList.remove('fm-0','fm-1','fm-2','fm-3','fm-4');
       if (!b || !b.total) {
-        tile.classList.remove('fm-1','fm-2','fm-3','fm-4');
-        tile.classList.add('fm-0');
-        tile.setAttribute('aria-label', `${tile.dataset.name}: no tracked awards`);
-        return;
+        p.classList.add('fm-0');
+      } else {
+        const pct = b.total / maxT;
+        const cls = pct > 0.5 ? 'fm-4' : pct > 0.25 ? 'fm-3' : pct > 0.1 ? 'fm-2' : 'fm-1';
+        p.classList.add(cls);
       }
-      // Log-scale bucketing into 5 levels
-      const pct = b.total / maxT;
-      const cls = pct > 0.5 ? 'fm-4' : pct > 0.25 ? 'fm-3' : pct > 0.1 ? 'fm-2' : 'fm-1';
-      tile.classList.remove('fm-0','fm-1','fm-2','fm-3','fm-4');
-      tile.classList.add(cls);
-      tile.setAttribute('aria-label',
-        `${tile.dataset.name}: ${fmt(b.total)} across ${b.count} awards`);
     });
 
-    // Tooltip + click handlers
-    const showTip = (tile) => {
+    // Tooltip handlers
+    const showTip = (path) => {
       if (!tooltip) return;
-      const code = tile.dataset.code;
+      const code = path.dataset.code;
+      const name = path.dataset.name || code;
       const b = byState.get(code);
-      const name = tile.dataset.name;
       if (!b || !b.total) {
-        tooltip.innerHTML = `<div class="tt-head">${name}</div><div class="tt-sub">No tracked awards in the last 24 months.</div>`;
+        tooltip.innerHTML = `<div class="tt-head">${escapeHtml(name)}</div><div class="tt-sub">No tracked awards in the last 24 months.</div>`;
       } else {
         const topItems = b.items.slice(0, 3).map(a =>
           `<div class="tt-item"><span class="tt-amt">${a.amount_display || fmt(a.amount)}</span> · ${escapeHtml((a.recipient || '').slice(0, 44))}</div>`
         ).join('');
         tooltip.innerHTML = `
-          <div class="tt-head">${name} · <span class="tt-code">${code}</span></div>
+          <div class="tt-head">${escapeHtml(name)} · <span class="tt-code">${code}</span></div>
           <div class="tt-total">${fmt(b.total)} <span class="tt-sub">across ${b.count} awards</span></div>
           <div class="tt-items">${topItems}</div>
-          <div class="tt-cta">Click to load ${name} context →</div>
+          <div class="tt-cta">Click to load ${escapeHtml(name)} context →</div>
         `;
       }
-      const rect = tile.getBoundingClientRect();
-      const gridRect = grid.getBoundingClientRect();
-      tooltip.style.left = (rect.left - gridRect.left + rect.width / 2) + 'px';
-      tooltip.style.top  = (rect.top  - gridRect.top  - 10) + 'px';
+      const rect = path.getBoundingClientRect();
+      const hostRect = mapHost.getBoundingClientRect();
+      tooltip.style.left = (rect.left + rect.width / 2 - hostRect.left) + 'px';
+      tooltip.style.top  = (rect.top  - hostRect.top  - 10) + 'px';
       tooltip.setAttribute('aria-hidden', 'false');
       tooltip.classList.add('show');
     };
@@ -2538,13 +2515,13 @@ function initFundingMap() {
       tooltip.classList.remove('show');
       tooltip.setAttribute('aria-hidden', 'true');
     };
-    tiles.forEach(tile => {
-      tile.addEventListener('mouseenter', () => showTip(tile));
-      tile.addEventListener('focus',       () => showTip(tile));
-      tile.addEventListener('mouseleave', hideTip);
-      tile.addEventListener('blur',        hideTip);
-      tile.addEventListener('click', () => {
-        const code = tile.dataset.code;
+    paths.forEach(path => {
+      path.addEventListener('mouseenter', () => showTip(path));
+      path.addEventListener('focus',       () => showTip(path));
+      path.addEventListener('mouseleave', hideTip);
+      path.addEventListener('blur',        hideTip);
+      path.addEventListener('click', () => {
+        const code = path.dataset.code;
         if (code) {
           const url = new URL(window.location.href);
           url.searchParams.set('state', code);
@@ -2552,6 +2529,12 @@ function initFundingMap() {
           window.location.assign(url.toString());
         }
       });
+      path.setAttribute('tabindex', '0');
+      path.setAttribute('role', 'button');
+      path.setAttribute('aria-label',
+        (byState.get(path.dataset.code)
+          ? `${path.dataset.name}: ${fmt(byState.get(path.dataset.code).total)} across ${byState.get(path.dataset.code).count} awards`
+          : `${path.dataset.name}: no tracked awards`));
     });
 
     // Aggregate totals strip
