@@ -337,7 +337,7 @@ a:hover { text-decoration: underline; }
 }
 .telemetry .tele-ticker-track {
   display: inline-block;
-  animation: tele-scroll 90s linear infinite;
+  animation: tele-scroll 180s linear infinite;
   padding-left: 100%;
 }
 .telemetry .tele-ticker-track .op {
