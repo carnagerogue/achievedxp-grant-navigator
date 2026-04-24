@@ -86,6 +86,27 @@
     },
     {
       "source": "grants_gov",
+      "source_id": "362040",
+      "opp_number": "O-BJA-2025-172588",
+      "title": "BJA FY 25 Invited to Apply- Transforming Prison Cultures, Climates, and Spaces",
+      "agency": "USDOJ-OJP-BJA",
+      "agency_code": "USDOJ-OJP-BJA",
+      "cfda": "16.812",
+      "aln_all": [
+        "16.812"
+      ],
+      "status": "posted",
+      "doc_type": "synopsis",
+      "post_date": "04/23/2026",
+      "close_date": "05/06/2026",
+      "award_ceiling": 1000000,
+      "award_floor": 0,
+      "synopsis": "This is a notice of funding opportunity (NOFO) for the BJA FY 2025 Invited to Apply for Transforming Prison Cultures, Climates, and Spaces. Originally released in FY23, BJA’s Transforming Prison Cultures, Climates, and Spaces program funded the development and initial implementation of the Safe Inside Initiative, which supports state departments of corrections (DOC) in their efforts to improve safety, security, and reduce recidivism, particularly among prisons facing acute workforce challenges. Through the Safe Inside Initiative funded via this program, state DOCs will receive highly specializ",
+      "funding_url": "https://bja.ojp.gov",
+      "source_url": "https://www.grants.gov/search-results-detail/362040"
+    },
+    {
+      "source": "grants_gov",
       "source_id": "361617",
       "opp_number": "O-OJJDP-2025-172525",
       "title": "OJJDP FY25 Family-Based Alternative Justice",
@@ -125,6 +146,27 @@
       "synopsis": "OJP is committed to advancing work that furthers DOJ’s mission to uphold the rule of law, to keep our country safe, and to protect civil rights. OJP provides federal leadership, funding, and other critical resources to directly support law enforcement, combat violent crime, protect American children, provide services to American crime victims, and address public safety challenges, including human trafficking and the opioid crisis. As authorized by the Bipartisan Safer Communities Act of 2022, this NOFO will provide funding for the creation or enhancement of state crisis intervention court proc",
       "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2025-172582",
       "source_url": "https://www.grants.gov/search-results-detail/361925"
+    },
+    {
+      "source": "grants_gov",
+      "source_id": "361501",
+      "opp_number": "O-BJA-2025-172542",
+      "title": "BJA FY25 Edward Byrne Memorial Justice Assistance Grant (JAG) Program &ndash; Local Formula",
+      "agency": "USDOJ-OJP-BJA",
+      "agency_code": "USDOJ-OJP-BJA",
+      "cfda": "16.738",
+      "aln_all": [
+        "16.738"
+      ],
+      "status": "posted",
+      "doc_type": "synopsis",
+      "post_date": "03/13/2026",
+      "close_date": "04/28/2026",
+      "award_ceiling": 4098693,
+      "award_floor": 0,
+      "synopsis": "OJP is committed to advancing work that furthers DOJ’s mission to uphold the rule of law, to keep our country safe, and to protect civil rights. OJP provides federal leadership, funding, and other critical resources to directly support law enforcement, combat violent crime, protect American children, provide services to American crime victims, and address public safety challenges, including human trafficking and the opioid crisis. With this Notice of Funding Opportunity (NOFO), BJA seeks to award Edward Byrne Memorial Justice Assistance Grant (JAG) Program funds to eligible units of local gove",
+      "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2025-172542",
+      "source_url": "https://www.grants.gov/search-results-detail/361501"
     },
     {
       "source": "grants_gov",
@@ -2819,11 +2861,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-04-23T08:51:33.689Z",
+  "last_synced_at": "2026-04-24T08:58:34.899Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 11,
+  "count": 13,
   "counts": {
-    "opportunities": 11,
+    "opportunities": 13,
     "awards": 132,
     "foundations": 12,
     "saa_states": 56
