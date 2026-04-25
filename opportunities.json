@@ -254,6 +254,48 @@
     },
     {
       "source": "grants_gov",
+      "source_id": "362050",
+      "opp_number": "OCTAE-PM-2026-ADULT",
+      "title": "Estimated Fiscal Year 2026 Adult Education and Family Literacy Act State Award Amounts",
+      "agency": "DOL-OCTAE",
+      "agency_code": "DOL-OCTAE",
+      "cfda": "84.002",
+      "aln_all": [
+        "84.002"
+      ],
+      "status": "posted",
+      "doc_type": "synopsis",
+      "post_date": "04/24/2026",
+      "close_date": "05/26/2026",
+      "award_ceiling": 101469588,
+      "award_floor": 5234,
+      "synopsis": "This program memorandum advises states of the estimated FY 2026 State Allocations under the Adult Education and Family Literacy Act (AEFLA), title II of the Workforce Innovation and Opportunity Act (WIOA).  Questions regarding this Program Memorandum may be emailed to Sabrina Guerrier (octae-formula@dol.gov).",
+      "funding_url": null,
+      "source_url": "https://www.grants.gov/search-results-detail/362050"
+    },
+    {
+      "source": "grants_gov",
+      "source_id": "362051",
+      "opp_number": "OCTAE-PM-2026-PERKINS",
+      "title": "Fiscal Year 2026 State Allocations under the Carl D. Perkins Career and Technical Education Act of 2006 (Perkins V)",
+      "agency": "DOL-OCTAE",
+      "agency_code": "DOL-OCTAE",
+      "cfda": "84.048",
+      "aln_all": [
+        "84.048"
+      ],
+      "status": "posted",
+      "doc_type": "synopsis",
+      "post_date": "04/24/2026",
+      "close_date": "05/26/2026",
+      "award_ceiling": 142867852,
+      "award_floor": 197032,
+      "synopsis": "This program memorandum advises states of the estimated FY 2026 State Allocations under the Carl D. Perkins Career and Technical Education Act of 2006 (Perkins V).  Questions regarding this Program Memorandum may be emailed to Anu Mathew (octae-formula@dol.gov).",
+      "funding_url": null,
+      "source_url": "https://www.grants.gov/search-results-detail/362051"
+    },
+    {
+      "source": "grants_gov",
       "source_id": "357771",
       "opp_number": "ETA-TEGL-09-24",
       "title": "Updated National Dislocated Worker Grant Program Guidance and Application Information",
@@ -2861,11 +2903,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-04-24T08:58:34.899Z",
+  "last_synced_at": "2026-04-25T08:03:56.617Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 13,
+  "count": 15,
   "counts": {
-    "opportunities": 13,
+    "opportunities": 15,
     "awards": 132,
     "foundations": 12,
     "saa_states": 56
