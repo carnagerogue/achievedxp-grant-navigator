@@ -233,6 +233,48 @@
     },
     {
       "source": "grants_gov",
+      "source_id": "362129",
+      "opp_number": "ETA-TEGL-10-25-ADULT",
+      "title": "Workforce Innovation and Opportunity Act (WIOA) Adult Activities Program Allotments for Program Year (PY) 2026.",
+      "agency": "DOL-ETA",
+      "agency_code": "DOL-ETA",
+      "cfda": "17.258",
+      "aln_all": [
+        "17.258"
+      ],
+      "status": "posted",
+      "doc_type": "synopsis",
+      "post_date": "04/29/2026",
+      "close_date": "05/29/2026",
+      "award_ceiling": 149671359,
+      "award_floor": 2183228,
+      "synopsis": "Workforce Innovation and Opportunity Act (WIOA) Adult Activities Program Allotments for Program Year (PY) 2026.   States should e-mail all submission questions to Anu Mathew, Grants Management Specialist, at WIOA-WP-WIG-ETAGrants@dol.gov. The email must reference the specific Funding Opportunity Number, and include a contact name, email address, and phone number.",
+      "funding_url": null,
+      "source_url": "https://www.grants.gov/search-results-detail/362129"
+    },
+    {
+      "source": "grants_gov",
+      "source_id": "362125",
+      "opp_number": "ETA-TEGL-10-25-YOUTH",
+      "title": "Workforce Innovation and Opportunity Act (WIOA) Youth Program Allotments for Program Year (PY) 2026.",
+      "agency": "DOL-ETA",
+      "agency_code": "DOL-ETA",
+      "cfda": "17.259",
+      "aln_all": [
+        "17.259"
+      ],
+      "status": "posted",
+      "doc_type": "synopsis",
+      "post_date": "04/29/2026",
+      "close_date": "05/29/2026",
+      "award_ceiling": 156286824,
+      "award_floor": 2326108,
+      "synopsis": "Workforce Innovation and Opportunity Act (WIOA) Youth Activities Program Allotment for Program Year (PY) 2026.  States should e-mail all submission questions to Anu Mathew, Grants Management Specialist, at WIOA-WP-WIG-ETAGrants@dol.gov. The email must reference the specific Funding Opportunity Number, and include a contact name, email address, and phone number.",
+      "funding_url": null,
+      "source_url": "https://www.grants.gov/search-results-detail/362125"
+    },
+    {
+      "source": "grants_gov",
       "source_id": "357771",
       "opp_number": "ETA-TEGL-09-24",
       "title": "Updated National Dislocated Worker Grant Program Guidance and Application Information",
@@ -2133,7 +2175,7 @@
       "source": "usaspending",
       "aln": "16.828",
       "award_id": "15PBJA24GG01890PRJH",
-      "recipient": "MAYORS OFFICE OF THE CRIMINAL JUSTI",
+      "recipient": "CITY OF NEW YORK - MAYORS OFFICE OF CRIMINAL JUSTICE",
       "amount": 899995,
       "amount_display": "$900K",
       "awarding_agency": "Department of Justice",
@@ -2840,11 +2882,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-04-29T09:07:38.160Z",
+  "last_synced_at": "2026-04-30T09:09:51.271Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 12,
+  "count": 14,
   "counts": {
-    "opportunities": 12,
+    "opportunities": 14,
     "awards": 132,
     "foundations": 12,
     "saa_states": 56
