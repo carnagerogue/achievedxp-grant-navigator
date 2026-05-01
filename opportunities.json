@@ -128,48 +128,6 @@
     },
     {
       "source": "grants_gov",
-      "source_id": "361596",
-      "opp_number": "O-OJJDP-2025-172543",
-      "title": "OJJDP FY25 Title II Formula Grants Program Training and Technical Assistance Center",
-      "agency": "USDOJ-OJP-OJJDP",
-      "agency_code": "USDOJ-OJP-OJJDP",
-      "cfda": "16.540",
-      "aln_all": [
-        "16.540"
-      ],
-      "status": "posted",
-      "doc_type": "synopsis",
-      "post_date": "03/23/2026",
-      "close_date": "04/30/2026",
-      "award_ceiling": 2000000,
-      "award_floor": 0,
-      "synopsis": "This NOFO will fund the Title II Formula Grants program Training and Technical Assistance Center to (1) strengthen state and territory-level compliance with the Formula Grants program authorized under the Juvenile Justice and Delinquency Prevention Act (JJDPA) and (2) develop and implement training and technical assistance that supports the effective operation of the juvenile justice system across state, territory, Tribal, and community levels.",
-      "funding_url": "https://www.ojp.gov/funding/docs/OJJDP-2025-172543.pdf",
-      "source_url": "https://www.grants.gov/search-results-detail/361596"
-    },
-    {
-      "source": "grants_gov",
-      "source_id": "361602",
-      "opp_number": "O-OJJDP-2025-172545",
-      "title": "OJJDP FY25 Nonparticipating States: Connecticut, Texas, and Wyoming",
-      "agency": "USDOJ-OJP-OJJDP",
-      "agency_code": "USDOJ-OJP-OJJDP",
-      "cfda": "16.540",
-      "aln_all": [
-        "16.540"
-      ],
-      "status": "posted",
-      "doc_type": "synopsis",
-      "post_date": "03/23/2026",
-      "close_date": "04/30/2026",
-      "award_ceiling": 1045806,
-      "award_floor": 0,
-      "synopsis": "This NOFO will make funding available to local public and private non-profit agencies within states that have chosen not to submit a state plan under the Title II Formula Grants program outlined in the Juvenile Justice and Delinquency Prevention Act (JJDPA). The funding must be used to carry out activities of the kinds described in the core requirements of the JJDPA: deinstitutionalization of status offenders (“DSO”), removal of juveniles charged as adults from adult facilities (“JCA”), separation of juveniles from adults inmates (“separation”), removal of juveniles from adult jails and lockup",
-      "funding_url": "https://www.ojp.gov/funding/docs/OJJDP-2025-172545.pdf",
-      "source_url": "https://www.grants.gov/search-results-detail/361602"
-    },
-    {
-      "source": "grants_gov",
       "source_id": "361629",
       "opp_number": "O-OJJDP-2025-172512",
       "title": "OJJDP FY25 National Mentoring Resource Center",
@@ -406,8 +364,8 @@
       "aln": "84.126",
       "award_id": "H126A260005",
       "recipient": "CA DEPT OF REHABILITATION",
-      "amount": 343699072,
-      "amount_display": "$343.7M",
+      "amount": 346600724,
+      "amount_display": "$346.6M",
       "awarding_agency": "Department of Education",
       "awarding_sub_agency": "Department of Education",
       "start_date": null,
@@ -2882,11 +2840,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-04-30T09:09:51.271Z",
+  "last_synced_at": "2026-05-01T08:58:13.101Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 14,
+  "count": 12,
   "counts": {
-    "opportunities": 14,
+    "opportunities": 12,
     "awards": 132,
     "foundations": 12,
     "saa_states": 56
