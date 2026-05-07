@@ -2,9 +2,9 @@
   "opportunities": [
     {
       "source": "grants_gov",
-      "source_id": "362040",
-      "opp_number": "O-BJA-2025-172588",
-      "title": "BJA FY 25 Invited to Apply- Transforming Prison Cultures, Climates, and Spaces",
+      "source_id": "361634",
+      "opp_number": "O-BJA-2025-172499",
+      "title": "BJA FY25 Second Chance Act Community-based Reentry Program",
       "agency": "USDOJ-OJP-BJA",
       "agency_code": "USDOJ-OJP-BJA",
       "cfda": "16.812",
@@ -13,13 +13,13 @@
       ],
       "status": "posted",
       "doc_type": "synopsis",
-      "post_date": "04/23/2026",
-      "close_date": "05/06/2026",
+      "post_date": "03/25/2026",
+      "close_date": "05/08/2026",
       "award_ceiling": 1000000,
       "award_floor": 0,
-      "synopsis": "This is a notice of funding opportunity (NOFO) for the BJA FY 2025 Invited to Apply for Transforming Prison Cultures, Climates, and Spaces. Originally released in FY23, BJA’s Transforming Prison Cultures, Climates, and Spaces program funded the development and initial implementation of the Safe Inside Initiative, which supports state departments of corrections (DOC) in their efforts to improve safety, security, and reduce recidivism, particularly among prisons facing acute workforce challenges. Through the Safe Inside Initiative funded via this program, state DOCs will receive highly specializ",
-      "funding_url": "https://bja.ojp.gov",
-      "source_url": "https://www.grants.gov/search-results-detail/362040"
+      "synopsis": "This NOFO will support community-based organizations and tribal governments to provide mentoring and transitional services for adults returning to communities after a period of incarceration in a prison or a jail and who are assessed as moderate to high risk for recidivism. Services may be provided pre- and/or post-release.",
+      "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2025-172499",
+      "source_url": "https://www.grants.gov/search-results-detail/361634"
     },
     {
       "source": "grants_gov",
@@ -65,24 +65,24 @@
     },
     {
       "source": "grants_gov",
-      "source_id": "361634",
-      "opp_number": "O-BJA-2025-172499",
-      "title": "BJA FY25 Second Chance Act Community-based Reentry Program",
-      "agency": "USDOJ-OJP-BJA",
-      "agency_code": "USDOJ-OJP-BJA",
-      "cfda": "16.812",
+      "source_id": "361617",
+      "opp_number": "O-OJJDP-2025-172525",
+      "title": "OJJDP FY25 Family-Based Alternative Justice",
+      "agency": "USDOJ-OJP-OJJDP",
+      "agency_code": "USDOJ-OJP-OJJDP",
+      "cfda": "16.738",
       "aln_all": [
-        "16.812"
+        "16.738"
       ],
       "status": "posted",
       "doc_type": "synopsis",
       "post_date": "03/25/2026",
       "close_date": "05/08/2026",
-      "award_ceiling": 1000000,
+      "award_ceiling": 750000,
       "award_floor": 0,
-      "synopsis": "This NOFO will support community-based organizations and tribal governments to provide mentoring and transitional services for adults returning to communities after a period of incarceration in a prison or a jail and who are assessed as moderate to high risk for recidivism. Services may be provided pre- and/or post-release.",
-      "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2025-172499",
-      "source_url": "https://www.grants.gov/search-results-detail/361634"
+      "synopsis": "This NOFO will support the implementation of new, and enhance existing, family-based alternative sentencing programs for parents/primary caregivers who are involved in or at risk for becoming involved in the criminal justice system. Through pre-arrest and pre-sentencing alternatives, these programs focus on rehabilitation, family unification, and family preservation. They help parents avoid incarceration, when appropriate, while strengthening their skills and capacity to care for their children long-term, preventing children from entering the foster care system, and reducing the likelihood for",
+      "funding_url": "https://www.ojp.gov/funding/docs/OJJDP-2025-172525.pdf",
+      "source_url": "https://www.grants.gov/search-results-detail/361617"
     },
     {
       "source": "grants_gov",
@@ -125,6 +125,27 @@
       "synopsis": "OJP is committed to advancing work that furthers DOJ’s mission to uphold the rule of law, to keep our country safe, and to protect civil rights. OJP provides federal leadership, funding, and other critical resources to directly support law enforcement, combat violent crime, protect American children, provide services to American crime victims, and address public safety challenges, including human trafficking and the opioid crisis. With this Notice of Funding Opportunity (NOFO), BJA seeks to award Edward Byrne Memorial Justice Assistance Grant (JAG) Program funds to eligible units of local gove",
       "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2025-172542",
       "source_url": "https://www.grants.gov/search-results-detail/361501"
+    },
+    {
+      "source": "grants_gov",
+      "source_id": "361629",
+      "opp_number": "O-OJJDP-2025-172512",
+      "title": "OJJDP FY25 National Mentoring Resource Center",
+      "agency": "USDOJ-OJP-OJJDP",
+      "agency_code": "USDOJ-OJP-OJJDP",
+      "cfda": "16.726",
+      "aln_all": [
+        "16.726"
+      ],
+      "status": "posted",
+      "doc_type": "synopsis",
+      "post_date": "03/25/2026",
+      "close_date": "05/08/2026",
+      "award_ceiling": 2600000,
+      "award_floor": 0,
+      "synopsis": "This NOFO will support OJJDP mentoring grantees and the mentoring field more broadly by maintaining the OJJDP National Mentoring Resource Center website and providing training and technical assistance (TTA) to OJJDP grantees.",
+      "funding_url": "https://www.ojp.gov/funding/docs/OJJDP-2025-172512.pdf",
+      "source_url": "https://www.grants.gov/search-results-detail/361629"
     },
     {
       "source": "grants_gov",
@@ -1736,21 +1757,6 @@
     {
       "source": "usaspending",
       "aln": "16.726",
-      "award_id": "15PJDP21GG02765MENT",
-      "recipient": "BIG BROTHERS BIG SISTERS OF AMERICA CORPORATION",
-      "amount": 10999993.96,
-      "amount_display": "$11.0M",
-      "awarding_agency": "Department of Justice",
-      "awarding_sub_agency": "Office of Justice Programs",
-      "start_date": null,
-      "end_date": null,
-      "state": "FL",
-      "generated_internal_id": "ASST_NON_15PJDP21GG02765MENT_015",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PJDP21GG02765MENT_015"
-    },
-    {
-      "source": "usaspending",
-      "aln": "16.726",
       "award_id": "15PJDP22GG01749MENT",
       "recipient": "BIG BROTHERS BIG SISTERS OF AMERICA CORPORATION",
       "amount": 10999927.53,
@@ -1972,6 +1978,21 @@
       "state": "CA",
       "generated_internal_id": "ASST_NON_15PBJA23GK05461SCAX_015",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_15PBJA23GK05461SCAX_015"
+    },
+    {
+      "source": "usaspending",
+      "aln": "16.726",
+      "award_id": "2019JUFX0013",
+      "recipient": "YOUTH COLLABORATORY INC",
+      "amount": 4000000,
+      "amount_display": "$4.0M",
+      "awarding_agency": "Department of Justice",
+      "awarding_sub_agency": "Office of Justice Programs",
+      "start_date": null,
+      "end_date": null,
+      "state": "PA",
+      "generated_internal_id": "ASST_NON_2019JUFX0013_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_2019JUFX0013_015"
     },
     {
       "source": "usaspending",
@@ -2819,11 +2840,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-05-06T09:21:17.776Z",
+  "last_synced_at": "2026-05-07T09:28:52.793Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 11,
+  "count": 12,
   "counts": {
-    "opportunities": 11,
+    "opportunities": 12,
     "awards": 132,
     "foundations": 12,
     "saa_states": 56
