@@ -2,90 +2,6 @@
   "opportunities": [
     {
       "source": "grants_gov",
-      "source_id": "361634",
-      "opp_number": "O-BJA-2025-172499",
-      "title": "BJA FY25 Second Chance Act Community-based Reentry Program",
-      "agency": "USDOJ-OJP-BJA",
-      "agency_code": "USDOJ-OJP-BJA",
-      "cfda": "16.812",
-      "aln_all": [
-        "16.812"
-      ],
-      "status": "posted",
-      "doc_type": "synopsis",
-      "post_date": "03/25/2026",
-      "close_date": "05/08/2026",
-      "award_ceiling": 1000000,
-      "award_floor": 0,
-      "synopsis": "This NOFO will support community-based organizations and tribal governments to provide mentoring and transitional services for adults returning to communities after a period of incarceration in a prison or a jail and who are assessed as moderate to high risk for recidivism. Services may be provided pre- and/or post-release.",
-      "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2025-172499",
-      "source_url": "https://www.grants.gov/search-results-detail/361634"
-    },
-    {
-      "source": "grants_gov",
-      "source_id": "361632",
-      "opp_number": "O-BJA-2025-172488",
-      "title": "BJA FY25 Second Chance Act Family-Based Substance Use Disorder Treatment Program",
-      "agency": "USDOJ-OJP-BJA",
-      "agency_code": "USDOJ-OJP-BJA",
-      "cfda": "16.812",
-      "aln_all": [
-        "16.812"
-      ],
-      "status": "posted",
-      "doc_type": "synopsis",
-      "post_date": "03/25/2026",
-      "close_date": "05/08/2026",
-      "award_ceiling": 1000000,
-      "award_floor": 0,
-      "synopsis": "This NOFO will provide funding to deliver treatment and recovery support services for parents with substance use disorders (SUD), who have minor children or are pregnant, and are under correctional control in facility or community-based setting. State, local, and tribal governments and nonprofit organizations may apply for funding to provide family-based SUD treatment programs in jail, in prison, or as part of an alternative to incarceration to reduce recidivism and improve reentry and other related outcomes for the parent and their children.",
-      "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2025-172488",
-      "source_url": "https://www.grants.gov/search-results-detail/361632"
-    },
-    {
-      "source": "grants_gov",
-      "source_id": "361671",
-      "opp_number": "O-BJA-2025-172507",
-      "title": "BJA FY25 Second Chance Act Improving Reentry Education and Employment Outcomes",
-      "agency": "USDOJ-OJP-BJA",
-      "agency_code": "USDOJ-OJP-BJA",
-      "cfda": "16.812",
-      "aln_all": [
-        "16.812"
-      ],
-      "status": "posted",
-      "doc_type": "synopsis",
-      "post_date": "03/26/2026",
-      "close_date": "05/08/2026",
-      "award_ceiling": 900000,
-      "award_floor": 0,
-      "synopsis": "This NOFO supports state, local, and tribal governments and community-based organizations to provide education and employment programs for people leaving jail and prison. The goal of the program is to improve academic and vocational/trade programs available to people in prisons and jails and expand workforce development and career pathways that result in improved job readiness, employment attainment, and retention thereby improving employment prospects and reducing recidivism. Applicants may consider proposing projects that develop marketable skills, leverage technology, and build capacity to ",
-      "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2025-172507",
-      "source_url": "https://www.grants.gov/search-results-detail/361671"
-    },
-    {
-      "source": "grants_gov",
-      "source_id": "361617",
-      "opp_number": "O-OJJDP-2025-172525",
-      "title": "OJJDP FY25 Family-Based Alternative Justice",
-      "agency": "USDOJ-OJP-OJJDP",
-      "agency_code": "USDOJ-OJP-OJJDP",
-      "cfda": "16.738",
-      "aln_all": [
-        "16.738"
-      ],
-      "status": "posted",
-      "doc_type": "synopsis",
-      "post_date": "03/25/2026",
-      "close_date": "05/08/2026",
-      "award_ceiling": 750000,
-      "award_floor": 0,
-      "synopsis": "This NOFO will support the implementation of new, and enhance existing, family-based alternative sentencing programs for parents/primary caregivers who are involved in or at risk for becoming involved in the criminal justice system. Through pre-arrest and pre-sentencing alternatives, these programs focus on rehabilitation, family unification, and family preservation. They help parents avoid incarceration, when appropriate, while strengthening their skills and capacity to care for their children long-term, preventing children from entering the foster care system, and reducing the likelihood for",
-      "funding_url": "https://www.ojp.gov/funding/docs/OJJDP-2025-172525.pdf",
-      "source_url": "https://www.grants.gov/search-results-detail/361617"
-    },
-    {
-      "source": "grants_gov",
       "source_id": "361925",
       "opp_number": "O-BJA-2025-172582",
       "title": "BJA FY25 Byrne State Crisis Intervention Formula Program",
@@ -125,27 +41,6 @@
       "synopsis": "OJP is committed to advancing work that furthers DOJ’s mission to uphold the rule of law, to keep our country safe, and to protect civil rights. OJP provides federal leadership, funding, and other critical resources to directly support law enforcement, combat violent crime, protect American children, provide services to American crime victims, and address public safety challenges, including human trafficking and the opioid crisis. With this Notice of Funding Opportunity (NOFO), BJA seeks to award Edward Byrne Memorial Justice Assistance Grant (JAG) Program funds to eligible units of local gove",
       "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2025-172542",
       "source_url": "https://www.grants.gov/search-results-detail/361501"
-    },
-    {
-      "source": "grants_gov",
-      "source_id": "361629",
-      "opp_number": "O-OJJDP-2025-172512",
-      "title": "OJJDP FY25 National Mentoring Resource Center",
-      "agency": "USDOJ-OJP-OJJDP",
-      "agency_code": "USDOJ-OJP-OJJDP",
-      "cfda": "16.726",
-      "aln_all": [
-        "16.726"
-      ],
-      "status": "posted",
-      "doc_type": "synopsis",
-      "post_date": "03/25/2026",
-      "close_date": "05/08/2026",
-      "award_ceiling": 2600000,
-      "award_floor": 0,
-      "synopsis": "This NOFO will support OJJDP mentoring grantees and the mentoring field more broadly by maintaining the OJJDP National Mentoring Resource Center website and providing training and technical assistance (TTA) to OJJDP grantees.",
-      "funding_url": "https://www.ojp.gov/funding/docs/OJJDP-2025-172512.pdf",
-      "source_url": "https://www.grants.gov/search-results-detail/361629"
     },
     {
       "source": "grants_gov",
@@ -233,8 +128,8 @@
     },
     {
       "source": "grants_gov",
-      "source_id": "357771",
-      "opp_number": "ETA-TEGL-09-24",
+      "source_id": "362325",
+      "opp_number": "ETA-TEGL-09-24-CH1",
       "title": "Updated National Dislocated Worker Grant Program Guidance and Application Information",
       "agency": "DOL-ETA",
       "agency_code": "DOL-ETA",
@@ -244,13 +139,13 @@
       ],
       "status": "posted",
       "doc_type": "synopsis",
-      "post_date": "12/17/2024",
-      "close_date": "12/31/2026",
+      "post_date": "05/08/2026",
+      "close_date": "12/31/2028",
       "award_ceiling": 10000000,
       "award_floor": 150000,
       "synopsis": "If you have difficulty accessing the full announcement electronically, please contact Jenifer McEnery (DOL-ETA-DWG@dol.gov).",
       "funding_url": null,
-      "source_url": "https://www.grants.gov/search-results-detail/357771"
+      "source_url": "https://www.grants.gov/search-results-detail/362325"
     }
   ],
   "awards": [
@@ -2840,11 +2735,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-05-08T08:19:58.701Z",
+  "last_synced_at": "2026-05-09T08:25:17.683Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 12,
+  "count": 7,
   "counts": {
-    "opportunities": 12,
+    "opportunities": 7,
     "awards": 132,
     "foundations": 12,
     "saa_states": 56
