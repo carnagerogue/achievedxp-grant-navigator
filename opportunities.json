@@ -2,9 +2,9 @@
   "opportunities": [
     {
       "source": "grants_gov",
-      "source_id": "361925",
-      "opp_number": "O-BJA-2025-172582",
-      "title": "BJA FY25 Byrne State Crisis Intervention Formula Program",
+      "source_id": "362371",
+      "opp_number": "O-BJA-2025-172613",
+      "title": "BJA FY25 Invited to Apply &ndash; Prison Rape Elimination Act (PREA) Reallocation Funds Program",
       "agency": "USDOJ-OJP-BJA",
       "agency_code": "USDOJ-OJP-BJA",
       "cfda": "16.738",
@@ -13,34 +13,13 @@
       ],
       "status": "posted",
       "doc_type": "synopsis",
-      "post_date": "04/15/2026",
-      "close_date": "05/12/2026",
-      "award_ceiling": 14672296,
+      "post_date": "05/12/2026",
+      "close_date": "06/04/2026",
+      "award_ceiling": 420866,
       "award_floor": 0,
-      "synopsis": "OJP is committed to advancing work that furthers DOJ’s mission to uphold the rule of law, to keep our country safe, and to protect civil rights. OJP provides federal leadership, funding, and other critical resources to directly support law enforcement, combat violent crime, protect American children, provide services to American crime victims, and address public safety challenges, including human trafficking and the opioid crisis. As authorized by the Bipartisan Safer Communities Act of 2022, this NOFO will provide funding for the creation or enhancement of state crisis intervention court proc",
-      "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2025-172582",
-      "source_url": "https://www.grants.gov/search-results-detail/361925"
-    },
-    {
-      "source": "grants_gov",
-      "source_id": "361501",
-      "opp_number": "O-BJA-2025-172542",
-      "title": "BJA FY25 Edward Byrne Memorial Justice Assistance Grant (JAG) Program &ndash; Local Formula",
-      "agency": "USDOJ-OJP-BJA",
-      "agency_code": "USDOJ-OJP-BJA",
-      "cfda": "16.738",
-      "aln_all": [
-        "16.738"
-      ],
-      "status": "posted",
-      "doc_type": "synopsis",
-      "post_date": "03/13/2026",
-      "close_date": "05/12/2026",
-      "award_ceiling": 4098693,
-      "award_floor": 0,
-      "synopsis": "OJP is committed to advancing work that furthers DOJ’s mission to uphold the rule of law, to keep our country safe, and to protect civil rights. OJP provides federal leadership, funding, and other critical resources to directly support law enforcement, combat violent crime, protect American children, provide services to American crime victims, and address public safety challenges, including human trafficking and the opioid crisis. With this Notice of Funding Opportunity (NOFO), BJA seeks to award Edward Byrne Memorial Justice Assistance Grant (JAG) Program funds to eligible units of local gove",
-      "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2025-172542",
-      "source_url": "https://www.grants.gov/search-results-detail/361501"
+      "synopsis": "OJP is committed to advancing work that furthers DOJ’s mission to uphold the rule of law, to keep our country safe, and to protect civil rights. OJP provides federal leadership, funding, and other critical resources to directly support law enforcement, combat violent crime, protect American children, provide services to American crime victims, and address public safety challenges, including human trafficking and the opioid crisis. This NOFO will provide assistance to state, local, and tribal correctional agencies and facilities to prevent, detect, and respond to sexual abuse and sexual harassm",
+      "funding_url": "https://bja.ojp.gov",
+      "source_url": "https://www.grants.gov/search-results-detail/362371"
     },
     {
       "source": "grants_gov",
@@ -2735,11 +2714,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-05-12T09:34:34.973Z",
+  "last_synced_at": "2026-05-13T09:42:31.617Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 7,
+  "count": 6,
   "counts": {
-    "opportunities": 7,
+    "opportunities": 6,
     "awards": 132,
     "foundations": 12,
     "saa_states": 56
