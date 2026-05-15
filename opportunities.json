@@ -1586,17 +1586,17 @@
     {
       "source": "usaspending",
       "aln": "17.277",
-      "award_id": "DW348172060A53",
-      "recipient": "STATE OF WASHINGTON EMPLOYMENT SECURITY DEPARTMENT",
-      "amount": 11820738.41,
-      "amount_display": "$11.8M",
+      "award_id": "23A60DW000008",
+      "recipient": "DEPARTMENT OF WORKFORCE DEVELOPMENT",
+      "amount": 11666667,
+      "amount_display": "$11.7M",
       "awarding_agency": "Department of Labor",
       "awarding_sub_agency": "Employment and Training Administration",
       "start_date": null,
       "end_date": null,
-      "state": "WA",
-      "generated_internal_id": "ASST_NON_DW348172060A53_1601",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_DW348172060A53_1601"
+      "state": "KY",
+      "generated_internal_id": "ASST_NON_23A60DW000008_1601",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_23A60DW000008_1601"
     },
     {
       "source": "usaspending",
@@ -2714,7 +2714,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-05-14T09:31:43.879Z",
+  "last_synced_at": "2026-05-15T09:45:04.504Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 6,
   "counts": {
