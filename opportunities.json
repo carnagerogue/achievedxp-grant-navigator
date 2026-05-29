@@ -2,6 +2,27 @@
   "opportunities": [
     {
       "source": "grants_gov",
+      "source_id": "362598",
+      "opp_number": "O-BJA-2025-172628",
+      "title": "BJA FY25 Invited to Apply &ndash; Medicaid and Corrections Program",
+      "agency": "USDOJ-OJP-BJA",
+      "agency_code": "USDOJ-OJP-BJA",
+      "cfda": "16.812",
+      "aln_all": [
+        "16.812"
+      ],
+      "status": "posted",
+      "doc_type": "synopsis",
+      "post_date": "05/28/2026",
+      "close_date": "06/10/2026",
+      "award_ceiling": 500307,
+      "award_floor": 0,
+      "synopsis": "This is a notice of funding opportunity (NOFO) for the FY 2025 Invited to Apply – Medicaid and Corrections Program. This opportunity seeks to support highly specialized technical training to correctional institutions to implement operational and system changes to improve justice and health outcomes for reentering individuals. \nThis program focuses on reentry services to strengthen safety within correctional institutions, facilitate successful returns to communities from incarceration, and ensure cost savings to the American taxpayer. The program will provide direct support to jails and prisons",
+      "funding_url": "https://bja.ojp.gov",
+      "source_url": "https://www.grants.gov/search-results-detail/362598"
+    },
+    {
+      "source": "grants_gov",
       "source_id": "362371",
       "opp_number": "O-BJA-2025-172613",
       "title": "BJA FY25 Invited to Apply &ndash; Prison Rape Elimination Act (PREA) Reallocation Funds Program",
@@ -2672,11 +2693,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-05-28T10:52:59.877Z",
+  "last_synced_at": "2026-05-29T10:43:21.923Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 4,
+  "count": 5,
   "counts": {
-    "opportunities": 4,
+    "opportunities": 5,
     "awards": 132,
     "foundations": 12,
     "saa_states": 56
