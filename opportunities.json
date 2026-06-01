@@ -1799,8 +1799,8 @@
     {
       "source": "usaspending",
       "aln": "16.812",
-      "award_id": "15PBJA23GK05461SCAX",
-      "recipient": "THE LATINO COALITION FOR COMMUNITY LEADERSHIP",
+      "award_id": "15PBJA23GK05460SCAX",
+      "recipient": "IMPACT JUSTICE",
       "amount": 4000000,
       "amount_display": "$4.0M",
       "awarding_agency": "Department of Justice",
@@ -1808,8 +1808,8 @@
       "start_date": null,
       "end_date": null,
       "state": "CA",
-      "generated_internal_id": "ASST_NON_15PBJA23GK05461SCAX_015",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PBJA23GK05461SCAX_015"
+      "generated_internal_id": "ASST_NON_15PBJA23GK05460SCAX_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PBJA23GK05460SCAX_015"
     },
     {
       "source": "usaspending",
@@ -2672,7 +2672,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-05-31T09:45:52.832Z",
+  "last_synced_at": "2026-06-01T12:33:27.692Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 4,
   "counts": {
