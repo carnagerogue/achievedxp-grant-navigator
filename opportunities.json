@@ -899,6 +899,21 @@
     {
       "source": "usaspending",
       "aln": "16.575",
+      "award_id": "15POVC23GG00434ASSI",
+      "recipient": "DEPARTMENT OF LEGAL AFFAIRS FLORIDA",
+      "amount": 87867754,
+      "amount_display": "$87.9M",
+      "awarding_agency": "Department of Justice",
+      "awarding_sub_agency": "Office of Justice Programs",
+      "start_date": null,
+      "end_date": null,
+      "state": "FL",
+      "generated_internal_id": "ASST_NON_15POVC23GG00434ASSI_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_15POVC23GG00434ASSI_015"
+    },
+    {
+      "source": "usaspending",
+      "aln": "16.575",
       "award_id": "15POVC24GG00612ASSI",
       "recipient": "OFFICE OF EMERGENCY SERVICES",
       "amount": 87080017,
@@ -970,21 +985,6 @@
       "state": "FL",
       "generated_internal_id": "ASST_NON_25E55EP000080_1601",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_25E55EP000080_1601"
-    },
-    {
-      "source": "usaspending",
-      "aln": "16.575",
-      "award_id": "15POVC23GG00405ASSI",
-      "recipient": "NYS OFFICE OF VICTIM SERVICES",
-      "amount": 77783082,
-      "amount_display": "$77.8M",
-      "awarding_agency": "Department of Justice",
-      "awarding_sub_agency": "Office of Justice Programs",
-      "start_date": null,
-      "end_date": null,
-      "state": "NY",
-      "generated_internal_id": "ASST_NON_15POVC23GG00405ASSI_015",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_15POVC23GG00405ASSI_015"
     },
     {
       "source": "usaspending",
@@ -1228,21 +1228,6 @@
     },
     {
       "source": "usaspending",
-      "aln": "16.726",
-      "award_id": "15PJDP22GG01746MENT",
-      "recipient": "BOYS & GIRLS CLUBS OF AMERICA",
-      "amount": 28000000,
-      "amount_display": "$28.0M",
-      "awarding_agency": "Department of Justice",
-      "awarding_sub_agency": "Office of Justice Programs",
-      "start_date": null,
-      "end_date": null,
-      "state": "GA",
-      "generated_internal_id": "ASST_NON_15PJDP22GG01746MENT_015",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PJDP22GG01746MENT_015"
-    },
-    {
-      "source": "usaspending",
       "aln": "16.812",
       "award_id": "2019RPBXK001",
       "recipient": "IMPACT JUSTICE",
@@ -1270,6 +1255,21 @@
       "state": "GA",
       "generated_internal_id": "ASST_NON_2020JUFX0029_015",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_2020JUFX0029_015"
+    },
+    {
+      "source": "usaspending",
+      "aln": "16.726",
+      "award_id": "15PJDP22GG01746MENT",
+      "recipient": "BOYS & GIRLS CLUBS OF AMERICA",
+      "amount": 26195504,
+      "amount_display": "$26.2M",
+      "awarding_agency": "Department of Justice",
+      "awarding_sub_agency": "Office of Justice Programs",
+      "start_date": null,
+      "end_date": null,
+      "state": "GA",
+      "generated_internal_id": "ASST_NON_15PJDP22GG01746MENT_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PJDP22GG01746MENT_015"
     },
     {
       "source": "usaspending",
@@ -2054,17 +2054,17 @@
     {
       "source": "usaspending",
       "aln": "16.828",
-      "award_id": "15PBJA21GG02700PRJH",
-      "recipient": "ALABAMA BUREAU OF PARDONS AND PAROLE FIRSTNET",
-      "amount": 700000,
-      "amount_display": "$700K",
+      "award_id": "2020HOBX0003",
+      "recipient": "CUYAHOGA COUNTY COMMON PLEAS COURT",
+      "amount": 726426.72,
+      "amount_display": "$726K",
       "awarding_agency": "Department of Justice",
       "awarding_sub_agency": "Office of Justice Programs",
       "start_date": null,
       "end_date": null,
-      "state": "AL",
-      "generated_internal_id": "ASST_NON_15PBJA21GG02700PRJH_015",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PBJA21GG02700PRJH_015"
+      "state": "OH",
+      "generated_internal_id": "ASST_NON_2020HOBX0003_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_2020HOBX0003_015"
     }
   ],
   "foundations": [
@@ -2672,7 +2672,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-06-05T10:43:39.093Z",
+  "last_synced_at": "2026-06-06T09:23:01.522Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 4,
   "counts": {
