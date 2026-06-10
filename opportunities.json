@@ -23,6 +23,27 @@
     },
     {
       "source": "grants_gov",
+      "source_id": "362371",
+      "opp_number": "O-BJA-2025-172613",
+      "title": "BJA FY25 Invited to Apply &ndash; Prison Rape Elimination Act (PREA) Reallocation Funds Program",
+      "agency": "USDOJ-OJP-BJA",
+      "agency_code": "USDOJ-OJP-BJA",
+      "cfda": "16.738",
+      "aln_all": [
+        "16.738"
+      ],
+      "status": "posted",
+      "doc_type": "synopsis",
+      "post_date": "05/12/2026",
+      "close_date": "06/10/2026",
+      "award_ceiling": 420866,
+      "award_floor": 0,
+      "synopsis": "OJP is committed to advancing work that furthers DOJ’s mission to uphold the rule of law, to keep our country safe, and to protect civil rights. OJP provides federal leadership, funding, and other critical resources to directly support law enforcement, combat violent crime, protect American children, provide services to American crime victims, and address public safety challenges, including human trafficking and the opioid crisis. This NOFO will provide assistance to state, local, and tribal correctional agencies and facilities to prevent, detect, and respond to sexual abuse and sexual harassm",
+      "funding_url": "https://bja.ojp.gov",
+      "source_url": "https://www.grants.gov/search-results-detail/362371"
+    },
+    {
+      "source": "grants_gov",
       "source_id": "362610",
       "opp_number": "O-OVC-2026-172627",
       "title": "OVC FY 2026 Victim of Crime Act (VOCA) Victim Assistance Formula Grant",
@@ -2651,11 +2672,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-06-09T10:32:33.054Z",
+  "last_synced_at": "2026-06-10T10:53:41.761Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 3,
+  "count": 4,
   "counts": {
-    "opportunities": 3,
+    "opportunities": 4,
     "awards": 132,
     "foundations": 12,
     "saa_states": 56
