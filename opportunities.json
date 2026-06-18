@@ -23,6 +23,27 @@
     },
     {
       "source": "grants_gov",
+      "source_id": "361564",
+      "opp_number": "SM-26-019",
+      "title": "Safety Through Recovery, Engagement, and Evidence-Based Treatment and Support",
+      "agency": "HHS-SAMHS-SAMHSA",
+      "agency_code": "HHS-SAMHS-SAMHSA",
+      "cfda": "93.243",
+      "aln_all": [
+        "93.243"
+      ],
+      "status": "posted",
+      "doc_type": "synopsis",
+      "post_date": "06/17/2026",
+      "close_date": "07/17/2026",
+      "award_ceiling": 3000000,
+      "award_floor": 0,
+      "synopsis": "<p>The purpose of this program is to support comprehensive, street-based engagement, treatment, and recovery support services for individuals who are homeless and have serious mental illness, serious emotional disturbance, substance use disorders, or co-occurring mental and substance use disorders.</p>",
+      "funding_url": "https://www.samhsa.gov/grants/grant-announcements/sm-26-019",
+      "source_url": "https://www.grants.gov/search-results-detail/361564"
+    },
+    {
+      "source": "grants_gov",
       "source_id": "362325",
       "opp_number": "ETA-TEGL-09-24-CH1",
       "title": "Updated National Dislocated Worker Grant Program Guidance and Application Information",
@@ -2630,11 +2651,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-06-17T11:44:21.492Z",
+  "last_synced_at": "2026-06-18T11:07:00.774Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 2,
+  "count": 3,
   "counts": {
-    "opportunities": 2,
+    "opportunities": 3,
     "awards": 132,
     "foundations": 12,
     "saa_states": 56
