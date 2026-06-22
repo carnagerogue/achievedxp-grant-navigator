@@ -637,21 +637,6 @@
     },
     {
       "source": "usaspending",
-      "aln": "17.259",
-      "award_id": "24A55AY000066",
-      "recipient": "STATE OF CALIFORNIA EMPLOYMENT DEVELOPMENT DEPARTMENT",
-      "amount": 146040343,
-      "amount_display": "$146.0M",
-      "awarding_agency": "Department of Labor",
-      "awarding_sub_agency": "Employment and Training Administration",
-      "start_date": null,
-      "end_date": null,
-      "state": "CA",
-      "generated_internal_id": "ASST_NON_24A55AY000066_1601",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_24A55AY000066_1601"
-    },
-    {
-      "source": "usaspending",
       "aln": "16.575",
       "award_id": "15POVC25GG00285ASSI",
       "recipient": "OFFICE OF EMERGENCY SERVICES",
@@ -754,6 +739,21 @@
       "state": "PA",
       "generated_internal_id": "ASST_NON_AA363422155A42_1601",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_AA363422155A42_1601"
+    },
+    {
+      "source": "usaspending",
+      "aln": "17.259",
+      "award_id": "AA385272255A17",
+      "recipient": "ILLINOIS DEPARTMENT COMMERCE & ECONOMIC OPPORTUNITY",
+      "amount": 124616851.01,
+      "amount_display": "$124.6M",
+      "awarding_agency": "Department of Labor",
+      "awarding_sub_agency": "Employment and Training Administration",
+      "start_date": null,
+      "end_date": null,
+      "state": "IL",
+      "generated_internal_id": "ASST_NON_AA385272255A17_1601",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_AA385272255A17_1601"
     },
     {
       "source": "usaspending",
@@ -2651,7 +2651,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-06-21T10:27:25.648Z",
+  "last_synced_at": "2026-06-22T12:46:47.153Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 3,
   "counts": {
