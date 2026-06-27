@@ -62,6 +62,27 @@
       "synopsis": "If you have difficulty accessing the full announcement electronically, please contact Jenifer McEnery (DOL-ETA-DWG@dol.gov).",
       "funding_url": null,
       "source_url": "https://www.grants.gov/search-results-detail/362325"
+    },
+    {
+      "source": "grants_gov",
+      "source_id": "362987",
+      "opp_number": "ETA-TEGL-15-25",
+      "title": "Rapid Reskill Employment Recovery National Dislocated Worker Grants",
+      "agency": "DOL-ETA",
+      "agency_code": "DOL-ETA",
+      "cfda": "17.277",
+      "aln_all": [
+        "17.277"
+      ],
+      "status": "posted",
+      "doc_type": "synopsis",
+      "post_date": "06/26/2026",
+      "close_date": "08/03/2026",
+      "award_ceiling": 8000000,
+      "award_floor": 2000000,
+      "synopsis": "Please direct inquiries about this funding opportunity to Sabrina Guerrier at DOL-ETA-DWG@dol.gov with Reskill DWG in the subject line.",
+      "funding_url": null,
+      "source_url": "https://www.grants.gov/search-results-detail/362987"
     }
   ],
   "awards": [
@@ -2651,11 +2672,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-06-26T10:21:18.278Z",
+  "last_synced_at": "2026-06-27T09:26:25.741Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 3,
+  "count": 4,
   "counts": {
-    "opportunities": 3,
+    "opportunities": 4,
     "awards": 132,
     "foundations": 12,
     "saa_states": 56
