@@ -1979,6 +1979,21 @@
     {
       "source": "usaspending",
       "aln": "16.828",
+      "award_id": "15PBJA23GG00716PRJH",
+      "recipient": "DEKALB COUNTY GOVERNMENT",
+      "amount": 800000,
+      "amount_display": "$800K",
+      "awarding_agency": "Department of Justice",
+      "awarding_sub_agency": "Office of Justice Programs",
+      "start_date": null,
+      "end_date": null,
+      "state": "IL",
+      "generated_internal_id": "ASST_NON_15PBJA23GG00716PRJH_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PBJA23GG00716PRJH_015"
+    },
+    {
+      "source": "usaspending",
+      "aln": "16.828",
       "award_id": "15PBJA22GK01137PRJH",
       "recipient": "CITY OF LAS VEGAS",
       "amount": 790681,
@@ -2050,21 +2065,6 @@
       "state": "TX",
       "generated_internal_id": "ASST_NON_15PBJA21GG02697PRJH_015",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_15PBJA21GG02697PRJH_015"
-    },
-    {
-      "source": "usaspending",
-      "aln": "16.828",
-      "award_id": "2020HOBX0003",
-      "recipient": "CUYAHOGA COUNTY COMMON PLEAS COURT",
-      "amount": 726426.72,
-      "amount_display": "$726K",
-      "awarding_agency": "Department of Justice",
-      "awarding_sub_agency": "Office of Justice Programs",
-      "start_date": null,
-      "end_date": null,
-      "state": "OH",
-      "generated_internal_id": "ASST_NON_2020HOBX0003_015",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_2020HOBX0003_015"
     }
   ],
   "foundations": [
@@ -2672,7 +2672,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-06-30T10:29:43.873Z",
+  "last_synced_at": "2026-07-01T10:39:18.484Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 4,
   "counts": {
