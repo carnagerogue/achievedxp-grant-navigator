@@ -1183,21 +1183,6 @@
     },
     {
       "source": "usaspending",
-      "aln": "17.277",
-      "award_id": "DW393612360A12",
-      "recipient": "FLORIDA DEPARTMENT OF COMMERCE",
-      "amount": 30000000,
-      "amount_display": "$30.0M",
-      "awarding_agency": "Department of Labor",
-      "awarding_sub_agency": "Employment and Training Administration",
-      "start_date": null,
-      "end_date": null,
-      "state": "FL",
-      "generated_internal_id": "ASST_NON_DW393612360A12_1601",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_DW393612360A12_1601"
-    },
-    {
-      "source": "usaspending",
       "aln": "16.726",
       "award_id": "15PJDP24GG01661MENT",
       "recipient": "BOYS & GIRLS CLUBS OF AMERICA",
@@ -1555,6 +1540,21 @@
       "state": "KY",
       "generated_internal_id": "ASST_NON_23A60DW000008_1601",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_23A60DW000008_1601"
+    },
+    {
+      "source": "usaspending",
+      "aln": "17.277",
+      "award_id": "DW392042260A17",
+      "recipient": "ILLINOIS DEPARTMENT COMMERCE & ECONOMIC OPPORTUNITY",
+      "amount": 11147910,
+      "amount_display": "$11.1M",
+      "awarding_agency": "Department of Labor",
+      "awarding_sub_agency": "Employment and Training Administration",
+      "start_date": null,
+      "end_date": null,
+      "state": "IL",
+      "generated_internal_id": "ASST_NON_DW392042260A17_1601",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_DW392042260A17_1601"
     },
     {
       "source": "usaspending",
@@ -2672,7 +2672,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-07-05T09:39:40.013Z",
+  "last_synced_at": "2026-07-06T11:25:23.470Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 4,
   "counts": {
