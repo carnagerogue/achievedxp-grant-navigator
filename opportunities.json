@@ -2,6 +2,27 @@
   "opportunities": [
     {
       "source": "grants_gov",
+      "source_id": "363071",
+      "opp_number": "O-BJA-2026-172650",
+      "title": "BJA FY 2026 Invited to Apply &ndash; Pennington County, South Dakota Public Safety Support for the 250th Anniversary Celebration at Mount Rushmore",
+      "agency": "USDOJ-OJP-BJA",
+      "agency_code": "USDOJ-OJP-BJA",
+      "cfda": "16.738",
+      "aln_all": [
+        "16.738"
+      ],
+      "status": "posted",
+      "doc_type": "synopsis",
+      "post_date": "07/06/2026",
+      "close_date": "07/07/2026",
+      "award_ceiling": 16000,
+      "award_floor": 0,
+      "synopsis": "This is a notice of funding opportunity (NOFO) for the BJA FY 2026 Invited to Apply – Pennington County, South Dakota Public Safety Support for the 250th Anniversary Celebration at Mount Rushmore. This opportunity seeks to support law enforcement and public safety activities associated with the July 3, 2026, celebration of the 250th anniversary of the United States at Mount Rushmore. Funding will support the execution of security operations by the Pennington County Sheriff’s Office to ensure the safety and security of attendees and the surrounding community.",
+      "funding_url": "https://bja.ojp.gov",
+      "source_url": "https://www.grants.gov/search-results-detail/363071"
+    },
+    {
+      "source": "grants_gov",
       "source_id": "362610",
       "opp_number": "O-OVC-2026-172627",
       "title": "OVC FY 2026 Victim of Crime Act (VOCA) Victim Assistance Formula Grant",
@@ -448,21 +469,6 @@
     },
     {
       "source": "usaspending",
-      "aln": "93.243",
-      "award_id": "H79TI085753",
-      "recipient": "OHIO DEPARTMENT MENTAL HEALTH",
-      "amount": 198120987,
-      "amount_display": "$198.1M",
-      "awarding_agency": "Department of Health and Human Services",
-      "awarding_sub_agency": "Substance Abuse and Mental Health Services Administration",
-      "start_date": null,
-      "end_date": null,
-      "state": "OH",
-      "generated_internal_id": "ASST_NON_H79TI085753_075",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_H79TI085753_075"
-    },
-    {
-      "source": "usaspending",
       "aln": "17.258",
       "award_id": "AA363482155A48",
       "recipient": "TEXAS WORKFORCE COMMISSION",
@@ -475,6 +481,21 @@
       "state": "TX",
       "generated_internal_id": "ASST_NON_AA363482155A48_1601",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_AA363482155A48_1601"
+    },
+    {
+      "source": "usaspending",
+      "aln": "93.243",
+      "award_id": "H79TI085753",
+      "recipient": "OHIO DEPARTMENT MENTAL HEALTH",
+      "amount": 195180330.8,
+      "amount_display": "$195.2M",
+      "awarding_agency": "Department of Health and Human Services",
+      "awarding_sub_agency": "Substance Abuse and Mental Health Services Administration",
+      "start_date": null,
+      "end_date": null,
+      "state": "OH",
+      "generated_internal_id": "ASST_NON_H79TI085753_075",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_H79TI085753_075"
     },
     {
       "source": "usaspending",
@@ -2672,11 +2693,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-07-06T11:25:23.470Z",
+  "last_synced_at": "2026-07-07T10:22:43.761Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 4,
+  "count": 5,
   "counts": {
-    "opportunities": 4,
+    "opportunities": 5,
     "awards": 132,
     "foundations": 12,
     "saa_states": 56
