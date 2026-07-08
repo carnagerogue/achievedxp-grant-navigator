@@ -2,27 +2,6 @@
   "opportunities": [
     {
       "source": "grants_gov",
-      "source_id": "363071",
-      "opp_number": "O-BJA-2026-172650",
-      "title": "BJA FY 2026 Invited to Apply &ndash; Pennington County, South Dakota Public Safety Support for the 250th Anniversary Celebration at Mount Rushmore",
-      "agency": "USDOJ-OJP-BJA",
-      "agency_code": "USDOJ-OJP-BJA",
-      "cfda": "16.738",
-      "aln_all": [
-        "16.738"
-      ],
-      "status": "posted",
-      "doc_type": "synopsis",
-      "post_date": "07/06/2026",
-      "close_date": "07/07/2026",
-      "award_ceiling": 16000,
-      "award_floor": 0,
-      "synopsis": "This is a notice of funding opportunity (NOFO) for the BJA FY 2026 Invited to Apply – Pennington County, South Dakota Public Safety Support for the 250th Anniversary Celebration at Mount Rushmore. This opportunity seeks to support law enforcement and public safety activities associated with the July 3, 2026, celebration of the 250th anniversary of the United States at Mount Rushmore. Funding will support the execution of security operations by the Pennington County Sheriff’s Office to ensure the safety and security of attendees and the surrounding community.",
-      "funding_url": "https://bja.ojp.gov",
-      "source_url": "https://www.grants.gov/search-results-detail/363071"
-    },
-    {
-      "source": "grants_gov",
       "source_id": "362610",
       "opp_number": "O-OVC-2026-172627",
       "title": "OVC FY 2026 Victim of Crime Act (VOCA) Victim Assistance Formula Grant",
@@ -2693,11 +2672,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-07-07T10:22:43.761Z",
+  "last_synced_at": "2026-07-08T09:23:18.321Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 5,
+  "count": 4,
   "counts": {
-    "opportunities": 5,
+    "opportunities": 4,
     "awards": 132,
     "foundations": 12,
     "saa_states": 56
