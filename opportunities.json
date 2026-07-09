@@ -2,27 +2,6 @@
   "opportunities": [
     {
       "source": "grants_gov",
-      "source_id": "362610",
-      "opp_number": "O-OVC-2026-172627",
-      "title": "OVC FY 2026 Victim of Crime Act (VOCA) Victim Assistance Formula Grant",
-      "agency": "USDOJ-OJP-OVC",
-      "agency_code": "USDOJ-OJP-OVC",
-      "cfda": "16.575",
-      "aln_all": [
-        "16.575"
-      ],
-      "status": "posted",
-      "doc_type": "synopsis",
-      "post_date": "05/29/2026",
-      "close_date": "07/08/2026",
-      "award_ceiling": 0,
-      "award_floor": 0,
-      "synopsis": "This is a notice of funding opportunity (NOFO) for the OVC FY 2026 Victims of Crime Act (VOCA) Victim Assistance Formula Grant. This opportunity provides an annual VOCA victim assistance grant to all states and most territories to provide subgrants to local organizations and public agencies that provide services directly to crime victims. Examples of services provided include crisis counseling, telephone and onsite information and referrals, criminal justice support and advocacy, shelter, therapy, and additional assistance.",
-      "funding_url": "https://ovc.ojp.gov/funding/current-funding-opportunities",
-      "source_url": "https://www.grants.gov/search-results-detail/362610"
-    },
-    {
-      "source": "grants_gov",
       "source_id": "361564",
       "opp_number": "SM-26-019",
       "title": "Safety Through Recovery, Engagement, and Evidence-Based Treatment and Support",
@@ -2672,11 +2651,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-07-08T09:23:18.321Z",
+  "last_synced_at": "2026-07-09T10:21:41.990Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 4,
+  "count": 3,
   "counts": {
-    "opportunities": 4,
+    "opportunities": 3,
     "awards": 132,
     "foundations": 12,
     "saa_states": 56
