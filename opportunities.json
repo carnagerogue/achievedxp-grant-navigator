@@ -832,6 +832,21 @@
     },
     {
       "source": "usaspending",
+      "aln": "84.002",
+      "award_id": "V002A220005",
+      "recipient": "DEPARTMENT OF EDUCATION CALIFORNIA",
+      "amount": 110916830.2,
+      "amount_display": "$110.9M",
+      "awarding_agency": "Department of Education",
+      "awarding_sub_agency": "Department of Education",
+      "start_date": null,
+      "end_date": null,
+      "state": "CA",
+      "generated_internal_id": "ASST_NON_V002A220005_091",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_V002A220005_091"
+    },
+    {
+      "source": "usaspending",
       "aln": "84.048",
       "award_id": "V048A180043",
       "recipient": "TX EDUCATION AGENCY",
@@ -1103,6 +1118,21 @@
     {
       "source": "usaspending",
       "aln": "84.002",
+      "award_id": "V002A220033",
+      "recipient": "NEW YORK STATE EDUCATION DEPARTMENT",
+      "amount": 48935052.68,
+      "amount_display": "$48.9M",
+      "awarding_agency": "Department of Education",
+      "awarding_sub_agency": "Department of Education",
+      "start_date": null,
+      "end_date": null,
+      "state": "NY",
+      "generated_internal_id": "ASST_NON_V002A220033_091",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_V002A220033_091"
+    },
+    {
+      "source": "usaspending",
+      "aln": "84.002",
       "award_id": "V002A210033",
       "recipient": "NEW YORK STATE EDUCATION DEPARTMENT",
       "amount": 47996784.83,
@@ -1279,36 +1309,6 @@
       "state": "KY",
       "generated_internal_id": "ASST_NON_DW379582260A21_1601",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_DW379582260A21_1601"
-    },
-    {
-      "source": "usaspending",
-      "aln": "84.002",
-      "award_id": "25E55EE000044",
-      "recipient": "IL COMMUNITY COLLEGE BOARD",
-      "amount": 24270149.16,
-      "amount_display": "$24.3M",
-      "awarding_agency": "Department of Labor",
-      "awarding_sub_agency": "Employment and Training Administration",
-      "start_date": null,
-      "end_date": null,
-      "state": "IL",
-      "generated_internal_id": "ASST_NON_25E55EE000044_1601",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_25E55EE000044_1601"
-    },
-    {
-      "source": "usaspending",
-      "aln": "84.002",
-      "award_id": "25E55EE000041",
-      "recipient": "TECHNICAL COLLEGE SYSTEM OF GEORGIA",
-      "amount": 23143436,
-      "amount_display": "$23.1M",
-      "awarding_agency": "Department of Labor",
-      "awarding_sub_agency": "Employment and Training Administration",
-      "start_date": null,
-      "end_date": null,
-      "state": "GA",
-      "generated_internal_id": "ASST_NON_25E55EE000041_1601",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_25E55EE000041_1601"
     },
     {
       "source": "usaspending",
@@ -2651,7 +2651,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-07-10T10:20:26.318Z",
+  "last_synced_at": "2026-07-11T08:44:08.536Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 3,
   "counts": {
