@@ -787,21 +787,6 @@
     },
     {
       "source": "usaspending",
-      "aln": "84.048",
-      "award_id": "V048A200005",
-      "recipient": "DEPARTMENT OF EDUCATION CALIFORNIA",
-      "amount": 115760374.68,
-      "amount_display": "$115.8M",
-      "awarding_agency": "Department of Education",
-      "awarding_sub_agency": "Department of Education",
-      "start_date": null,
-      "end_date": null,
-      "state": "CA",
-      "generated_internal_id": "ASST_NON_V048A200005_091",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_V048A200005_091"
-    },
-    {
-      "source": "usaspending",
       "aln": "16.575",
       "award_id": "15POVC25GG00366ASSI",
       "recipient": "GOVERNOR, TEXAS OFFICE OF THE",
@@ -817,21 +802,6 @@
     },
     {
       "source": "usaspending",
-      "aln": "84.048",
-      "award_id": "V048A200043",
-      "recipient": "TX EDUCATION AGENCY",
-      "amount": 111620962.9,
-      "amount_display": "$111.6M",
-      "awarding_agency": "Department of Education",
-      "awarding_sub_agency": "Department of Education",
-      "start_date": null,
-      "end_date": null,
-      "state": "TX",
-      "generated_internal_id": "ASST_NON_V048A200043_091",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_V048A200043_091"
-    },
-    {
-      "source": "usaspending",
       "aln": "84.002",
       "award_id": "V002A220005",
       "recipient": "DEPARTMENT OF EDUCATION CALIFORNIA",
@@ -844,21 +814,6 @@
       "state": "CA",
       "generated_internal_id": "ASST_NON_V002A220005_091",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_V002A220005_091"
-    },
-    {
-      "source": "usaspending",
-      "aln": "84.048",
-      "award_id": "V048A180043",
-      "recipient": "TX EDUCATION AGENCY",
-      "amount": 104598100.64,
-      "amount_display": "$104.6M",
-      "awarding_agency": "Department of Education",
-      "awarding_sub_agency": "Department of Education",
-      "start_date": null,
-      "end_date": null,
-      "state": "TX",
-      "generated_internal_id": "ASST_NON_V048A180043_091",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_V048A180043_091"
     },
     {
       "source": "usaspending",
@@ -1102,6 +1057,36 @@
     },
     {
       "source": "usaspending",
+      "aln": "84.048",
+      "award_id": "25E55EP000066",
+      "recipient": "DEPARTMENT OF EDUCATION CALIFORNIA",
+      "amount": 55716509.28,
+      "amount_display": "$55.7M",
+      "awarding_agency": "Department of Labor",
+      "awarding_sub_agency": "Employment and Training Administration",
+      "start_date": null,
+      "end_date": null,
+      "state": "CA",
+      "generated_internal_id": "ASST_NON_25E55EP000066_1601",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_25E55EP000066_1601"
+    },
+    {
+      "source": "usaspending",
+      "aln": "84.048",
+      "award_id": "25E55EP000017",
+      "recipient": "OHIO DEPARTMENT OF EDUCATION",
+      "amount": 52700165.76,
+      "amount_display": "$52.7M",
+      "awarding_agency": "Department of Labor",
+      "awarding_sub_agency": "Employment and Training Administration",
+      "start_date": null,
+      "end_date": null,
+      "state": "OH",
+      "generated_internal_id": "ASST_NON_25E55EP000017_1601",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_25E55EP000017_1601"
+    },
+    {
+      "source": "usaspending",
       "aln": "84.002",
       "award_id": "25E55EE000040",
       "recipient": "FLORIDA DEPARTMENT OF EDUCATION",
@@ -1114,6 +1099,21 @@
       "state": "FL",
       "generated_internal_id": "ASST_NON_25E55EE000040_1601",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_25E55EE000040_1601"
+    },
+    {
+      "source": "usaspending",
+      "aln": "84.048",
+      "award_id": "25E55EP000082",
+      "recipient": "GEORGIA DEPT OF EDUCATION",
+      "amount": 51393334.37,
+      "amount_display": "$51.4M",
+      "awarding_agency": "Department of Labor",
+      "awarding_sub_agency": "Employment and Training Administration",
+      "start_date": null,
+      "end_date": null,
+      "state": "GA",
+      "generated_internal_id": "ASST_NON_25E55EP000082_1601",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_25E55EP000082_1601"
     },
     {
       "source": "usaspending",
@@ -2651,7 +2651,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-07-12T08:59:47.889Z",
+  "last_synced_at": "2026-07-13T10:21:39.534Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 3,
   "counts": {
