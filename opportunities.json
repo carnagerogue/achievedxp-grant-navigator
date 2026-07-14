@@ -1493,21 +1493,6 @@
     {
       "source": "usaspending",
       "aln": "17.277",
-      "award_id": "23A60DW000009",
-      "recipient": "STATE OF HAWAII DEPARTMENT OF LABOR AND INDUSTRIAL RELATIONS",
-      "amount": 13031320,
-      "amount_display": "$13.0M",
-      "awarding_agency": "Department of Labor",
-      "awarding_sub_agency": "Employment and Training Administration",
-      "start_date": null,
-      "end_date": null,
-      "state": "HI",
-      "generated_internal_id": "ASST_NON_23A60DW000009_1601",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_23A60DW000009_1601"
-    },
-    {
-      "source": "usaspending",
-      "aln": "17.277",
       "award_id": "23A60DW000008",
       "recipient": "DEPARTMENT OF WORKFORCE DEVELOPMENT",
       "amount": 11666667,
@@ -1579,6 +1564,21 @@
       "state": "FL",
       "generated_internal_id": "ASST_NON_15PJDP22GG01749MENT_015",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_15PJDP22GG01749MENT_015"
+    },
+    {
+      "source": "usaspending",
+      "aln": "17.277",
+      "award_id": "DW392112260A15",
+      "recipient": "STATE OF HAWAII DEPARTMENT OF LABOR AND INDUSTRIAL RELATIONS",
+      "amount": 10595171,
+      "amount_display": "$10.6M",
+      "awarding_agency": "Department of Labor",
+      "awarding_sub_agency": "Employment and Training Administration",
+      "start_date": null,
+      "end_date": null,
+      "state": "HI",
+      "generated_internal_id": "ASST_NON_DW392112260A15_1601",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_DW392112260A15_1601"
     },
     {
       "source": "usaspending",
@@ -2651,7 +2651,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-07-13T10:21:39.534Z",
+  "last_synced_at": "2026-07-14T09:01:38.415Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 3,
   "counts": {
