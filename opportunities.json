@@ -181,6 +181,51 @@
     },
     {
       "source": "usaspending",
+      "aln": "93.243",
+      "award_id": "H79TI087926",
+      "recipient": "HEALTH CARE SERVICES, CALIFORNIA DEPARTMENT OF",
+      "amount": 322294432,
+      "amount_display": "$322.3M",
+      "awarding_agency": "Department of Health and Human Services",
+      "awarding_sub_agency": "Substance Abuse and Mental Health Services Administration",
+      "start_date": null,
+      "end_date": null,
+      "state": "CA",
+      "generated_internal_id": "ASST_NON_H79TI087926_075",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_H79TI087926_075"
+    },
+    {
+      "source": "usaspending",
+      "aln": "93.243",
+      "award_id": "H79TI087842",
+      "recipient": "FLORIDA DEPARTMENT OF CHILDREN AND FAMILIES",
+      "amount": 317698497,
+      "amount_display": "$317.7M",
+      "awarding_agency": "Department of Health and Human Services",
+      "awarding_sub_agency": "Substance Abuse and Mental Health Services Administration",
+      "start_date": null,
+      "end_date": null,
+      "state": "FL",
+      "generated_internal_id": "ASST_NON_H79TI087842_075",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_H79TI087842_075"
+    },
+    {
+      "source": "usaspending",
+      "aln": "93.243",
+      "award_id": "H79TI087745",
+      "recipient": "OHIO DEPARTMENT MENTAL HEALTH",
+      "amount": 305197226,
+      "amount_display": "$305.2M",
+      "awarding_agency": "Department of Health and Human Services",
+      "awarding_sub_agency": "Substance Abuse and Mental Health Services Administration",
+      "start_date": null,
+      "end_date": null,
+      "state": "OH",
+      "generated_internal_id": "ASST_NON_H79TI087745_075",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_H79TI087745_075"
+    },
+    {
+      "source": "usaspending",
       "aln": "93.959",
       "award_id": "B08TI088093",
       "recipient": "HEALTH CARE SERVICES, CALIFORNIA DEPARTMENT OF",
@@ -212,6 +257,21 @@
     {
       "source": "usaspending",
       "aln": "93.959",
+      "award_id": "B08TI088457",
+      "recipient": "HEALTH CARE SERVICES, CALIFORNIA DEPARTMENT OF",
+      "amount": 260703434,
+      "amount_display": "$260.7M",
+      "awarding_agency": "Department of Health and Human Services",
+      "awarding_sub_agency": "Substance Abuse and Mental Health Services Administration",
+      "start_date": null,
+      "end_date": null,
+      "state": "CA",
+      "generated_internal_id": "ASST_NON_B08TI088457_075",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_B08TI088457_075"
+    },
+    {
+      "source": "usaspending",
+      "aln": "93.959",
       "award_id": "B08TI087026",
       "recipient": "HEALTH CARE SERVICES, CALIFORNIA DEPARTMENT OF",
       "amount": 260578442,
@@ -238,6 +298,21 @@
       "state": "CA",
       "generated_internal_id": "ASST_NON_B08TI084632_075",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_B08TI084632_075"
+    },
+    {
+      "source": "usaspending",
+      "aln": "93.243",
+      "award_id": "H79TI087839",
+      "recipient": "PENNSYLVANIA DEPARTMENT OF DRUG AND ALCOHOL PROGRAMS",
+      "amount": 253166031,
+      "amount_display": "$253.2M",
+      "awarding_agency": "Department of Health and Human Services",
+      "awarding_sub_agency": "Substance Abuse and Mental Health Services Administration",
+      "start_date": null,
+      "end_date": null,
+      "state": "PA",
+      "generated_internal_id": "ASST_NON_H79TI087839_075",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_H79TI087839_075"
     },
     {
       "source": "usaspending",
@@ -316,36 +391,6 @@
     },
     {
       "source": "usaspending",
-      "aln": "93.243",
-      "award_id": "H79TI087926",
-      "recipient": "HEALTH CARE SERVICES, CALIFORNIA DEPARTMENT OF",
-      "amount": 215454880,
-      "amount_display": "$215.5M",
-      "awarding_agency": "Department of Health and Human Services",
-      "awarding_sub_agency": "Substance Abuse and Mental Health Services Administration",
-      "start_date": null,
-      "end_date": null,
-      "state": "CA",
-      "generated_internal_id": "ASST_NON_H79TI087926_075",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_H79TI087926_075"
-    },
-    {
-      "source": "usaspending",
-      "aln": "93.243",
-      "award_id": "H79TI087842",
-      "recipient": "FLORIDA DEPARTMENT OF CHILDREN AND FAMILIES",
-      "amount": 212309444,
-      "amount_display": "$212.3M",
-      "awarding_agency": "Department of Health and Human Services",
-      "awarding_sub_agency": "Substance Abuse and Mental Health Services Administration",
-      "start_date": null,
-      "end_date": null,
-      "state": "FL",
-      "generated_internal_id": "ASST_NON_H79TI087842_075",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_H79TI087842_075"
-    },
-    {
-      "source": "usaspending",
       "aln": "84.126",
       "award_id": "H126A250086",
       "recipient": "FLORIDA DEPARTMENT OF EDUCATION",
@@ -358,6 +403,21 @@
       "state": "FL",
       "generated_internal_id": "ASST_NON_H126A250086_091",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_H126A250086_091"
+    },
+    {
+      "source": "usaspending",
+      "aln": "93.243",
+      "award_id": "H79TI087774",
+      "recipient": "HUMAN SERVICES, NEW JERSEY DEPARTMENT OF",
+      "amount": 209457258,
+      "amount_display": "$209.5M",
+      "awarding_agency": "Department of Health and Human Services",
+      "awarding_sub_agency": "Substance Abuse and Mental Health Services Administration",
+      "start_date": null,
+      "end_date": null,
+      "state": "NJ",
+      "generated_internal_id": "ASST_NON_H79TI087774_075",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_H79TI087774_075"
     },
     {
       "source": "usaspending",
@@ -388,21 +448,6 @@
       "state": "CA",
       "generated_internal_id": "ASST_NON_H79TI083285_075",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_H79TI083285_075"
-    },
-    {
-      "source": "usaspending",
-      "aln": "93.243",
-      "award_id": "H79TI087745",
-      "recipient": "OHIO DEPARTMENT MENTAL HEALTH",
-      "amount": 203933932,
-      "amount_display": "$203.9M",
-      "awarding_agency": "Department of Health and Human Services",
-      "awarding_sub_agency": "Substance Abuse and Mental Health Services Administration",
-      "start_date": null,
-      "end_date": null,
-      "state": "OH",
-      "generated_internal_id": "ASST_NON_H79TI087745_075",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_H79TI087745_075"
     },
     {
       "source": "usaspending",
@@ -451,21 +496,6 @@
     },
     {
       "source": "usaspending",
-      "aln": "93.243",
-      "award_id": "H79TI085766",
-      "recipient": "FLORIDA DEPARTMENT OF CHILDREN AND FAMILIES",
-      "amount": 189637573.13,
-      "amount_display": "$189.6M",
-      "awarding_agency": "Department of Health and Human Services",
-      "awarding_sub_agency": "Substance Abuse and Mental Health Services Administration",
-      "start_date": null,
-      "end_date": null,
-      "state": "FL",
-      "generated_internal_id": "ASST_NON_H79TI085766_075",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_H79TI085766_075"
-    },
-    {
-      "source": "usaspending",
       "aln": "84.126",
       "award_id": "H126A240086",
       "recipient": "FLORIDA DEPARTMENT OF EDUCATION",
@@ -493,21 +523,6 @@
       "state": "NY",
       "generated_internal_id": "ASST_NON_AA363362155A36_1601",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_AA363362155A36_1601"
-    },
-    {
-      "source": "usaspending",
-      "aln": "93.243",
-      "award_id": "H79TI081686",
-      "recipient": "HEALTH CARE SERVICES, CALIFORNIA DEPARTMENT OF",
-      "amount": 175885269.7,
-      "amount_display": "$175.9M",
-      "awarding_agency": "Department of Health and Human Services",
-      "awarding_sub_agency": "Substance Abuse and Mental Health Services Administration",
-      "start_date": null,
-      "end_date": null,
-      "state": "CA",
-      "generated_internal_id": "ASST_NON_H79TI081686_075",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_H79TI081686_075"
     },
     {
       "source": "usaspending",
@@ -568,21 +583,6 @@
       "state": "CA",
       "generated_internal_id": "ASST_NON_25A55AT000150_1601",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_25A55AT000150_1601"
-    },
-    {
-      "source": "usaspending",
-      "aln": "93.959",
-      "award_id": "B08TI087067",
-      "recipient": "HEALTH & HUMAN SVC COMMN TX",
-      "amount": 163029912.55,
-      "amount_display": "$163.0M",
-      "awarding_agency": "Department of Health and Human Services",
-      "awarding_sub_agency": "Substance Abuse and Mental Health Services Administration",
-      "start_date": null,
-      "end_date": null,
-      "state": "TX",
-      "generated_internal_id": "ASST_NON_B08TI087067_075",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_B08TI087067_075"
     },
     {
       "source": "usaspending",
@@ -2630,7 +2630,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-07-20T09:56:16.329Z",
+  "last_synced_at": "2026-07-21T09:24:40.356Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 2,
   "counts": {
