@@ -1292,6 +1292,21 @@
     {
       "source": "usaspending",
       "aln": "16.738",
+      "award_id": "15PBJA23GG02967JAGX",
+      "recipient": "CALIFORNIA BOARD OF STATE AND COMMUNITY CORRECTIONS",
+      "amount": 21274503,
+      "amount_display": "$21.3M",
+      "awarding_agency": "Department of Justice",
+      "awarding_sub_agency": "Office of Justice Programs",
+      "start_date": null,
+      "end_date": null,
+      "state": "CA",
+      "generated_internal_id": "ASST_NON_15PBJA23GG02967JAGX_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PBJA23GG02967JAGX_015"
+    },
+    {
+      "source": "usaspending",
+      "aln": "16.738",
       "award_id": "15PBJA23GG00035BSCI",
       "recipient": "GOVERNOR, TEXAS OFFICE OF THE",
       "amount": 21246509,
@@ -1438,21 +1453,6 @@
       "state": "AZ",
       "generated_internal_id": "ASST_NON_DW392152260A4_1601",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_DW392152260A4_1601"
-    },
-    {
-      "source": "usaspending",
-      "aln": "16.738",
-      "award_id": "15PBJA22GG00618JAGX",
-      "recipient": "GOVERNOR, TEXAS OFFICE OF THE",
-      "amount": 14989265,
-      "amount_display": "$15.0M",
-      "awarding_agency": "Department of Justice",
-      "awarding_sub_agency": "Office of Justice Programs",
-      "start_date": null,
-      "end_date": null,
-      "state": "TX",
-      "generated_internal_id": "ASST_NON_15PBJA22GG00618JAGX_015",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PBJA22GG00618JAGX_015"
     },
     {
       "source": "usaspending",
@@ -2630,7 +2630,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-07-23T09:22:09.545Z",
+  "last_synced_at": "2026-07-24T09:17:49.832Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 2,
   "counts": {
