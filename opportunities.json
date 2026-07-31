@@ -2,27 +2,6 @@
   "opportunities": [
     {
       "source": "grants_gov",
-      "source_id": "363344",
-      "opp_number": "O-OJJDP-2025-172666",
-      "title": "OJJDP FY25 Invited to Apply - Title II Formula Grants Program",
-      "agency": "USDOJ-OJP-OJJDP",
-      "agency_code": "USDOJ-OJP-OJJDP",
-      "cfda": "16.540",
-      "aln_all": [
-        "16.540"
-      ],
-      "status": "posted",
-      "doc_type": "synopsis",
-      "post_date": "07/28/2026",
-      "close_date": "07/30/2026",
-      "award_ceiling": 128645,
-      "award_floor": 0,
-      "synopsis": "This opportunity seeks to assist states in planning, establishing, operating, coordinating, and evaluating projects directly or through grants and contracts with public and private agencies. Funding will assist in the development of more effective education, training, research, prevention, diversion, treatment, and rehabilitation programs to improve their juvenile justice system.",
-      "funding_url": "See Invitation Letter",
-      "source_url": "https://www.grants.gov/search-results-detail/363344"
-    },
-    {
-      "source": "grants_gov",
       "source_id": "362325",
       "opp_number": "ETA-TEGL-09-24-CH1",
       "title": "Updated National Dislocated Worker Grant Program Guidance and Application Information",
@@ -2651,11 +2630,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-07-30T09:27:24.819Z",
+  "last_synced_at": "2026-07-31T09:40:06.227Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 3,
+  "count": 2,
   "counts": {
-    "opportunities": 3,
+    "opportunities": 2,
     "awards": 132,
     "foundations": 12,
     "saa_states": 56
