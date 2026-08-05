@@ -1706,6 +1706,21 @@
     {
       "source": "usaspending",
       "aln": "16.540",
+      "award_id": "15PJDP25GG02482MUMU",
+      "recipient": "HEALTH & HUMAN SERVICES AGENCY CALIFORNIA",
+      "amount": 4204755,
+      "amount_display": "$4.2M",
+      "awarding_agency": "Department of Justice",
+      "awarding_sub_agency": "Office of Justice Programs",
+      "start_date": null,
+      "end_date": null,
+      "state": "CA",
+      "generated_internal_id": "ASST_NON_15PJDP25GG02482MUMU_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PJDP25GG02482MUMU_015"
+    },
+    {
+      "source": "usaspending",
+      "aln": "16.540",
       "award_id": "15PJDP24GG05475TITL",
       "recipient": "HEALTH & HUMAN SERVICES AGENCY CALIFORNIA",
       "amount": 4099327,
@@ -1811,32 +1826,17 @@
     {
       "source": "usaspending",
       "aln": "16.540",
-      "award_id": "15PJDP24GG05478MUMU",
+      "award_id": "15PJDP25GG02493MUMU",
       "recipient": "FLORIDA DEPARTMENT OF JUVENILE JUSTICE",
-      "amount": 2212363,
-      "amount_display": "$2.2M",
+      "amount": 2308518,
+      "amount_display": "$2.3M",
       "awarding_agency": "Department of Justice",
       "awarding_sub_agency": "Office of Justice Programs",
       "start_date": null,
       "end_date": null,
       "state": "FL",
-      "generated_internal_id": "ASST_NON_15PJDP24GG05478MUMU_015",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PJDP24GG05478MUMU_015"
-    },
-    {
-      "source": "usaspending",
-      "aln": "16.540",
-      "award_id": "15PJDP21GG04733TITL",
-      "recipient": "NEW YORK STATE DIVISION OF CRIMINAL JUSTICE SERVICES",
-      "amount": 2098225,
-      "amount_display": "$2.1M",
-      "awarding_agency": "Department of Justice",
-      "awarding_sub_agency": "Office of Justice Programs",
-      "start_date": null,
-      "end_date": null,
-      "state": "NY",
-      "generated_internal_id": "ASST_NON_15PJDP21GG04733TITL_015",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PJDP21GG04733TITL_015"
+      "generated_internal_id": "ASST_NON_15PJDP25GG02493MUMU_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PJDP25GG02493MUMU_015"
     },
     {
       "source": "usaspending",
@@ -2609,7 +2609,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-08-04T09:36:33.967Z",
+  "last_synced_at": "2026-08-05T09:33:39.491Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 1,
   "counts": {
