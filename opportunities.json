@@ -700,21 +700,6 @@
     },
     {
       "source": "usaspending",
-      "aln": "16.575",
-      "award_id": "15POVC22GG00807ASSI",
-      "recipient": "GOVERNOR, TEXAS OFFICE OF THE",
-      "amount": 124379369,
-      "amount_display": "$124.4M",
-      "awarding_agency": "Department of Justice",
-      "awarding_sub_agency": "Office of Justice Programs",
-      "start_date": null,
-      "end_date": null,
-      "state": "TX",
-      "generated_internal_id": "ASST_NON_15POVC22GG00807ASSI_015",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_15POVC22GG00807ASSI_015"
-    },
-    {
-      "source": "usaspending",
       "aln": "17.259",
       "award_id": "AA363432155A72",
       "recipient": "DEPARTAMENTO DE DESARROLLO ECONOMICO Y COMERCIO",
@@ -892,6 +877,21 @@
       "state": "FL",
       "generated_internal_id": "ASST_NON_25E55EP000080_1601",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_25E55EP000080_1601"
+    },
+    {
+      "source": "usaspending",
+      "aln": "16.575",
+      "award_id": "15POVC23GG00405ASSI",
+      "recipient": "NYS OFFICE OF VICTIM SERVICES",
+      "amount": 77783082,
+      "amount_display": "$77.8M",
+      "awarding_agency": "Department of Justice",
+      "awarding_sub_agency": "Office of Justice Programs",
+      "start_date": null,
+      "end_date": null,
+      "state": "NY",
+      "generated_internal_id": "ASST_NON_15POVC23GG00405ASSI_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_15POVC23GG00405ASSI_015"
     },
     {
       "source": "usaspending",
@@ -2609,7 +2609,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-08-06T09:36:46.866Z",
+  "last_synced_at": "2026-08-07T08:10:21.139Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 1,
   "counts": {
