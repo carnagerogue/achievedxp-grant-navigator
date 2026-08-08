@@ -1510,21 +1510,6 @@
     },
     {
       "source": "usaspending",
-      "aln": "16.726",
-      "award_id": "15PJDP22GG01749MENT",
-      "recipient": "BIG BROTHERS BIG SISTERS OF AMERICA CORPORATION",
-      "amount": 10999927.53,
-      "amount_display": "$11.0M",
-      "awarding_agency": "Department of Justice",
-      "awarding_sub_agency": "Office of Justice Programs",
-      "start_date": null,
-      "end_date": null,
-      "state": "FL",
-      "generated_internal_id": "ASST_NON_15PJDP22GG01749MENT_015",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PJDP22GG01749MENT_015"
-    },
-    {
-      "source": "usaspending",
       "aln": "17.277",
       "award_id": "DW392112260A15",
       "recipient": "STATE OF HAWAII DEPARTMENT OF LABOR AND INDUSTRIAL RELATIONS",
@@ -1780,6 +1765,21 @@
     },
     {
       "source": "usaspending",
+      "aln": "16.726",
+      "award_id": "2019MUFX0004",
+      "recipient": "NATIONAL CASA ASSOCIATION",
+      "amount": 3597140.37,
+      "amount_display": "$3.6M",
+      "awarding_agency": "Department of Justice",
+      "awarding_sub_agency": "Office of Justice Programs",
+      "start_date": null,
+      "end_date": null,
+      "state": "WA",
+      "generated_internal_id": "ASST_NON_2019MUFX0004_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_2019MUFX0004_015"
+    },
+    {
+      "source": "usaspending",
       "aln": "16.540",
       "award_id": "2020MUMUK001",
       "recipient": "COUNCIL OF JUVENILE JUSTICE ADMINISTRATORS INC.",
@@ -1852,21 +1852,6 @@
       "state": "NY",
       "generated_internal_id": "ASST_NON_15PBJA21GK02618PRJH_015",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_15PBJA21GK02618PRJH_015"
-    },
-    {
-      "source": "usaspending",
-      "aln": "16.203",
-      "award_id": "2017AWBXK002",
-      "recipient": "THE URBAN INSTITUTE",
-      "amount": 959623.59,
-      "amount_display": "$960K",
-      "awarding_agency": "Department of Justice",
-      "awarding_sub_agency": "Office of Justice Programs",
-      "start_date": null,
-      "end_date": null,
-      "state": "DC",
-      "generated_internal_id": "ASST_NON_2017AWBXK002_015",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_2017AWBXK002_015"
     },
     {
       "source": "usaspending",
@@ -2609,12 +2594,12 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-08-07T08:10:21.139Z",
+  "last_synced_at": "2026-08-08T07:44:38.814Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 1,
   "counts": {
     "opportunities": 1,
-    "awards": 132,
+    "awards": 131,
     "foundations": 12,
     "saa_states": 56
   }
