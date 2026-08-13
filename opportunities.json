@@ -1376,21 +1376,6 @@
     {
       "source": "usaspending",
       "aln": "17.277",
-      "award_id": "DW392182260A55",
-      "recipient": "WORKFORCE DEVELOPMENT, WISCONSIN DEPARTMENT OF",
-      "amount": 15000000,
-      "amount_display": "$15.0M",
-      "awarding_agency": "Department of Labor",
-      "awarding_sub_agency": "Employment and Training Administration",
-      "start_date": null,
-      "end_date": null,
-      "state": "WI",
-      "generated_internal_id": "ASST_NON_DW392182260A55_1601",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_DW392182260A55_1601"
-    },
-    {
-      "source": "usaspending",
-      "aln": "17.277",
       "award_id": "DW392032260A53",
       "recipient": "STATE OF WASHINGTON EMPLOYMENT SECURITY DEPARTMENT",
       "amount": 15000000,
@@ -1402,21 +1387,6 @@
       "state": "WA",
       "generated_internal_id": "ASST_NON_DW392032260A53_1601",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_DW392032260A53_1601"
-    },
-    {
-      "source": "usaspending",
-      "aln": "17.277",
-      "award_id": "DW392012260A44",
-      "recipient": "LABOR & TRAINING RHODE ISLAND DEPARTMENT",
-      "amount": 15000000,
-      "amount_display": "$15.0M",
-      "awarding_agency": "Department of Labor",
-      "awarding_sub_agency": "Employment and Training Administration",
-      "start_date": null,
-      "end_date": null,
-      "state": "RI",
-      "generated_internal_id": "ASST_NON_DW392012260A44_1601",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_DW392012260A44_1601"
     },
     {
       "source": "usaspending",
@@ -1522,6 +1492,36 @@
       "state": "NC",
       "generated_internal_id": "ASST_NON_25A60DW000038_1601",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_25A60DW000038_1601"
+    },
+    {
+      "source": "usaspending",
+      "aln": "17.277",
+      "award_id": "DW392202260A18",
+      "recipient": "WORKFORCE DEVELOPMENT, INDIANA DEPARTMENT OF",
+      "amount": 9821366.28,
+      "amount_display": "$9.8M",
+      "awarding_agency": "Department of Labor",
+      "awarding_sub_agency": "Employment and Training Administration",
+      "start_date": null,
+      "end_date": null,
+      "state": "IN",
+      "generated_internal_id": "ASST_NON_DW392202260A18_1601",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_DW392202260A18_1601"
+    },
+    {
+      "source": "usaspending",
+      "aln": "17.277",
+      "award_id": "DW392062260A39",
+      "recipient": "OHIO DEPARTMENT OF JOB & FAMILY SERVICES",
+      "amount": 9000000,
+      "amount_display": "$9.0M",
+      "awarding_agency": "Department of Labor",
+      "awarding_sub_agency": "Employment and Training Administration",
+      "start_date": null,
+      "end_date": null,
+      "state": "OH",
+      "generated_internal_id": "ASST_NON_DW392062260A39_1601",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_DW392062260A39_1601"
     },
     {
       "source": "usaspending",
@@ -2594,7 +2594,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-08-12T08:13:18.457Z",
+  "last_synced_at": "2026-08-13T08:16:53.045Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 1,
   "counts": {
