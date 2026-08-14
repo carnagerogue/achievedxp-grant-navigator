@@ -2,6 +2,27 @@
   "opportunities": [
     {
       "source": "grants_gov",
+      "source_id": "363588",
+      "opp_number": "O-BJA-2026-172673",
+      "title": "BJA FY 2026 Smart Reentry Demonstration Program",
+      "agency": "USDOJ-OJP-BJA",
+      "agency_code": "USDOJ-OJP-BJA",
+      "cfda": "16.812",
+      "aln_all": [
+        "16.812"
+      ],
+      "status": "posted",
+      "doc_type": "synopsis",
+      "post_date": "08/13/2026",
+      "close_date": "09/24/2026",
+      "award_ceiling": 1100000,
+      "award_floor": 0,
+      "synopsis": "This is a notice of funding opportunity (NOFO) for the BJA FY 2026 Smart Reentry Demonstration Program. This opportunity supports state, local, and tribal governments to implement comprehensive and collaborative reentry strategies to increase the likelihood of successful reentry for people returning to communities from adult correctional facilities, and to establish or expand a program or service (“intervention”) to reduce recidivism. Interventions may address a variety of needs related to reentry as outlined in section 101, subsection (b) of the Second Chance Act (34 USC §10631 – Adult and ju",
+      "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2026-172673",
+      "source_url": "https://www.grants.gov/search-results-detail/363588"
+    },
+    {
+      "source": "grants_gov",
       "source_id": "362325",
       "opp_number": "ETA-TEGL-09-24-CH1",
       "title": "Updated National Dislocated Worker Grant Program Guidance and Application Information",
@@ -2594,11 +2615,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-08-13T08:16:53.045Z",
+  "last_synced_at": "2026-08-14T08:11:55.651Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 1,
+  "count": 2,
   "counts": {
-    "opportunities": 1,
+    "opportunities": 2,
     "awards": 131,
     "foundations": 12,
     "saa_states": 56
