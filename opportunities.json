@@ -23,6 +23,27 @@
     },
     {
       "source": "grants_gov",
+      "source_id": "363602",
+      "opp_number": "O-BJA-2026-172676",
+      "title": "BJA FY 2026 Public Safety and Mental Health Initiative",
+      "agency": "USDOJ-OJP-BJA",
+      "agency_code": "USDOJ-OJP-BJA",
+      "cfda": "16.812",
+      "aln_all": [
+        "16.812"
+      ],
+      "status": "posted",
+      "doc_type": "synopsis",
+      "post_date": "08/14/2026",
+      "close_date": "09/25/2026",
+      "award_ceiling": 3000000,
+      "award_floor": 0,
+      "synopsis": "This is a notice of funding opportunity (NOFO) for the BJA FY2026 Public Safety and Mental Health Initiative (PSMHI). This opportunity supports comprehensive service networks addressing untreated mental illness and substance use to reduce the burden of on law enforcement and the justice system; restore order in communities affected by homelessness, mental illness, and substance use; decrease recidivism; reduce crime; and improve overall public safety and restore confidence in public spaces. \nThis initiative supports coordinated, direct intervention efforts across public safety, justice, mental",
+      "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2026-172676",
+      "source_url": "https://www.grants.gov/search-results-detail/363602"
+    },
+    {
+      "source": "grants_gov",
       "source_id": "362325",
       "opp_number": "ETA-TEGL-09-24-CH1",
       "title": "Updated National Dislocated Worker Grant Program Guidance and Application Information",
@@ -2615,11 +2636,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-08-14T08:11:55.651Z",
+  "last_synced_at": "2026-08-15T07:26:03.608Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 2,
+  "count": 3,
   "counts": {
-    "opportunities": 2,
+    "opportunities": 3,
     "awards": 131,
     "foundations": 12,
     "saa_states": 56
