@@ -518,17 +518,17 @@
     {
       "source": "usaspending",
       "aln": "84.126",
-      "award_id": "H126A240086",
-      "recipient": "FLORIDA DEPARTMENT OF EDUCATION",
-      "amount": 184931573,
-      "amount_display": "$184.9M",
+      "award_id": "H126A250056",
+      "recipient": "DEPARTMENT OF LABOR & INDUSTRY PA",
+      "amount": 179140231,
+      "amount_display": "$179.1M",
       "awarding_agency": "Department of Education",
       "awarding_sub_agency": "Department of Education",
       "start_date": null,
       "end_date": null,
-      "state": "FL",
-      "generated_internal_id": "ASST_NON_H126A240086_091",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_H126A240086_091"
+      "state": "PA",
+      "generated_internal_id": "ASST_NON_H126A250056_091",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_H126A250056_091"
     },
     {
       "source": "usaspending",
@@ -2636,7 +2636,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-08-16T07:26:57.714Z",
+  "last_synced_at": "2026-08-17T07:48:24.434Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 3,
   "counts": {
