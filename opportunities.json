@@ -44,6 +44,69 @@
     },
     {
       "source": "grants_gov",
+      "source_id": "363637",
+      "opp_number": "O-BJA-2026-172698",
+      "title": "BJA FY 2026 Second Chance Act Improving Reentry Education and Employment Outcomes",
+      "agency": "USDOJ-OJP-BJA",
+      "agency_code": "USDOJ-OJP-BJA",
+      "cfda": "16.812",
+      "aln_all": [
+        "16.812"
+      ],
+      "status": "posted",
+      "doc_type": "synopsis",
+      "post_date": "08/17/2026",
+      "close_date": "09/24/2026",
+      "award_ceiling": 1000000,
+      "award_floor": 0,
+      "synopsis": "This is a notice of funding opportunity (NOFO) for BJA FY 2026 Second Chance Act (SCA) Improving Reentry Education and Employment Outcomes. This opportunity supports state, local, and tribal governments and community-based organizations to provide education and employment programs for adults and youth leaving prison and jail. The goal of the program is to improve academic and vocational/trade programs available to adults and youth in prisons and jails and expand workforce development and career pathways that result in improved job readiness, employment attainment, and retention, thereby improv",
+      "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2026-172698",
+      "source_url": "https://www.grants.gov/search-results-detail/363637"
+    },
+    {
+      "source": "grants_gov",
+      "source_id": "363638",
+      "opp_number": "O-BJA-2026-172700",
+      "title": "BJA FY 2026 Second Chance Act Family-Based Substance Use Disorder Treatment Program",
+      "agency": "USDOJ-OJP-BJA",
+      "agency_code": "USDOJ-OJP-BJA",
+      "cfda": "16.812",
+      "aln_all": [
+        "16.812"
+      ],
+      "status": "posted",
+      "doc_type": "synopsis",
+      "post_date": "08/17/2026",
+      "close_date": "09/24/2026",
+      "award_ceiling": 1000000,
+      "award_floor": 0,
+      "synopsis": "This is a notice of funding opportunity (NOFO) for the BJA FY 2026 Second Chance Act Family-Based Substance Use Disorder Treatment Program. This opportunity will provide treatment and recovery support services to parents with substance use disorders (SUD) who have minor children or are pregnant and are under correctional control in a facility or community-based setting. State, local, and tribal governments and nonprofit organizations may apply for funding to provide family-based SUD treatment programs in jail, in prison, or as part of an alternative to incarceration to reduce recidivism and im",
+      "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2026-172700",
+      "source_url": "https://www.grants.gov/search-results-detail/363638"
+    },
+    {
+      "source": "grants_gov",
+      "source_id": "363635",
+      "opp_number": "O-BJA-2026-172701",
+      "title": "BJA FY 2026 Local Law Enforcement Crime Gun Intelligence Center Integration Initiative",
+      "agency": "USDOJ-OJP-BJA",
+      "agency_code": "USDOJ-OJP-BJA",
+      "cfda": "16.738",
+      "aln_all": [
+        "16.738"
+      ],
+      "status": "posted",
+      "doc_type": "synopsis",
+      "post_date": "08/17/2026",
+      "close_date": "09/24/2026",
+      "award_ceiling": 700000,
+      "award_floor": 0,
+      "synopsis": "This is a notice of funding opportunity (NOFO) for the FY 2026 Local Law Enforcement Crime Gun Intelligence Center (CGIC) Integration Initiative. In collaboration with DOJ’s Bureau of Alcohol, Tobacco, Firearms and Explosives (ATF), the Local Law Enforcement Crime Gun Intelligence Center Integration Initiative supports law enforcement agencies to establish and expand CGICs to address firearm-related crime. CGICs are an interagency collaboration focused on the timely collection, management, and analysis of crime gun evidence, such as cartridge casings and semiautomatic handguns, using ATF’s Nat",
+      "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2026-172701",
+      "source_url": "https://www.grants.gov/search-results-detail/363635"
+    },
+    {
+      "source": "grants_gov",
       "source_id": "362325",
       "opp_number": "ETA-TEGL-09-24-CH1",
       "title": "Updated National Dislocated Worker Grant Program Guidance and Application Information",
@@ -2636,11 +2699,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-08-17T07:48:24.434Z",
+  "last_synced_at": "2026-08-18T07:34:14.157Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 3,
+  "count": 6,
   "counts": {
-    "opportunities": 3,
+    "opportunities": 6,
     "awards": 131,
     "foundations": 12,
     "saa_states": 56
