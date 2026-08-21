@@ -1540,21 +1540,6 @@
     },
     {
       "source": "usaspending",
-      "aln": "17.277",
-      "award_id": "DW392042260A17",
-      "recipient": "ILLINOIS DEPARTMENT COMMERCE & ECONOMIC OPPORTUNITY",
-      "amount": 11147910,
-      "amount_display": "$11.1M",
-      "awarding_agency": "Department of Labor",
-      "awarding_sub_agency": "Employment and Training Administration",
-      "start_date": null,
-      "end_date": null,
-      "state": "IL",
-      "generated_internal_id": "ASST_NON_DW392042260A17_1601",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_DW392042260A17_1601"
-    },
-    {
-      "source": "usaspending",
       "aln": "16.726",
       "award_id": "15PJDP24GG01659MENT",
       "recipient": "BIG BROTHERS BIG SISTERS OF AMERICA CORPORATION",
@@ -1627,6 +1612,21 @@
       "state": "OH",
       "generated_internal_id": "ASST_NON_DW392062260A39_1601",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_DW392062260A39_1601"
+    },
+    {
+      "source": "usaspending",
+      "aln": "17.277",
+      "award_id": "DW380312260A39",
+      "recipient": "OHIO DEPARTMENT OF JOB & FAMILY SERVICES",
+      "amount": 8500000,
+      "amount_display": "$8.5M",
+      "awarding_agency": "Department of Labor",
+      "awarding_sub_agency": "Employment and Training Administration",
+      "start_date": null,
+      "end_date": null,
+      "state": "OH",
+      "generated_internal_id": "ASST_NON_DW380312260A39_1601",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_DW380312260A39_1601"
     },
     {
       "source": "usaspending",
@@ -2334,7 +2334,7 @@
       "total_expenses": 4246010,
       "total_assets": 8171045,
       "filings_count": 10,
-      "filing_url": null,
+      "filing_url": "https://projects.propublica.org/nonprofits/download-filing?path=IRS%2F030300865_202312_990PF_2025010222973124.pdf",
       "source_url": "https://projects.propublica.org/nonprofits/organizations/030300865"
     }
   ],
@@ -2699,7 +2699,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-08-20T07:37:07.513Z",
+  "last_synced_at": "2026-08-21T07:39:01.910Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 6,
   "counts": {
