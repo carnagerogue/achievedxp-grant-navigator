@@ -107,6 +107,48 @@
     },
     {
       "source": "grants_gov",
+      "source_id": "363712",
+      "opp_number": "O-BJA-2026-172705",
+      "title": "BJA FY 2026 Edward Byrne Memorial Justice Assistance Grant (JAG) Program&mdash;Local Formula",
+      "agency": "USDOJ-OJP-BJA",
+      "agency_code": "USDOJ-OJP-BJA",
+      "cfda": "16.738",
+      "aln_all": [
+        "16.738"
+      ],
+      "status": "posted",
+      "doc_type": "synopsis",
+      "post_date": "08/25/2026",
+      "close_date": "10/09/2026",
+      "award_ceiling": 4964030,
+      "award_floor": 0,
+      "synopsis": "The Office of Justice Programs (OJP) is committed to advancing work that furthers the U.S. Department of Justice’s (DOJ) mission to keep our country safe and secure and uphold the rule of law and protect the rights of American citizens. OJP provides federal leadership, funding, and other critical resources to directly support law enforcement, combat violent crime, protect American children, provide services to American crime victims, and address public safety challenges, including human trafficking and the opioid crisis. This is a notice of funding opportunity (NOFO) for the BJA FY 2026 Edward",
+      "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2026-172705",
+      "source_url": "https://www.grants.gov/search-results-detail/363712"
+    },
+    {
+      "source": "grants_gov",
+      "source_id": "363711",
+      "opp_number": "O-BJA-2026-172704",
+      "title": "BJA FY 2026 Edward Byrne Memorial Justice Assistance Grant (JAG) Program&mdash;State Formula",
+      "agency": "USDOJ-OJP-BJA",
+      "agency_code": "USDOJ-OJP-BJA",
+      "cfda": "16.738",
+      "aln_all": [
+        "16.738"
+      ],
+      "status": "posted",
+      "doc_type": "synopsis",
+      "post_date": "08/25/2026",
+      "close_date": "09/18/2026",
+      "award_ceiling": 21479876,
+      "award_floor": 0,
+      "synopsis": "The Office of Justice Programs (OJP) is committed to advancing work that furthers the U.S. Department of Justice’s (DOJ) mission to keep our country safe and secure and uphold the rule of law and protect the rights of American citizens. OJP provides federal leadership, funding, and other critical resources to directly support law enforcement, combat violent crime, protect American children, provide services to American crime victims, and address public safety challenges, including human trafficking and the opioid crisis. This is a notice of funding opportunity (NOFO) for the BJA FY2026 Edward ",
+      "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2026-172704",
+      "source_url": "https://www.grants.gov/search-results-detail/363711"
+    },
+    {
+      "source": "grants_gov",
       "source_id": "362325",
       "opp_number": "ETA-TEGL-09-24-CH1",
       "title": "Updated National Dislocated Worker Grant Program Guidance and Application Information",
@@ -2699,11 +2741,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-08-25T07:40:20.243Z",
+  "last_synced_at": "2026-08-26T07:41:37.034Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 6,
+  "count": 8,
   "counts": {
-    "opportunities": 6,
+    "opportunities": 8,
     "awards": 131,
     "foundations": 12,
     "saa_states": 56
