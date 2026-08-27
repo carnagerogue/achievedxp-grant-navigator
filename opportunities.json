@@ -149,6 +149,27 @@
     },
     {
       "source": "grants_gov",
+      "source_id": "363725",
+      "opp_number": "O-BJA-2026-172690",
+      "title": "BJA FY 2026 Byrne State Crisis Intervention Formula Program",
+      "agency": "USDOJ-OJP-BJA",
+      "agency_code": "USDOJ-OJP-BJA",
+      "cfda": "16.738",
+      "aln_all": [
+        "16.738"
+      ],
+      "status": "posted",
+      "doc_type": "synopsis",
+      "post_date": "08/27/2026",
+      "close_date": "10/06/2026",
+      "award_ceiling": 16015504,
+      "award_floor": 0,
+      "synopsis": "The Office of Justice Programs (OJP) is committed to advancing work that furthers the U.S. Department of Justice’s (DOJ) mission to keep our country safe and secure and uphold the rule of law and protect the rights of American citizens. OJP provides federal leadership, funding, and other critical resources to directly support law enforcement, combat violent crime, protect American children, provide services to American crime victims, and address public safety challenges, including human trafficking and the opioid crisis. This NOFO, as authorized by the Bipartisan Safer Communities Act of 2022,",
+      "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2026-172690",
+      "source_url": "https://www.grants.gov/search-results-detail/363725"
+    },
+    {
+      "source": "grants_gov",
       "source_id": "362325",
       "opp_number": "ETA-TEGL-09-24-CH1",
       "title": "Updated National Dislocated Worker Grant Program Guidance and Application Information",
@@ -2741,11 +2762,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-08-26T07:41:37.034Z",
+  "last_synced_at": "2026-08-27T18:03:35.666Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 8,
+  "count": 9,
   "counts": {
-    "opportunities": 8,
+    "opportunities": 9,
     "awards": 131,
     "foundations": 12,
     "saa_states": 56
