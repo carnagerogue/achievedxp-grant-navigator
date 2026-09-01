@@ -1455,7 +1455,7 @@
       "source": "usaspending",
       "aln": "16.738",
       "award_id": "15PBJA23GG00035BSCI",
-      "recipient": "GOVERNOR, TEXAS OFFICE OF THE",
+      "recipient": "TEXAS OFFICE OF THE GOVERNOR",
       "amount": 21246509,
       "amount_display": "$21.2M",
       "awarding_agency": "Department of Justice",
@@ -2762,7 +2762,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-08-31T14:47:35.382Z",
+  "last_synced_at": "2026-09-01T12:19:05.080Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 9,
   "counts": {
