@@ -973,21 +973,6 @@
     },
     {
       "source": "usaspending",
-      "aln": "16.575",
-      "award_id": "15POVC24GG00612ASSI",
-      "recipient": "OFFICE OF EMERGENCY SERVICES",
-      "amount": 87080017,
-      "amount_display": "$87.1M",
-      "awarding_agency": "Department of Justice",
-      "awarding_sub_agency": "Office of Justice Programs",
-      "start_date": null,
-      "end_date": null,
-      "state": "CA",
-      "generated_internal_id": "ASST_NON_15POVC24GG00612ASSI_015",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_15POVC24GG00612ASSI_015"
-    },
-    {
-      "source": "usaspending",
       "aln": "84.048",
       "award_id": "V048A240005",
       "recipient": "DEPARTMENT OF EDUCATION CALIFORNIA",
@@ -1120,6 +1105,21 @@
       "state": "CA",
       "generated_internal_id": "ASST_NON_V002A240005_091",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_V002A240005_091"
+    },
+    {
+      "source": "usaspending",
+      "aln": "16.575",
+      "award_id": "15POVC25GG00347ASSI",
+      "recipient": "NYS OFFICE OF VICTIM SERVICES",
+      "amount": 72246998,
+      "amount_display": "$72.2M",
+      "awarding_agency": "Department of Justice",
+      "awarding_sub_agency": "Office of Justice Programs",
+      "start_date": null,
+      "end_date": null,
+      "state": "NY",
+      "generated_internal_id": "ASST_NON_15POVC25GG00347ASSI_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_15POVC25GG00347ASSI_015"
     },
     {
       "source": "usaspending",
@@ -2762,7 +2762,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-09-05T11:06:28.154Z",
+  "last_synced_at": "2026-09-06T11:30:14.287Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 9,
   "counts": {
