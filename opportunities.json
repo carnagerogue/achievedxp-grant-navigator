@@ -1288,21 +1288,6 @@
     },
     {
       "source": "usaspending",
-      "aln": "17.277",
-      "award_id": "EM329291960A6",
-      "recipient": "STATE OF CALIFORNIA EMPLOYMENT DEVELOPMENT DEPARTMENT",
-      "amount": 36143799.52,
-      "amount_display": "$36.1M",
-      "awarding_agency": "Department of Labor",
-      "awarding_sub_agency": "Employment and Training Administration",
-      "start_date": null,
-      "end_date": null,
-      "state": "CA",
-      "generated_internal_id": "ASST_NON_EM329291960A6_1601",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_EM329291960A6_1601"
-    },
-    {
-      "source": "usaspending",
       "aln": "84.002",
       "award_id": "25E55EE000075",
       "recipient": "FLORIDA DEPARTMENT OF EDUCATION",
@@ -1735,6 +1720,21 @@
       "state": "VA",
       "generated_internal_id": "ASST_NON_2020CZBXK002_015",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_2020CZBXK002_015"
+    },
+    {
+      "source": "usaspending",
+      "aln": "17.277",
+      "award_id": "CC389292260A54",
+      "recipient": "WEST VIRGINIA UNIVERSITY AT PARKERSBURG",
+      "amount": 6488966,
+      "amount_display": "$6.5M",
+      "awarding_agency": "Department of Labor",
+      "awarding_sub_agency": "Employment and Training Administration",
+      "start_date": null,
+      "end_date": null,
+      "state": "WV",
+      "generated_internal_id": "ASST_NON_CC389292260A54_1601",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_CC389292260A54_1601"
     },
     {
       "source": "usaspending",
@@ -2762,7 +2762,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-09-06T11:30:14.287Z",
+  "last_synced_at": "2026-09-07T13:14:30.164Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 9,
   "counts": {
