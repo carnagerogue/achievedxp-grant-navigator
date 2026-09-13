@@ -1649,21 +1649,6 @@
     {
       "source": "usaspending",
       "aln": "17.277",
-      "award_id": "DW392062260A39",
-      "recipient": "OHIO DEPARTMENT OF JOB & FAMILY SERVICES",
-      "amount": 9000000,
-      "amount_display": "$9.0M",
-      "awarding_agency": "Department of Labor",
-      "awarding_sub_agency": "Employment and Training Administration",
-      "start_date": null,
-      "end_date": null,
-      "state": "OH",
-      "generated_internal_id": "ASST_NON_DW392062260A39_1601",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_DW392062260A39_1601"
-    },
-    {
-      "source": "usaspending",
-      "aln": "17.277",
       "award_id": "DW380312260A39",
       "recipient": "OHIO DEPARTMENT OF JOB & FAMILY SERVICES",
       "amount": 8500000,
@@ -1735,6 +1720,21 @@
       "state": "WV",
       "generated_internal_id": "ASST_NON_CC389292260A54_1601",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_CC389292260A54_1601"
+    },
+    {
+      "source": "usaspending",
+      "aln": "17.277",
+      "award_id": "DW344802060A23",
+      "recipient": "LABOR, MAINE DEPARTMENT OF",
+      "amount": 6281891,
+      "amount_display": "$6.3M",
+      "awarding_agency": "Department of Labor",
+      "awarding_sub_agency": "Employment and Training Administration",
+      "start_date": null,
+      "end_date": null,
+      "state": "ME",
+      "generated_internal_id": "ASST_NON_DW344802060A23_1601",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_DW344802060A23_1601"
     },
     {
       "source": "usaspending",
@@ -2762,7 +2762,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-09-12T11:26:29.425Z",
+  "last_synced_at": "2026-09-13T12:30:39.158Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 9,
   "counts": {
