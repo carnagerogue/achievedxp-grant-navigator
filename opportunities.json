@@ -883,21 +883,6 @@
     },
     {
       "source": "usaspending",
-      "aln": "84.002",
-      "award_id": "25E55EE000036",
-      "recipient": "DEPARTMENT OF EDUCATION CALIFORNIA",
-      "amount": 116708119.7,
-      "amount_display": "$116.7M",
-      "awarding_agency": "Department of Labor",
-      "awarding_sub_agency": "Employment and Training Administration",
-      "start_date": null,
-      "end_date": null,
-      "state": "CA",
-      "generated_internal_id": "ASST_NON_25E55EE000036_1601",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_25E55EE000036_1601"
-    },
-    {
-      "source": "usaspending",
       "aln": "16.575",
       "award_id": "15POVC25GG00366ASSI",
       "recipient": "TEXAS OFFICE OF THE GOVERNOR",
@@ -1274,21 +1259,6 @@
     {
       "source": "usaspending",
       "aln": "84.002",
-      "award_id": "25E55EE000067",
-      "recipient": "DEPARTMENT OF EDUCATION CALIFORNIA",
-      "amount": 42066056.56,
-      "amount_display": "$42.1M",
-      "awarding_agency": "Department of Labor",
-      "awarding_sub_agency": "Employment and Training Administration",
-      "start_date": null,
-      "end_date": null,
-      "state": "CA",
-      "generated_internal_id": "ASST_NON_25E55EE000067_1601",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_25E55EE000067_1601"
-    },
-    {
-      "source": "usaspending",
-      "aln": "84.002",
       "award_id": "25E55EE000075",
       "recipient": "FLORIDA DEPARTMENT OF EDUCATION",
       "amount": 35012532.57,
@@ -1300,6 +1270,36 @@
       "state": "FL",
       "generated_internal_id": "ASST_NON_25E55EE000075_1601",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_25E55EE000075_1601"
+    },
+    {
+      "source": "usaspending",
+      "aln": "16.726",
+      "award_id": "15PJDP24GG01661MENT",
+      "recipient": "BOYS & GIRLS CLUBS OF AMERICA",
+      "amount": 28000000,
+      "amount_display": "$28.0M",
+      "awarding_agency": "Department of Justice",
+      "awarding_sub_agency": "Office of Justice Programs",
+      "start_date": null,
+      "end_date": null,
+      "state": "GA",
+      "generated_internal_id": "ASST_NON_15PJDP24GG01661MENT_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PJDP24GG01661MENT_015"
+    },
+    {
+      "source": "usaspending",
+      "aln": "16.726",
+      "award_id": "15PJDP23GG00847MENT",
+      "recipient": "BOYS & GIRLS CLUBS OF AMERICA",
+      "amount": 28000000,
+      "amount_display": "$28.0M",
+      "awarding_agency": "Department of Justice",
+      "awarding_sub_agency": "Office of Justice Programs",
+      "start_date": null,
+      "end_date": null,
+      "state": "GA",
+      "generated_internal_id": "ASST_NON_15PJDP23GG00847MENT_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PJDP23GG00847MENT_015"
     },
     {
       "source": "usaspending",
@@ -1315,6 +1315,51 @@
       "state": "CA",
       "generated_internal_id": "ASST_NON_2019RPBXK001_015",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_2019RPBXK001_015"
+    },
+    {
+      "source": "usaspending",
+      "aln": "16.726",
+      "award_id": "2020JUFX0029",
+      "recipient": "BOYS & GIRLS CLUBS OF AMERICA",
+      "amount": 27049026.8,
+      "amount_display": "$27.0M",
+      "awarding_agency": "Department of Justice",
+      "awarding_sub_agency": "Office of Justice Programs",
+      "start_date": null,
+      "end_date": null,
+      "state": "GA",
+      "generated_internal_id": "ASST_NON_2020JUFX0029_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_2020JUFX0029_015"
+    },
+    {
+      "source": "usaspending",
+      "aln": "16.726",
+      "award_id": "15PJDP22GG01746MENT",
+      "recipient": "BOYS & GIRLS CLUBS OF AMERICA",
+      "amount": 26195504,
+      "amount_display": "$26.2M",
+      "awarding_agency": "Department of Justice",
+      "awarding_sub_agency": "Office of Justice Programs",
+      "start_date": null,
+      "end_date": null,
+      "state": "GA",
+      "generated_internal_id": "ASST_NON_15PJDP22GG01746MENT_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PJDP22GG01746MENT_015"
+    },
+    {
+      "source": "usaspending",
+      "aln": "16.726",
+      "award_id": "15PJDP21GG02763MENT",
+      "recipient": "BOYS & GIRLS CLUBS OF AMERICA",
+      "amount": 26126253,
+      "amount_display": "$26.1M",
+      "awarding_agency": "Department of Justice",
+      "awarding_sub_agency": "Office of Justice Programs",
+      "start_date": null,
+      "end_date": null,
+      "state": "GA",
+      "generated_internal_id": "ASST_NON_15PJDP21GG02763MENT_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PJDP21GG02763MENT_015"
     },
     {
       "source": "usaspending",
@@ -1345,6 +1390,36 @@
       "state": "KY",
       "generated_internal_id": "ASST_NON_DW379582260A21_1601",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_DW379582260A21_1601"
+    },
+    {
+      "source": "usaspending",
+      "aln": "84.002",
+      "award_id": "25E55EE000044",
+      "recipient": "IL COMMUNITY COLLEGE BOARD",
+      "amount": 24270149.16,
+      "amount_display": "$24.3M",
+      "awarding_agency": "Department of Labor",
+      "awarding_sub_agency": "Employment and Training Administration",
+      "start_date": null,
+      "end_date": null,
+      "state": "IL",
+      "generated_internal_id": "ASST_NON_25E55EE000044_1601",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_25E55EE000044_1601"
+    },
+    {
+      "source": "usaspending",
+      "aln": "84.002",
+      "award_id": "25E55EE000041",
+      "recipient": "TECHNICAL COLLEGE SYSTEM OF GEORGIA",
+      "amount": 23143436,
+      "amount_display": "$23.1M",
+      "awarding_agency": "Department of Labor",
+      "awarding_sub_agency": "Employment and Training Administration",
+      "start_date": null,
+      "end_date": null,
+      "state": "GA",
+      "generated_internal_id": "ASST_NON_25E55EE000041_1601",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_25E55EE000041_1601"
     },
     {
       "source": "usaspending",
@@ -1513,18 +1588,33 @@
     },
     {
       "source": "usaspending",
-      "aln": "17.277",
-      "award_id": "25A60DW000038",
-      "recipient": "NORTH CAROLINA DEPARTMENT OF COMMERCE",
-      "amount": 10000000,
-      "amount_display": "$10.0M",
-      "awarding_agency": "Department of Labor",
-      "awarding_sub_agency": "Employment and Training Administration",
+      "aln": "16.726",
+      "award_id": "15PJDP24GG01659MENT",
+      "recipient": "BIG BROTHERS BIG SISTERS OF AMERICA CORPORATION",
+      "amount": 11000000,
+      "amount_display": "$11.0M",
+      "awarding_agency": "Department of Justice",
+      "awarding_sub_agency": "Office of Justice Programs",
       "start_date": null,
       "end_date": null,
-      "state": "NC",
-      "generated_internal_id": "ASST_NON_25A60DW000038_1601",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_25A60DW000038_1601"
+      "state": "FL",
+      "generated_internal_id": "ASST_NON_15PJDP24GG01659MENT_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PJDP24GG01659MENT_015"
+    },
+    {
+      "source": "usaspending",
+      "aln": "16.726",
+      "award_id": "15PJDP23GG00851MENT",
+      "recipient": "BIG BROTHERS BIG SISTERS OF AMERICA CORPORATION",
+      "amount": 11000000,
+      "amount_display": "$11.0M",
+      "awarding_agency": "Department of Justice",
+      "awarding_sub_agency": "Office of Justice Programs",
+      "start_date": null,
+      "end_date": null,
+      "state": "FL",
+      "generated_internal_id": "ASST_NON_15PJDP23GG00851MENT_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PJDP23GG00851MENT_015"
     },
     {
       "source": "usaspending",
@@ -1645,6 +1735,21 @@
       "state": "VA",
       "generated_internal_id": "ASST_NON_15PJDP23GK02210SCAX_015",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_15PJDP23GK02210SCAX_015"
+    },
+    {
+      "source": "usaspending",
+      "aln": "17.277",
+      "award_id": "DW380262260A6",
+      "recipient": "STATE OF CALIFORNIA EMPLOYMENT DEVELOPMENT DEPARTMENT",
+      "amount": 5889288.43,
+      "amount_display": "$5.9M",
+      "awarding_agency": "Department of Labor",
+      "awarding_sub_agency": "Employment and Training Administration",
+      "start_date": null,
+      "end_date": null,
+      "state": "CA",
+      "generated_internal_id": "ASST_NON_DW380262260A6_1601",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_DW380262260A6_1601"
     },
     {
       "source": "usaspending",
@@ -1795,6 +1900,36 @@
       "state": "CA",
       "generated_internal_id": "ASST_NON_15PBJA23GK05460SCAX_015",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_15PBJA23GK05460SCAX_015"
+    },
+    {
+      "source": "usaspending",
+      "aln": "16.726",
+      "award_id": "2019JUFX0013",
+      "recipient": "YOUTH COLLABORATORY INC",
+      "amount": 4000000,
+      "amount_display": "$4.0M",
+      "awarding_agency": "Department of Justice",
+      "awarding_sub_agency": "Office of Justice Programs",
+      "start_date": null,
+      "end_date": null,
+      "state": "PA",
+      "generated_internal_id": "ASST_NON_2019JUFX0013_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_2019JUFX0013_015"
+    },
+    {
+      "source": "usaspending",
+      "aln": "16.726",
+      "award_id": "2019MUFX0004",
+      "recipient": "NATIONAL CASA ASSOCIATION",
+      "amount": 3597140.37,
+      "amount_display": "$3.6M",
+      "awarding_agency": "Department of Justice",
+      "awarding_sub_agency": "Office of Justice Programs",
+      "start_date": null,
+      "end_date": null,
+      "state": "WA",
+      "generated_internal_id": "ASST_NON_2019MUFX0004_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_2019MUFX0004_015"
     },
     {
       "source": "usaspending",
@@ -2626,19 +2761,13 @@
     "17.259",
     "17.277"
   ],
-  "errors": [
-    {
-      "aln": "16.726",
-      "error": "HTTP 502",
-      "source": "usaspending"
-    }
-  ],
-  "last_synced_at": "2026-09-14T13:37:30.387Z",
+  "errors": [],
+  "last_synced_at": "2026-09-15T12:26:52.309Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 9,
   "counts": {
     "opportunities": 9,
-    "awards": 122,
+    "awards": 131,
     "foundations": 12,
     "saa_states": 56
   }
