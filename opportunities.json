@@ -149,27 +149,6 @@
     },
     {
       "source": "grants_gov",
-      "source_id": "363711",
-      "opp_number": "O-BJA-2026-172704",
-      "title": "BJA FY 2026 Edward Byrne Memorial Justice Assistance Grant (JAG) Program&mdash;State Formula",
-      "agency": "USDOJ-OJP-BJA",
-      "agency_code": "USDOJ-OJP-BJA",
-      "cfda": "16.738",
-      "aln_all": [
-        "16.738"
-      ],
-      "status": "posted",
-      "doc_type": "synopsis",
-      "post_date": "08/25/2026",
-      "close_date": "09/18/2026",
-      "award_ceiling": 21479876,
-      "award_floor": 0,
-      "synopsis": "The Office of Justice Programs (OJP) is committed to advancing work that furthers the U.S. Department of Justice’s (DOJ) mission to keep our country safe and secure and uphold the rule of law and protect the rights of American citizens. OJP provides federal leadership, funding, and other critical resources to directly support law enforcement, combat violent crime, protect American children, provide services to American crime victims, and address public safety challenges, including human trafficking and the opioid crisis. This is a notice of funding opportunity (NOFO) for the BJA FY2026 Edward ",
-      "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2026-172704",
-      "source_url": "https://www.grants.gov/search-results-detail/363711"
-    },
-    {
-      "source": "grants_gov",
       "source_id": "362325",
       "opp_number": "ETA-TEGL-09-24-CH1",
       "title": "Updated National Dislocated Worker Grant Program Guidance and Application Information",
@@ -659,17 +638,17 @@
     {
       "source": "usaspending",
       "aln": "84.126",
-      "award_id": "H126A220086",
-      "recipient": "FLORIDA DEPARTMENT OF EDUCATION",
-      "amount": 175063093.01,
-      "amount_display": "$175.1M",
+      "award_id": "H126A260052",
+      "recipient": "OPPORTUNITIES FOR OHIOANS WITH DISABILITIES AGENCY",
+      "amount": 172510349,
+      "amount_display": "$172.5M",
       "awarding_agency": "Department of Education",
       "awarding_sub_agency": "Department of Education",
       "start_date": null,
       "end_date": null,
-      "state": "FL",
-      "generated_internal_id": "ASST_NON_H126A220086_091",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_H126A220086_091"
+      "state": "OH",
+      "generated_internal_id": "ASST_NON_H126A260052_091",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_H126A260052_091"
     },
     {
       "source": "usaspending",
@@ -1303,21 +1282,6 @@
     },
     {
       "source": "usaspending",
-      "aln": "16.812",
-      "award_id": "2019RPBXK001",
-      "recipient": "IMPACT JUSTICE",
-      "amount": 27633837,
-      "amount_display": "$27.6M",
-      "awarding_agency": "Department of Justice",
-      "awarding_sub_agency": "Office of Justice Programs",
-      "start_date": null,
-      "end_date": null,
-      "state": "CA",
-      "generated_internal_id": "ASST_NON_2019RPBXK001_015",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_2019RPBXK001_015"
-    },
-    {
-      "source": "usaspending",
       "aln": "16.726",
       "award_id": "2020JUFX0029",
       "recipient": "BOYS & GIRLS CLUBS OF AMERICA",
@@ -1915,6 +1879,21 @@
       "state": "PA",
       "generated_internal_id": "ASST_NON_2019JUFX0013_015",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_2019JUFX0013_015"
+    },
+    {
+      "source": "usaspending",
+      "aln": "16.812",
+      "award_id": "15PBJA23GK05377MUMU",
+      "recipient": "KEYSTONE RESTITUERE JUSTICE CENTER, INC.",
+      "amount": 3750000,
+      "amount_display": "$3.8M",
+      "awarding_agency": "Department of Justice",
+      "awarding_sub_agency": "Office of Justice Programs",
+      "start_date": null,
+      "end_date": null,
+      "state": "PA",
+      "generated_internal_id": "ASST_NON_15PBJA23GK05377MUMU_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PBJA23GK05377MUMU_015"
     },
     {
       "source": "usaspending",
@@ -2762,11 +2741,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-09-18T12:03:25.402Z",
+  "last_synced_at": "2026-09-19T11:45:41.916Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 9,
+  "count": 8,
   "counts": {
-    "opportunities": 9,
+    "opportunities": 8,
     "awards": 131,
     "foundations": 12,
     "saa_states": 56
