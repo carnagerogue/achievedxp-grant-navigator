@@ -149,27 +149,6 @@
     },
     {
       "source": "grants_gov",
-      "source_id": "363711",
-      "opp_number": "O-BJA-2026-172704",
-      "title": "BJA FY 2026 Edward Byrne Memorial Justice Assistance Grant (JAG) Program&mdash;State Formula",
-      "agency": "USDOJ-OJP-BJA",
-      "agency_code": "USDOJ-OJP-BJA",
-      "cfda": "16.738",
-      "aln_all": [
-        "16.738"
-      ],
-      "status": "posted",
-      "doc_type": "synopsis",
-      "post_date": "08/25/2026",
-      "close_date": "09/23/2026",
-      "award_ceiling": 21479876,
-      "award_floor": 0,
-      "synopsis": "The Office of Justice Programs (OJP) is committed to advancing work that furthers the U.S. Department of Justice’s (DOJ) mission to keep our country safe and secure and uphold the rule of law and protect the rights of American citizens. OJP provides federal leadership, funding, and other critical resources to directly support law enforcement, combat violent crime, protect American children, provide services to American crime victims, and address public safety challenges, including human trafficking and the opioid crisis. This is a notice of funding opportunity (NOFO) for the BJA FY2026 Edward ",
-      "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2026-172704",
-      "source_url": "https://www.grants.gov/search-results-detail/363711"
-    },
-    {
-      "source": "grants_gov",
       "source_id": "363911",
       "opp_number": "O-OJJDP-2026-172745",
       "title": "OJJDP FY 2026 Multistate Mentoring Programs",
@@ -1670,21 +1649,6 @@
     {
       "source": "usaspending",
       "aln": "16.812",
-      "award_id": "2020CZBXK001",
-      "recipient": "THE COUNCIL OF STATE GOVERNMENTS LTD.",
-      "amount": 7300000,
-      "amount_display": "$7.3M",
-      "awarding_agency": "Department of Justice",
-      "awarding_sub_agency": "Office of Justice Programs",
-      "start_date": null,
-      "end_date": null,
-      "state": "KY",
-      "generated_internal_id": "ASST_NON_2020CZBXK001_015",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_2020CZBXK001_015"
-    },
-    {
-      "source": "usaspending",
-      "aln": "16.812",
       "award_id": "2020CZBXK002",
       "recipient": "AMERICAN INSTITUTES FOR RESEARCH IN THE BEHAVIORAL SCIENCES",
       "amount": 6543385.75,
@@ -1939,6 +1903,21 @@
     },
     {
       "source": "usaspending",
+      "aln": "16.812",
+      "award_id": "15PBJA23GK05506MUMU",
+      "recipient": "THE COUNCIL OF STATE GOVERNMENTS LTD.",
+      "amount": 3600000,
+      "amount_display": "$3.6M",
+      "awarding_agency": "Department of Justice",
+      "awarding_sub_agency": "Office of Justice Programs",
+      "start_date": null,
+      "end_date": null,
+      "state": "KY",
+      "generated_internal_id": "ASST_NON_15PBJA23GK05506MUMU_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PBJA23GK05506MUMU_015"
+    },
+    {
+      "source": "usaspending",
       "aln": "16.726",
       "award_id": "2019MUFX0004",
       "recipient": "NATIONAL CASA ASSOCIATION",
@@ -2045,21 +2024,6 @@
     {
       "source": "usaspending",
       "aln": "16.828",
-      "award_id": "15PBJA24GG01887PRJH",
-      "recipient": "ADMINISTRATIVE OFFICE OF THE ILLINOIS COURTS",
-      "amount": 900000,
-      "amount_display": "$900K",
-      "awarding_agency": "Department of Justice",
-      "awarding_sub_agency": "Office of Justice Programs",
-      "start_date": null,
-      "end_date": null,
-      "state": "IL",
-      "generated_internal_id": "ASST_NON_15PBJA24GG01887PRJH_015",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PBJA24GG01887PRJH_015"
-    },
-    {
-      "source": "usaspending",
-      "aln": "16.828",
       "award_id": "15PBJA24GG01883PRJH",
       "recipient": "COUNTY OF HAMILTON, OHIO",
       "amount": 900000,
@@ -2071,21 +2035,6 @@
       "state": "OH",
       "generated_internal_id": "ASST_NON_15PBJA24GG01883PRJH_015",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_15PBJA24GG01883PRJH_015"
-    },
-    {
-      "source": "usaspending",
-      "aln": "16.828",
-      "award_id": "15PBJA24GG01890PRJH",
-      "recipient": "CITY OF NEW YORK - MAYORS OFFICE OF CRIMINAL JUSTICE",
-      "amount": 899995,
-      "amount_display": "$900K",
-      "awarding_agency": "Department of Justice",
-      "awarding_sub_agency": "Office of Justice Programs",
-      "start_date": null,
-      "end_date": null,
-      "state": "NY",
-      "generated_internal_id": "ASST_NON_15PBJA24GG01890PRJH_015",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PBJA24GG01890PRJH_015"
     },
     {
       "source": "usaspending",
@@ -2176,6 +2125,36 @@
       "state": "TX",
       "generated_internal_id": "ASST_NON_15PBJA21GG02697PRJH_015",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_15PBJA21GG02697PRJH_015"
+    },
+    {
+      "source": "usaspending",
+      "aln": "16.828",
+      "award_id": "2020HOBX0003",
+      "recipient": "CUYAHOGA COUNTY COMMON PLEAS COURT",
+      "amount": 726426.72,
+      "amount_display": "$726K",
+      "awarding_agency": "Department of Justice",
+      "awarding_sub_agency": "Office of Justice Programs",
+      "start_date": null,
+      "end_date": null,
+      "state": "OH",
+      "generated_internal_id": "ASST_NON_2020HOBX0003_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_2020HOBX0003_015"
+    },
+    {
+      "source": "usaspending",
+      "aln": "16.828",
+      "award_id": "15PBJA21GG02700PRJH",
+      "recipient": "ALABAMA BUREAU OF PARDONS AND PAROLE FIRSTNET",
+      "amount": 700000,
+      "amount_display": "$700K",
+      "awarding_agency": "Department of Justice",
+      "awarding_sub_agency": "Office of Justice Programs",
+      "start_date": null,
+      "end_date": null,
+      "state": "AL",
+      "generated_internal_id": "ASST_NON_15PBJA21GG02700PRJH_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_15PBJA21GG02700PRJH_015"
     }
   ],
   "foundations": [
@@ -2406,7 +2385,7 @@
       "ein": "030300865",
       "name": "Ben & Jerrys Foundation",
       "state": "VT",
-      "city": "South Burlington",
+      "city": "S Burlington",
       "focus": [
         "reentry",
         "justice_reform"
@@ -2783,11 +2762,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-09-23T12:31:35.091Z",
+  "last_synced_at": "2026-09-24T12:32:16.251Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 10,
+  "count": 9,
   "counts": {
-    "opportunities": 10,
+    "opportunities": 9,
     "awards": 131,
     "foundations": 12,
     "saa_states": 56
