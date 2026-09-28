@@ -1549,21 +1549,6 @@
     },
     {
       "source": "usaspending",
-      "aln": "16.812",
-      "award_id": "2020CZBXK002",
-      "recipient": "AMERICAN INSTITUTES FOR RESEARCH IN THE BEHAVIORAL SCIENCES",
-      "amount": 6543385.75,
-      "amount_display": "$6.5M",
-      "awarding_agency": "Department of Justice",
-      "awarding_sub_agency": "Office of Justice Programs",
-      "start_date": null,
-      "end_date": null,
-      "state": "VA",
-      "generated_internal_id": "ASST_NON_2020CZBXK002_015",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_2020CZBXK002_015"
-    },
-    {
-      "source": "usaspending",
       "aln": "17.277",
       "award_id": "CC389292260A54",
       "recipient": "WEST VIRGINIA UNIVERSITY AT PARKERSBURG",
@@ -1861,6 +1846,21 @@
       "state": "IL",
       "generated_internal_id": "ASST_NON_15PBJA23GK05505SCAX_015",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_15PBJA23GK05505SCAX_015"
+    },
+    {
+      "source": "usaspending",
+      "aln": "16.812",
+      "award_id": "2020CZBX0014",
+      "recipient": "GEORGIA STATE UNIVERSITY RESEARCH FOUNDATION INC",
+      "amount": 3142606,
+      "amount_display": "$3.1M",
+      "awarding_agency": "Department of Justice",
+      "awarding_sub_agency": "Office of Justice Programs",
+      "start_date": null,
+      "end_date": null,
+      "state": "GA",
+      "generated_internal_id": "ASST_NON_2020CZBX0014_015",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_2020CZBX0014_015"
     },
     {
       "source": "usaspending",
@@ -2678,7 +2678,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-09-27T12:41:25.726Z",
+  "last_synced_at": "2026-09-28T14:54:01.812Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 5,
   "counts": {
