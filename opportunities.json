@@ -44,24 +44,24 @@
     },
     {
       "source": "grants_gov",
-      "source_id": "363712",
-      "opp_number": "O-BJA-2026-172705",
-      "title": "BJA FY 2026 Edward Byrne Memorial Justice Assistance Grant (JAG) Program&mdash;Local Formula",
+      "source_id": "364050",
+      "opp_number": "O-BJA-2026-172795",
+      "title": "BJA FY 2026 Invited to Apply- Medicaid and Corrections Program",
       "agency": "USDOJ-OJP-BJA",
       "agency_code": "USDOJ-OJP-BJA",
-      "cfda": "16.738",
+      "cfda": "16.812",
       "aln_all": [
-        "16.738"
+        "16.812"
       ],
       "status": "posted",
       "doc_type": "synopsis",
-      "post_date": "08/25/2026",
-      "close_date": "10/09/2026",
-      "award_ceiling": 4964030,
+      "post_date": "10/09/2026",
+      "close_date": "10/21/2026",
+      "award_ceiling": 800000,
       "award_floor": 0,
-      "synopsis": "The Office of Justice Programs (OJP) is committed to advancing work that furthers the U.S. Department of Justice’s (DOJ) mission to keep our country safe and secure and uphold the rule of law and protect the rights of American citizens. OJP provides federal leadership, funding, and other critical resources to directly support law enforcement, combat violent crime, protect American children, provide services to American crime victims, and address public safety challenges, including human trafficking and the opioid crisis. This is a notice of funding opportunity (NOFO) for the BJA FY 2026 Edward",
-      "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2026-172705",
-      "source_url": "https://www.grants.gov/search-results-detail/363712"
+      "synopsis": "This is a notice of funding opportunity (NOFO) for the FY 26 Invited to Apply – Medicaid and Corrections Program. This opportunity seeks to support the delivery of highly specialized technical assistance and training to sheriffs, jail administrators, state departments of correction, and correctional leaders and staff in order to support understanding and implementation of legal requirements related to Medicaid, reentry, and the provision of care within correctional facilities. This specialized technical expertise is critical to safely operationalizing Medicaid requirements in secure settings.",
+      "funding_url": "https://bja.ojp.gov/",
+      "source_url": "https://www.grants.gov/search-results-detail/364050"
     },
     {
       "source": "grants_gov",
@@ -83,6 +83,27 @@
       "synopsis": "This is a notice of funding opportunity (NOFO) for the OJJDP FY 2026 Multistate Mentoring Programs. This opportunity supports the implementation and delivery of mentoring services to youth populations that are at risk or high risk for delinquency, victimization, and going into the juvenile justice system. Mentoring services can be one-on-one, group, peer, or a combination of these types.",
       "funding_url": "https://www.ojp.gov/funding/docs/ojjdp-2026-172745.pdf",
       "source_url": "https://www.grants.gov/search-results-detail/363911"
+    },
+    {
+      "source": "grants_gov",
+      "source_id": "364058",
+      "opp_number": "O-OJJDP-2026-172743",
+      "title": "OJJDP FY 2026 Mentoring for Youth Impacted by Opioids and Other Substance Use",
+      "agency": "USDOJ-OJP-OJJDP",
+      "agency_code": "USDOJ-OJP-OJJDP",
+      "cfda": "16.726",
+      "aln_all": [
+        "16.726"
+      ],
+      "status": "posted",
+      "doc_type": "synopsis",
+      "post_date": "10/09/2026",
+      "close_date": "11/16/2026",
+      "award_ceiling": 2000000,
+      "award_floor": 0,
+      "synopsis": "This is a notice of funding opportunity (NOFO) for the OJJDP FY 2026 Mentoring for Youth Impacted by Opioids and Other Substance Use program. This opportunity supports the implementation and delivery of high-quality mentoring services for youth who are currently using or dependent on substances, as well as youth at risk of substance use or who have close family members experiencing substance use or dependency. Mentoring services may include one-on-one, group, or peer mentoring—or a combination of these approaches or hybrid (traditional in-person combined with virtual mentoring).",
+      "funding_url": "https://www.ojp.gov/funding/docs/ojjdp-2026-172743.pdf",
+      "source_url": "https://www.grants.gov/search-results-detail/364058"
     },
     {
       "source": "grants_gov",
@@ -2678,11 +2699,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-10-09T14:07:27.294Z",
+  "last_synced_at": "2026-10-10T13:15:25.381Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 5,
+  "count": 6,
   "counts": {
-    "opportunities": 5,
+    "opportunities": 6,
     "awards": 131,
     "foundations": 12,
     "saa_states": 56
