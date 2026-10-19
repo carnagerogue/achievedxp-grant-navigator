@@ -758,21 +758,6 @@
     {
       "source": "usaspending",
       "aln": "17.258",
-      "award_id": "24A55AT000059",
-      "recipient": "STATE OF CALIFORNIA EMPLOYMENT DEVELOPMENT DEPARTMENT",
-      "amount": 141158847,
-      "amount_display": "$141.2M",
-      "awarding_agency": "Department of Labor",
-      "awarding_sub_agency": "Employment and Training Administration",
-      "start_date": null,
-      "end_date": null,
-      "state": "CA",
-      "generated_internal_id": "ASST_NON_24A55AT000059_1601",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_24A55AT000059_1601"
-    },
-    {
-      "source": "usaspending",
-      "aln": "17.258",
       "award_id": "AA363132155A12",
       "recipient": "FLORIDA DEPARTMENT OF COMMERCE",
       "amount": 140852282,
@@ -847,7 +832,7 @@
     },
     {
       "source": "usaspending",
-      "aln": "17.259",
+      "aln": "17.258",
       "award_id": "AA363432155A72",
       "recipient": "DEPARTAMENTO DE DESARROLLO ECONOMICO Y COMERCIO",
       "amount": 121920747,
@@ -2741,12 +2726,12 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-10-18T11:55:16.260Z",
+  "last_synced_at": "2026-10-19T14:17:45.035Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 8,
   "counts": {
     "opportunities": 8,
-    "awards": 131,
+    "awards": 130,
     "foundations": 12,
     "saa_states": 56
   }
