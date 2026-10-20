@@ -1478,21 +1478,6 @@
     {
       "source": "usaspending",
       "aln": "17.277",
-      "award_id": "DW392032260A53",
-      "recipient": "STATE OF WASHINGTON EMPLOYMENT SECURITY DEPARTMENT",
-      "amount": 15000000,
-      "amount_display": "$15.0M",
-      "awarding_agency": "Department of Labor",
-      "awarding_sub_agency": "Employment and Training Administration",
-      "start_date": null,
-      "end_date": null,
-      "state": "WA",
-      "generated_internal_id": "ASST_NON_DW392032260A53_1601",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_DW392032260A53_1601"
-    },
-    {
-      "source": "usaspending",
-      "aln": "17.277",
       "award_id": "DW392092260A6",
       "recipient": "STATE OF CALIFORNIA EMPLOYMENT DEVELOPMENT DEPARTMENT",
       "amount": 13159917.57,
@@ -1714,6 +1699,21 @@
       "state": "NC",
       "generated_internal_id": "ASST_NON_MI358922160A37_1601",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_MI358922160A37_1601"
+    },
+    {
+      "source": "usaspending",
+      "aln": "17.277",
+      "award_id": "MI354802060A39",
+      "recipient": "OHIO DEPARTMENT OF JOB & FAMILY SERVICES",
+      "amount": 5000000,
+      "amount_display": "$5.0M",
+      "awarding_agency": "Department of Labor",
+      "awarding_sub_agency": "Employment and Training Administration",
+      "start_date": null,
+      "end_date": null,
+      "state": "OH",
+      "generated_internal_id": "ASST_NON_MI354802060A39_1601",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_MI354802060A39_1601"
     },
     {
       "source": "usaspending",
@@ -2726,7 +2726,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-10-19T14:17:45.035Z",
+  "last_synced_at": "2026-10-20T12:29:56.556Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 8,
   "counts": {
