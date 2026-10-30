@@ -86,27 +86,6 @@
     },
     {
       "source": "grants_gov",
-      "source_id": "363911",
-      "opp_number": "O-OJJDP-2026-172745",
-      "title": "OJJDP FY 2026 Multistate Mentoring Programs",
-      "agency": "USDOJ-OJP-OJJDP",
-      "agency_code": "USDOJ-OJP-OJJDP",
-      "cfda": "16.726",
-      "aln_all": [
-        "16.726"
-      ],
-      "status": "posted",
-      "doc_type": "synopsis",
-      "post_date": "09/21/2026",
-      "close_date": "10/29/2026",
-      "award_ceiling": 4000000,
-      "award_floor": 1000000,
-      "synopsis": "This is a notice of funding opportunity (NOFO) for the OJJDP FY 2026 Multistate Mentoring Programs. This opportunity supports the implementation and delivery of mentoring services to youth populations that are at risk or high risk for delinquency, victimization, and going into the juvenile justice system. Mentoring services can be one-on-one, group, peer, or a combination of these types.",
-      "funding_url": "https://www.ojp.gov/funding/docs/ojjdp-2026-172745.pdf",
-      "source_url": "https://www.grants.gov/search-results-detail/363911"
-    },
-    {
-      "source": "grants_gov",
       "source_id": "364058",
       "opp_number": "O-OJJDP-2026-172743",
       "title": "OJJDP FY 2026 Mentoring for Youth Impacted by Opioids and Other Substance Use",
@@ -2705,11 +2684,11 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-10-29T13:54:35.741Z",
+  "last_synced_at": "2026-10-30T13:47:18.361Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
-  "count": 7,
+  "count": 6,
   "counts": {
-    "opportunities": 7,
+    "opportunities": 6,
     "awards": 130,
     "foundations": 12,
     "saa_states": 56
