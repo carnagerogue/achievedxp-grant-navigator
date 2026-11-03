@@ -2,27 +2,6 @@
   "opportunities": [
     {
       "source": "grants_gov",
-      "source_id": "363961",
-      "opp_number": "O-OJJDP-2026-172751",
-      "title": "OJJDP FY 2026 Second Chance Act Youth Reentry Program",
-      "agency": "USDOJ-OJP-OJJDP",
-      "agency_code": "USDOJ-OJP-OJJDP",
-      "cfda": "16.812",
-      "aln_all": [
-        "16.812"
-      ],
-      "status": "posted",
-      "doc_type": "synopsis",
-      "post_date": "09/25/2026",
-      "close_date": "11/02/2026",
-      "award_ceiling": 750000,
-      "award_floor": 0,
-      "synopsis": "This is a notice of funding opportunity (NOFO) for the OJJDP FY 2026 Second Chance Act Youth Reentry Program. This opportunity will support states, units of local government, federally recognized Native American Tribal governments, and community-based organizations to provide (1) comprehensive reentry services for moderate- to high-risk youth before, during, and after release from confinement, and (2) support transitional services to assist youth to successfully reenter the community. This program supports collaborations between state agencies, local government, Tribes, and community- and fait",
-      "funding_url": "https://www.ojp.gov/funding/docs/ojjdp-2026-172751.pdf",
-      "source_url": "https://www.grants.gov/search-results-detail/363961"
-    },
-    {
-      "source": "grants_gov",
       "source_id": "363712",
       "opp_number": "O-BJA-2026-172705",
       "title": "BJA FY 2026 Edward Byrne Memorial Justice Assistance Grant (JAG) Program&mdash;Local Formula",
@@ -62,6 +41,27 @@
       "synopsis": "This is a notice of funding opportunity (NOFO) for the OJP FY 2026 Integrity in American Elections Grant Program. This opportunity will support state and local prosecutors and other justice professionals to prevent, investigate, and prosecute criminal offenses pertaining to voter roll integrity and voter fraud, including illegal voting and registration crimes. This includes votes by aliens, felons, the deceased, those younger than 18, those who vote more than once, those who vote in the name of another, and other illegal voting and registration crimes.",
       "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2026-172793",
       "source_url": "https://www.grants.gov/search-results-detail/364097"
+    },
+    {
+      "source": "grants_gov",
+      "source_id": "363725",
+      "opp_number": "O-BJA-2026-172690",
+      "title": "BJA FY 2026 Byrne State Crisis Intervention Formula Program",
+      "agency": "USDOJ-OJP-BJA",
+      "agency_code": "USDOJ-OJP-BJA",
+      "cfda": "16.738",
+      "aln_all": [
+        "16.738"
+      ],
+      "status": "posted",
+      "doc_type": "synopsis",
+      "post_date": "08/27/2026",
+      "close_date": "11/06/2026",
+      "award_ceiling": 16015504,
+      "award_floor": 0,
+      "synopsis": "The Office of Justice Programs (OJP) is committed to advancing work that furthers the U.S. Department of Justice’s (DOJ) mission to keep our country safe and secure and uphold the rule of law and protect the rights of American citizens. OJP provides federal leadership, funding, and other critical resources to directly support law enforcement, combat violent crime, protect American children, provide services to American crime victims, and address public safety challenges, including human trafficking and the opioid crisis. This NOFO, as authorized by the Bipartisan Safer Communities Act of 2022,",
+      "funding_url": "https://bja.ojp.gov/funding/opportunities/o-bja-2026-172690",
+      "source_url": "https://www.grants.gov/search-results-detail/363725"
     },
     {
       "source": "grants_gov",
@@ -1265,21 +1265,6 @@
     {
       "source": "usaspending",
       "aln": "84.002",
-      "award_id": "25E55EE000044",
-      "recipient": "IL COMMUNITY COLLEGE BOARD",
-      "amount": 24270149.16,
-      "amount_display": "$24.3M",
-      "awarding_agency": "Department of Labor",
-      "awarding_sub_agency": "Employment and Training Administration",
-      "start_date": null,
-      "end_date": null,
-      "state": "IL",
-      "generated_internal_id": "ASST_NON_25E55EE000044_1601",
-      "source_url": "https://www.usaspending.gov/award/ASST_NON_25E55EE000044_1601"
-    },
-    {
-      "source": "usaspending",
-      "aln": "84.002",
       "award_id": "25E55EE000041",
       "recipient": "TECHNICAL COLLEGE SYSTEM OF GEORGIA",
       "amount": 23143436,
@@ -1291,6 +1276,21 @@
       "state": "GA",
       "generated_internal_id": "ASST_NON_25E55EE000041_1601",
       "source_url": "https://www.usaspending.gov/award/ASST_NON_25E55EE000041_1601"
+    },
+    {
+      "source": "usaspending",
+      "aln": "84.002",
+      "award_id": "V002A240013",
+      "recipient": "IL COMMUNITY COLLEGE BOARD",
+      "amount": 22785663.41,
+      "amount_display": "$22.8M",
+      "awarding_agency": "Department of Education",
+      "awarding_sub_agency": "Department of Education",
+      "start_date": null,
+      "end_date": null,
+      "state": "IL",
+      "generated_internal_id": "ASST_NON_V002A240013_091",
+      "source_url": "https://www.usaspending.gov/award/ASST_NON_V002A240013_091"
     },
     {
       "source": "usaspending",
@@ -2663,7 +2663,7 @@
     "17.277"
   ],
   "errors": [],
-  "last_synced_at": "2026-11-02T16:46:48.417Z",
+  "last_synced_at": "2026-11-03T14:49:45.117Z",
   "source": "grants.gov + usaspending + propublica + saa-map",
   "count": 5,
   "counts": {
