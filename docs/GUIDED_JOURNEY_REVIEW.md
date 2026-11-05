@@ -1,6 +1,6 @@
 # Guided agency research and funding journey
 
-The default entry now helps an education team establish its applicant, research the agency, define a program, investigate funding, prepare an application and plan reporting. Existing discovery, application, AI strategy and outcomes workspaces remain connected through actionable steps and a return-to-guide control.
+The guided workspace at `#journey`, reached from the public welcome page, helps an education team establish its applicant, research the agency, define a program, investigate funding, prepare an application and plan reporting. Existing discovery, application, AI strategy and outcomes workspaces remain connected through actionable steps and a return-to-guide control.
 
 ## Design reference and fidelity
 

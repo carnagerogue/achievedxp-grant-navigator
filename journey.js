@@ -563,6 +563,7 @@ window.FundingJourney = {
     });
     return {
       render,
+      go,
       context: () => J.researchContext(ctx().state.profile, data()),
       program: () => data().program,
       step: () => data().step,

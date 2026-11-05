@@ -11,6 +11,8 @@ const files = [
   "intelligence.js",
   "journey.js",
   "journey.css",
+  "welcome.js",
+  "welcome.css",
   "journey-state.js",
   "agency-directory.js",
   "intelligence.css",

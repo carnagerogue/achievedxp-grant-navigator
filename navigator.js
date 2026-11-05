@@ -54,6 +54,10 @@
     agency: '<path d="m3 8 9-5 9 5H3Zm2 3v7m5-7v7m4-7v7m5-7v7M3 21h18"/>',
     link: '<path d="m10 7 2-2a5 5 0 0 1 7 7l-3 3m-2 2-2 2a5 5 0 0 1-7-7l3-3m1 6 6-6"/>',
     arrow: '<path d="M4 12h16m-6-6 6 6-6 6"/>',
+    external: '<path d="M14 3h7v7m0-7L10 14M10 3H3v18h18v-7"/>',
+    edit: '<path d="m16 3 5 5-12 12-6 1 1-6L16 3Zm-2 2 5 5"/>',
+    "check-square":
+      '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="m7 12 3 3 7-7"/>',
     save: '<path d="M6 3h12v18l-6-4-6 4V3Z"/>',
     check: '<path d="m5 12 4 4L19 6"/>',
     close: '<path d="m6 6 12 12M6 18 18 6"/>',
@@ -67,6 +71,7 @@
     (icons[name] || icons.doc) +
     "</svg>";
   const navs = [
+    ["home", "Welcome", "agency"],
     ["journey", "Funding journey", "path"],
     ["intelligence", "Intelligence", "spark"],
     ["discover", "Discover", "search"],
@@ -126,7 +131,7 @@
   }
   let view = navs.some((n) => n[0] === location.hash.slice(1))
       ? location.hash.slice(1)
-      : "journey",
+      : "home",
     selected = "",
     workKey = "",
     workTab = "qualify",
@@ -289,7 +294,9 @@
           esc(C.safeUrl(url)) +
           '" target="_blank" rel="noopener noreferrer">' +
           esc(label) +
-          " ↗</a>"
+          " " +
+          icon("external").replace("<svg ", '<svg class="external-icon" ') +
+          "</a>"
       : "";
   }
   function heading(title, sub, actions = "") {
@@ -320,6 +327,7 @@
     view = next;
     history.replaceState(null, "", "#" + next);
     render();
+    $("#main")?.focus({ preventScroll: true });
     window.scrollTo({
       top: 0,
       behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
@@ -328,12 +336,17 @@
     });
   }
   function render() {
+    if (view === "home") {
+      $("#app").innerHTML = welcome.render();
+      return;
+    }
     const current = navs.find((n) => n[0] === view);
     $("#app").innerHTML =
-      '<div class="layout"><aside class="sidebar"><a href="#journey" data-view="journey" class="brand">Grant Navigator<small>by AchieveDXP</small></a>' +
+      '<div class="layout"><aside class="sidebar"><a href="#home" data-view="home" class="brand" aria-label="Grant Navigator home">Grant Navigator<small>by AchieveDXP</small></a>' +
       button(icon("menu") + "<span>Menu</span>", "menu", "mobile-menu") +
       '<nav class="nav" aria-label="Main navigation">' +
       navs
+        .filter(([v]) => v !== "home")
         .map(
           ([v, label, i]) =>
             '<button data-view="' +
@@ -3565,6 +3578,21 @@
       navigate("outcomes");
     },
   });
+  const welcome = NavigatorWelcome.create({
+    icon,
+    button,
+    esc,
+    hasAgency: () => !!state.profile.agencyName.trim(),
+    launch: (step) => {
+      if (step === "reporting") {
+        navigate("outcomes");
+        return;
+      }
+      navigate("journey");
+      journey.go(step);
+      $("#main")?.focus({ preventScroll: true });
+    },
+  });
   render();
   fetch("opportunities.json", { cache: "no-cache" })
     .then((r) => {
@@ -3590,6 +3618,6 @@
     })
     .finally(() => {
       feedLoading = false;
-      render();
+      if (view !== "home") render();
     });
 })();

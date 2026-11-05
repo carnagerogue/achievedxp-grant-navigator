@@ -7,7 +7,7 @@ Review the implementation in the target repository before publishing. A draft pu
 
 1. Review the redesigned website and checks. Merge the reviewed implementation into the target repository’s `main` branch.
 2. In that repository, open **Settings → Pages → Build and deployment → Source → GitHub Actions**. The new `pages.yml` workflow builds an allowlisted `dist/` artifact and publishes it.
-3. Verify the Pages workflow output URL is the target above. Test a fresh visit and reload under the repository subdirectory. The browser must load the new `navigator.js` and `navigator.css`, not the old wizard as the root page.
+3. Verify the Pages workflow output URL is the target above. Test a fresh visit and reload under the repository subdirectory. The root should show the new welcome page, with `welcome.js` and `welcome.css` loaded alongside `navigator.js` and `navigator.css`. Confirm that **Start my funding journey** opens the guide and that a saved agency can resume its previous step.
 4. The daily source refresh commits `opportunities.json`. The Pages workflow also listens for successful completion of that refresh, because pushes using `GITHUB_TOKEN` do not trigger ordinary push workflows.
 
 The site’s six-stage guide, manual agency research, program definition, discovery, comparison, planning, evidence library, reporting, backups and exports work without AI hosting.

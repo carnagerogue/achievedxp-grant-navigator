@@ -1,6 +1,8 @@
 # AchieveDXP Grant Navigator
 
-A grant discovery, application, and outcomes workspace for corrections education teams. The primary website opens into a six-stage **Funding journey**: agency → research → program → funding → application → reporting. It guides the applicant through public-source agency research, a concrete program brief, a considered shortlist, an owned application plan, and grant-specific evidence and reporting.
+A grant discovery, application, and outcomes workspace for corrections education teams. The primary website opens with a welcome page and an interactive six-stage tour. **Start my funding journey** opens the guided workspace; returning agencies can resume their saved step. The **Funding journey** follows agency → research → program → funding → application → reporting. It guides the applicant through public-source agency research, a concrete program brief, a considered shortlist, an owned application plan, and grant-specific evidence and reporting.
+
+The guide is also directly accessible at `#journey`.
 
 **No Nucleos pricing, supplier rates, preset implementation costs, or award-probability claims.** Budgets use agency-entered values. Checklist and evidence coverage counts describe completed work, not application quality or likelihood of winning.
 
@@ -14,6 +16,7 @@ GitHub Pages cannot run a secure OpenAI backend. The website supports an HTTPS A
 
 ## Implemented workspace
 
+- **Welcome:** a purpose-led landing page for correctional education, a keyboard-accessible six-stage tour, working links into each workspace, a source-based AI explanation, and an AchieveDXP evidence-to-reporting overview. Exploring the tour never modifies saved work or makes AI requests.
 - **Funding journey:** a persistent six-stage guide with applicant identification, a 50-state/DC corrections-agency directory, public-source research review, substantive program-design questions, source-aligned funding options, six ordered application tasks, ownership and review dates, reporting preparation, and a downloadable funding plan. Each application task opens the corresponding workbench tab. Manual research and explicit research gaps keep the guide useful without AI. The directory supplies starting points; it does not verify legal authority or current programs. Other applicant types and territories support custom entry.
 - **Agency research:** an explicit server-side OpenAI web-search request scoped to the selected agency website and official federal sources. It looks for identity, mission, education/workforce programs, priorities, partners, funding and reporting context. Notes require provider-supplied source citations, display those links, and enter strategy/application context only after agency review. Agency changes invalidate prior findings; stale responses cannot attach to a different applicant. Research is AI synthesis, not independently verified facts or eligibility rules.
 - **Intelligence:** mission-based strategy and saved-shortlist comparison using up to 12 server-selected source records, source-bound opportunity references and exact quotes, separately labeled state/corporate research pathways, concrete next actions, context inspection, bounded follow-up conversation, and strategy export. No automatic AI calls or simulated answers. Funding strategy analyzes the selected snapshot; the separate agency-research task uses hosted web search.
@@ -76,7 +79,7 @@ The Node service binds loopback port 8766 by default. In the managed cloud envir
 npm test -- --config=/workspace/.cloud-setup/grant-navigator/playwright.config.cjs
 ```
 
-Browser tests cover the guided agency/research/program/application journey, manual fallback, provider errors, applicant changes, persistence and export, plus the application/evidence/reporting flows and retain legacy regressions. The Pages build must run before browser tests, which include subdirectory loading. Tests use fixtures and mocked AI responses; they do not prove source eligibility or provider availability.
+Browser tests cover the welcome tour, keyboard navigation, mobile and reduced-motion behavior, saved-step resume, the guided agency/research/program/application journey, manual fallback, provider errors, applicant changes, persistence and export, plus the application/evidence/reporting flows and retain legacy regressions. The Pages build must run before browser tests, which include subdirectory loading. Tests use fixtures and mocked AI responses; they do not prove source eligibility or provider availability.
 
 ## Secure AI configuration
 
@@ -128,6 +131,7 @@ API destinations: `api.grants.gov`, `api.usaspending.gov`, `projects.propublica.
 | Files | Responsibility |
 | --- | --- |
 | `index.html`, `navigator.css`, `navigator.js` | Primary static website and interaction workflows |
+| `welcome.js` / `welcome.css` | Public welcome, interactive product tour, and shared visual refinements |
 | `navigator-state.js` | Application/evidence validation, aggregate CSV parsing, budget and preparation rules |
 | `grant-core.js`, `matching.js`, `opportunity-tools.js` | Shared provenance, eligibility evidence, matching and notice validation |
 | `journey.js` / `journey.css`, `journey-state.js`, `agency-directory.js` | Guided planning, reviewed agency research context, and directory suggestions |

@@ -64,7 +64,7 @@ async function open(page, { ai = true, path = "/" } = {}) {
       },
     }),
   );
-  await page.goto(path);
+  await page.goto(path + "#journey");
   await expect(
     page.getByRole("heading", { name: "Who are we finding funding for?" }),
   ).toBeVisible();
