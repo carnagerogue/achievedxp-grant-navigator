@@ -110,7 +110,7 @@
 
     <div class="summary-box">
       <h3>Summary, in plain English</h3>
-      <p>If you fill out the wizard, we collect the information you enter (agency name, role, work email, phone, the program details you select) and send it to our team at <strong>leads@nucleos.com</strong> so they can follow up. That's the only place your data goes. We don't sell it, we don't share it with third parties for marketing, and you can ask us to delete it at any time by emailing that address.</p>
+      <p>Creating a plan saves it in your browser. We send your contact information and planning context to <strong>leads@nucleos.com</strong> through Formsubmit only when you request follow-up or submit a callback request. Shared links and exports contain planning information, including your budget and notes. We do not sell your information or share it for third-party marketing. Contact that address to request deletion of information you sent us.</p>
     </div>
 
     <h2>Who we are</h2>
@@ -127,8 +127,11 @@
 
     <h3>2. Technical information collected automatically</h3>
     <ul>
-      <li><strong>localStorage in your browser</strong> — your in-progress wizard answers are saved locally so you can resume a session. This data stays on your device unless you submit the wizard.</li>
-      <li><strong>Shareable report URL hash</strong> — when you copy a share link, your wizard answers are encoded into the URL itself. Anyone you send the link to will see the same plan; the data is not stored on our servers.</li>
+      <li><strong>localStorage in your browser</strong> — agency profiles, saved opportunities, application drafts, criteria, budgets, eligibility reviews and aggregate program results are saved locally so you can resume work. Earlier wizard answers remain separately stored. Draft answers and saved plans, including your shortlist, checklist, and agency-entered budget, stay on your device unless you share or export them or request follow-up. Clear site data to remove local copies.</li>
+      <li><strong>Earlier wizard shareable report URL hash</strong> — the new workspace uses local backups rather than embedding work in navigation links. In the compatibility wizard, when you copy a share link, your agency profile, shortlist identifiers, preparation checklist, program selections, budget figures, and budget notes are encoded into the URL itself. Contact fields are excluded. Anyone with the link can read these planning details. Do not put confidential information in budget notes or share the link publicly. Source information may change when the feed updates.</li>
+      <li><strong>AI evidence briefs and analysis</strong> — briefs are assembled in your browser from your agency profile, a selected source record, and any public notice excerpt you supply. The new workbench includes the selected agency profile, actual narrative, criterion requirements and responses, attached aggregate evidence, reporting plan, and applicant/partner route. Contact fields and unrelated local records are excluded; budget totals are included only when you select that option. If in-app analysis is enabled and you explicitly request eligibility analysis, criterion extraction, drafting, or application review, this context is sent through the workspace server to OpenAI. Requests use <code>store:false</code>; OpenAI’s applicable retention and processing policies still apply. This service does not log or persist prompt/analysis content. If you copy a brief into another service, that service’s policies apply. Use agency-approved tools and review the exact context before sharing it.</li>
+      <li><strong>Agency-added opportunities and eligibility reviews</strong> — imported notices and per-opportunity reviews are stored in your browser. Reviews can include responsible teams, partner names, next actions, and cited evidence. They are included in your downloaded plan, but excluded from share links. Review files before sharing; do not enter personal case records or confidential information.</li>
+      <li><strong>AI access</strong> — a configured hosted workspace requires a separate agency access code, held in page memory and sent only to the workspace server. Local development uses a temporary HttpOnly session cookie. Neither mechanism is used for advertising or analytics. Provider API keys are kept on the server.</li>
       <li>No analytics cookies, no advertising trackers, no third-party session recording.</li>
     </ul>
 
@@ -136,13 +139,13 @@
     <ul>
       <li>Sensitive personal information — Social Security numbers, financial-account numbers, passwords, health records.</li>
       <li>Biometric, geolocation (beyond self-reported state), or protected-class information.</li>
-      <li>Information about incarcerated individuals or agency-case data — this tool is exclusively for corrections-agency procurement planning, not program operations.</li>
+      <li>Information about incarcerated individuals or agency-case data — this tool is for agency grant planning, not individual program records.</li>
     </ul>
 
     <h2>How we use your data</h2>
     <ul>
-      <li><strong>To contact you about your plan.</strong> When you submit the wizard, a Nucleos account executive receives your information and typically reaches out within one business day.</li>
-      <li><strong>To prioritize high-fit inbound.</strong> Leads with a high readiness score + immediate timeline are flagged internally as <code>[PRIORITY]</code> so a specialist responds faster.</li>
+      <li><strong>To contact you about your plan.</strong> When you explicitly request follow-up or submit a callback request, the Nucleos team receives the contact details and planning context needed to respond. Creating a plan alone does not send a lead.</li>
+      <li><strong>To prioritize high-fit inbound.</strong> Requests with a substantially completed preparation checklist and an immediate timeline are flagged internally as <code>[PRIORITY]</code> so a specialist responds faster.</li>
       <li><strong>To improve the product.</strong> Aggregate, de-identified patterns (e.g., which agency types are most common) may inform future features. No individual records are published.</li>
     </ul>
 
@@ -150,7 +153,8 @@
     <ul>
       <li><strong>Nucleos sales &amp; success team</strong> (employees of Nucleos / iT1) — receive the full submission to follow up with you.</li>
       <li><strong>Formsubmit.co</strong> — a third-party form-relay service that routes your submission from the web page to our inbox. Their privacy policy: <a href="https://formsubmit.co/privacy-policy" target="_blank" rel="noopener noreferrer">formsubmit.co/privacy-policy</a>. We do not authorize them to use your data for any other purpose.</li>
-      <li><strong>No one else.</strong> We do not sell, rent, license, or exchange your data with advertisers, data brokers, or third-party marketers.</li>
+      <li><strong>OpenAI</strong> — receives the selected agency context and source material only when you explicitly request enabled in-app AI analysis. The workbench includes the application context described above; contact fields and unrelated local records are excluded. See <a href="https://openai.com/policies/privacy-policy/" target="_blank" rel="noopener noreferrer">OpenAI’s privacy policy</a> and your agency’s applicable service agreement.</li>
+      <li>We do not sell, rent, license, or exchange your data with advertisers, data brokers, or third-party marketers.</li>
     </ul>
 
     <h2>How long we keep it</h2>
@@ -182,11 +186,11 @@
       <li>The Navigator is served over HTTPS.</li>
       <li>Nucleos's AchieveDXP platform itself is SOC 2 Type I audited and continuously monitored for SOC 2 Type II controls, HIPAA, FedRAMP, ISO 27001:2022, and NIST SP 800-53 via Drata. See the <a href="./#compliance">Compliance section</a>.</li>
       <li>The lead-capture form uses Formsubmit.co for routing; the data in transit is encrypted.</li>
-      <li>Your in-progress wizard answers (localStorage) are stored only in your browser — never transmitted until you submit Step 10.</li>
+      <li>Your in-progress wizard answers (localStorage) are stored only in your browser — not sent as a lead unless you explicitly request follow-up or submit a callback request. Shared plan links contain the planning information described above.</li>
     </ul>
 
     <h2>Cookies</h2>
-    <p>The Navigator does not set tracking cookies. It uses <code>localStorage</code> to remember your wizard progress on a single device. You can clear it at any time via your browser's site-data settings.</p>
+    <p>The Navigator does not set tracking cookies. It uses <code>localStorage</code> for the current agency workspace, including application drafts and aggregate program evidence, plus earlier wizard progress and saved plans on a single device. The new workspace can be backed up and restored using a downloaded JSON file. The optional AI service URL is public configuration; the workspace access code stays in page memory. Aggregate CSV imports must be reviewed by the agency and must not include individual learner information. There is no cross-device account sync; export plans you want to retain. You can clear it at any time via your browser's site-data settings.</p>
 
     <h2>Third-party data sources</h2>
     <p>The Navigator <em>displays</em> data from the following public sources (none of which receive your personal data):</p>

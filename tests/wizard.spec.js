@@ -17,7 +17,7 @@ test.describe('AchieveDXP Grant Navigator — golden path', () => {
       await route.fulfill({ status: 200, contentType: 'application/json', body: '{"success":true}' });
     });
 
-    await page.goto('/');
+    await page.goto('/legacy.html');
 
     // Landing renders.
     await expect(page.locator('.hero h1')).toContainText('Find the grants');
@@ -28,7 +28,7 @@ test.describe('AchieveDXP Grant Navigator — golden path', () => {
     await page.click('#nextBtn');
 
     // Step 2 — state (select). Wait for the dropdown to populate.
-    await expect(page.locator('#stateSelect option')).toHaveCount(53);
+    await expect(page.locator('#stateSelect option')).toHaveCount(57);
     await page.selectOption('#stateSelect', 'MI');
     await page.click('#nextBtn');
 
@@ -68,14 +68,14 @@ test.describe('AchieveDXP Grant Navigator — golden path', () => {
     await page.fill('#contactName', 'Jane Doe');
     await page.fill('#contactRole', 'Director of Reentry');
     await page.fill('#contactEmail', 'jane@example.gov');
+    await page.check('#requestFollowup');
     await page.click('#nextBtn');
 
     // TL;DR view should be active by default with score, funding, and grants.
     await expect(page.locator('#results')).toHaveClass(/view-summary/);
     await expect(page.locator('#tldrScoreToday')).not.toHaveText('—');
-    await expect(page.locator('#tldrScoreWith')).not.toHaveText('—');
-    await expect(page.locator('#tldrDelta')).toContainText('+');
-    await expect(page.locator('#tldrFundingAmount')).toContainText('$');
+    await expect(page.locator('#tldrScoreToday')).toHaveText('0');
+    await expect(page.locator('#tldrFundingAmount')).toHaveText('0');
     await expect(page.locator('#tldrGrants .tldr-grant')).toHaveCount(3);
 
     // Share URL hash is set.
@@ -109,8 +109,8 @@ test.describe('AchieveDXP Grant Navigator — golden path', () => {
     expect(callback.specific_question).toContain('Playwright');
     expect(callback.preferred_contact_time).toBeTruthy();
     expect(callback.shareable_report_url).toContain('#plan=');
-    // Score 79 today + timeline "now" with this answer set → priority HIGH expected.
-    expect(callback.priority).toBe('HIGH');
-    expect(callback._subject).toMatch(/^\[PRIORITY\] /);
+    // Intake answers do not imply application preparation or award eligibility.
+    expect(callback.priority).toBe('standard');
+    expect(callback.application_preparation_percent).toBe('0');
   });
 });

@@ -28,9 +28,11 @@
  * into `awards`, `foundations`, `saa`.
  */
 
-import { writeFile, readFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+
+import { chooseSourceSnapshot, writeAtomicJson } from "./source-utils.mjs";
 
 import { fetchAllOpportunities } from "./refresh-grants.mjs";
 import { fetchAllAwards }        from "./refresh-awards.mjs";
@@ -49,6 +51,9 @@ async function loadSaaMap(hereDir) {
 async function main() {
   const here = dirname(fileURLToPath(import.meta.url));
   console.error("=== refresh-all.mjs ===");
+  const out = process.env.GRANT_FEED_OUTPUT || join(here, "..", "opportunities.json");
+  let previous = {};
+  try { previous = JSON.parse(await readFile(out, "utf8")); } catch (error) { if (error.code !== "ENOENT") throw error; }
 
   // Run fetchers sequentially so upstream API rate limits don't stampede.
   // Each is wrapped so one source's failure doesn't kill the others.
@@ -72,12 +77,20 @@ async function main() {
   console.error("\n[4/4] saa-map.json");
   saa = await loadSaaMap(here);
 
+  const sourceHealth = {};
+  for (const [source, result, key] of [['grants_gov', opps, 'opportunities'], ['usaspending', awd, 'awards'], ['propublica', fnd, 'foundations']]) {
+    const chosen = chooseSourceSnapshot(previous[key], result[key], result.errors || [], { previousAt: previous.source_health?.[source]?.last_success_at || null });
+    result[key] = chosen.records; sourceHealth[source] = chosen.health;
+  }
+  if (!saa && previous.saa) saa = previous.saa;
   const payload = {
+    source_health: sourceHealth,
     opportunities: opps.opportunities,
     awards:        awd.awards,
     foundations:   fnd.foundations,
     saa:           saa,
     alns_searched: opps.alns_searched,
+    keywords_searched: opps.keywords_searched || [],
     errors: [
       ...(opps.errors || []).map(e => ({ ...e, source: e.source || "grants_gov" })),
       ...(awd.errors  || []).map(e => ({ ...e, source: e.source || "usaspending"  })),
@@ -94,8 +107,7 @@ async function main() {
     }
   };
 
-  const out = join(here, "..", "opportunities.json");
-  await writeFile(out, JSON.stringify(payload, null, 2) + "\n", "utf8");
+  await writeAtomicJson(out, payload);
 
   console.error(`\n=== Done ===`);
   console.error(`  opportunities: ${payload.counts.opportunities}`);

@@ -1,0 +1,42 @@
+name: Deploy Grant Navigator to Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  workflow_run:
+    workflows: ['Refresh funding data (grants.gov + USASpending + ProPublica + SAA)']
+    types: [completed]
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  deploy:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Validate application rules
+        run: node --test tests/unit/*.test.cjs
+      - name: Prepare public website
+        run: node scripts/build-pages.mjs
+        env:
+          GRANT_AI_BASE_URL: ${{ vars.GRANT_AI_BASE_URL }}
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - name: Deploy website
+        id: deployment
+        uses: actions/deploy-pages@v4

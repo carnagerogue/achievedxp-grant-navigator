@@ -11,6 +11,8 @@
  * Public API, no auth required.
  */
 
+import { fetchJson } from "./source-utils.mjs";
+
 const CORRECTIONS_ALNS = [
   "16.812", "16.828", "16.738", "16.203", "16.540", "16.726", "16.575",
   "84.002", "84.048", "84.126", "84.331",
@@ -44,14 +46,14 @@ async function fetchAwardsForAln(aln) {
     sort: "Award Amount",
     order: "desc"
   };
-  const res = await fetch("https://api.usaspending.gov/api/v2/search/spending_by_award/", {
+  const data = await fetchJson("https://api.usaspending.gov/api/v2/search/spending_by_award/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body)
   });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const data = await res.json();
-  return (data.results || []).map(a => normalize(a, aln));
+
+  if (!Array.isArray(data.results)) throw new Error("USASpending returned an unexpected response");
+  return data.results.map(a => normalize(a, aln));
 }
 
 function normalize(a, aln) {

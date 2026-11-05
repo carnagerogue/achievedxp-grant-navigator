@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AchieveDXP Grant Navigator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="styles.css?v=2026-11-04.2">
+<link rel="stylesheet" href="workspace.css?v=2026-11-04.2">
+</head>
+<body>
+<div class="app">
+
+<!-- LANDING -->
+<div id="landing">
+  <!-- Resume banner — hidden unless localStorage has saved wizard progress -->
+  <div class="resume-banner" id="resumeBanner" role="region" aria-label="Resume saved progress">
+    <span class="rb-msg" id="resumeMsg">You have unfinished answers from a previous session.</span>
+    <button type="button" class="rb-btn" id="resumeBtn">Resume where you left off</button>
+    <button type="button" class="rb-dismiss" id="resumeDismiss">Start fresh</button>
+  </div>
+  <!-- Single mascot floater — moves between landing sections based on scroll -->
+  <div class="mascot-floater" id="mascotFloater" aria-hidden="true">
+    <img class="m-char" src="./assets/mascot.png" alt="">
+    <div class="m-bubble" id="mascotBubble">—</div>
+  </div>
+
+  <div class="hero-canvas">
+    <!-- TOP BAR (dark-mode, sits on hero) -->
+    <div class="top-bar">
+      <a href="#" class="logos home-link" onclick="returnToLanding(); return false;" aria-label="Back to home">
+        <img class="logo-n logo-src-n" id="logoNucleos" alt="Nucleos, an iT1 Company">
+        <div class="divider"></div>
+        <img class="logo-a logo-src-a" id="logoAchieve" alt="Achieve DXP">
+      </a>
+      <div class="meta">
+        <strong>AchieveDXP Grant Navigator</strong>
+        <div>publicsafety@it1.com · (877) 777-5995</div>
+      </div>
+    </div>
+    <div class="hero">
+      <div class="kicker">Grant Enablement Platform · Corrections</div>
+      <h1>Find the grants.<br>Build the program.<br><span class="accent">Prove the outcomes.</span></h1>
+      <p class="lead">A funding research and application-planning workspace for DOC education teams. Discover sources, build a shortlist, and prepare an evidence-backed proposal.</p>
+      <div class="cta-row">
+        <button class="btn btn-primary" onclick="startWizard()">Launch the Navigator  →</button>
+        <button class="btn btn-secondary" onclick="window.print()">Print a worksheet</button>
+      </div>
+
+      <div class="proof-row" id="proofRow">
+        <div class="stat">
+          <div class="val tabular"><span id="proofOpen">—</span></div>
+          <span class="lab">Opportunity records</span>
+          <span class="sub" id="proofOpenSub">Grants.gov · published snapshot</span>
+        </div>
+        <div class="stat">
+          <div class="val tabular"><span id="proofAwards">—</span></div>
+          <span class="lab">Peer awards tracked</span>
+          <span class="sub" id="proofAwardsSub">USASpending · last 24 mo.</span>
+        </div>
+        <div class="stat">
+          <div class="val tabular"><span id="proofFnd">—</span></div>
+          <span class="lab">Foundations covered</span>
+          <span class="sub" id="proofFndSub">ProPublica · IRS 990 data</span>
+        </div>
+        <div class="stat">
+          <div class="val tabular"><span id="proofSaa">—</span></div>
+          <span class="lab">State agencies mapped</span>
+          <span class="sub" id="proofSaaSub">State and territory directory</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="editorial" data-scene="editorial">
+    <div class="lane">
+      <div class="num">01 · DISCOVER</div>
+      <h3>Match the right funding</h3>
+      <p>Research federal, state, workforce, and philanthropic routes. See the evidence behind each match and identify when an eligible partner may need to lead.</p>
+    </div>
+    <div class="lane">
+      <div class="num">02 · DESIGN</div>
+      <h3>Compose the program</h3>
+      <p>GED, CTE, tablets, network, college pathways. Define your program scope, enter your agency’s budget, and gather evidence for each application. No vendor pricing is included.</p>
+    </div>
+    <div class="lane">
+      <div class="num">03 · DELIVER</div>
+      <h3>Build a stronger application</h3>
+      <p>Use source requirements, proposal working drafts, and cited eligibility evidence to build an application your team can substantiate.</p>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       SECTION · THE PLATFORM (what AchieveDXP is)
+       ======================================================== -->
+  <section class="section" id="platform" data-scene="platform">
+    <div class="section-head">
+      <div class="section-eyebrow-col">
+        <div class="section-kicker">AchieveDXP · The Platform</div>
+      </div>
+      <div>
+        <h2 class="section-headline">One platform for every system an agency runs. One record for every learner — for life.</h2>
+        <p class="section-lead">AchieveDXP integrates hundreds of systems — SIS, OMS, JMS, identity providers, learning content, secure delivery, monitoring — into a single fabric. Rostering and de-rostering sync automatically. Reporting maps to grant metrics. And the learner record follows the individual through transfers, through reentry, and into lifetime access to their transcripts, certifications, and diplomas. Education continues after release.</p>
+      </div>
+    </div>
+
+    <div class="unified-stack">
+      <div class="us-head">
+        <div class="us-label">One procurement · five layers</div>
+        <div class="us-title">AchieveDXP is what happens when the five things agencies used to buy separately procure together.</div>
+      </div>
+      <div class="us-layers">
+        <div class="us-layer" style="--tint: #F5B82E">
+          <div class="us-layer-num">LAYER 05</div>
+          <div class="us-layer-name">Reporting &amp; outcomes</div>
+          <div class="us-layer-meta">NRS · Perkins V · WIOA · Post-release outcomes</div>
+        </div>
+        <div class="us-layer" style="--tint: #8B5CF6">
+          <div class="us-layer-num">LAYER 04</div>
+          <div class="us-layer-name">Compliance &amp; standards</div>
+          <div class="us-layer-meta">SOC 2 · ISO 27001 · FERPA · HIPAA · CIPA · NIST 800-53</div>
+        </div>
+        <div class="us-layer" style="--tint: #2FB39A">
+          <div class="us-layer-num">LAYER 03</div>
+          <div class="us-layer-name">Platform</div>
+          <div class="us-layer-meta">Unified learner record · SSO · Dashboards · Real-time analytics</div>
+        </div>
+        <div class="us-layer" style="--tint: #5FC9B5">
+          <div class="us-layer-num">LAYER 02</div>
+          <div class="us-layer-name">Infrastructure · iT1</div>
+          <div class="us-layer-meta">Corrections-grade devices · Secure network · Deployment · Support</div>
+        </div>
+        <div class="us-layer" style="--tint: #E87722">
+          <div class="us-layer-num">LAYER 01</div>
+          <div class="us-layer-name">Content &amp; credentials</div>
+          <div class="us-layer-meta">Coursera · iCEV · NROC · Ascend · Universities · 90+ partners</div>
+        </div>
+      </div>
+      <div class="us-foot">
+        <div class="us-dot"></div>
+        <div class="us-foot-txt">One contract vehicle · one invoice · one accountable team</div>
+      </div>
+    </div>
+
+    <div class="cap-list">
+      <div class="cap">
+        <div class="idx">01</div>
+        <div>
+          <div class="name">Agency-system integration fabric</div>
+          <div class="desc">Pre-built connectors to your SIS, OMS, JMS, and identity provider. Learner records, housing data, rosters, and enrollments flow automatically — no CSV uploads, no dual data entry, no drift between your systems of record.</div>
+        </div>
+        <div class="tag">Integration</div>
+      </div>
+      <div class="cap">
+        <div class="idx">02</div>
+        <div>
+          <div class="name">Automated rostering & de-rostering</div>
+          <div class="desc">Accounts provision on intake and de-provision on release or transfer — driven by your OMS/JMS signals. Movement-aware rostering preserves progress through pod changes and facility moves without manual reconciliation.</div>
+        </div>
+        <div class="tag">Operational</div>
+      </div>
+      <div class="cap">
+        <div class="idx">03</div>
+        <div>
+          <div class="name">Secure content delivery & monitoring</div>
+          <div class="desc">Corrections-hardened content delivery integrated with agency monitoring systems. Activity logging, session recording, keyword watchlists, and incident routing — fully compatible with your existing monitoring stack.</div>
+        </div>
+        <div class="tag">Security</div>
+      </div>
+      <div class="cap">
+        <div class="idx">04</div>
+        <div>
+          <div class="name">Grant-aligned reporting out of the box</div>
+          <div class="desc">Teacher dashboards, program-level outcomes, agency-level reports mapped to NRS (AEFLA), Perkins V, and WIOA indicators — the exact evidence reviewers ask for on renewal. Plus real-time analytics for program leaders.</div>
+        </div>
+        <div class="tag">Reporting</div>
+      </div>
+      <div class="cap">
+        <div class="idx">05</div>
+        <div>
+          <div class="name">Hundreds of integrations, pre-built</div>
+          <div class="desc">SIS, OMS, JMS, identity, content (Coursera, iCEV, Essential Education, NROC, Ascend Math, GoEducate, accredited universities, 90+ more), monitoring systems. Pre-contracted, pre-integrated, single sign-on across the whole stack.</div>
+        </div>
+        <div class="tag">Ecosystem</div>
+      </div>
+      <div class="cap">
+        <div class="idx">06</div>
+        <div>
+          <div class="name">Lifetime learner access — the reentry moment</div>
+          <div class="desc">Returning citizens retain access to their AchieveDXP account after release. Transcripts, certifications, diplomas, and program records follow them home — verifiable, portable, employer-shareable. Education doesn't end at the gate.</div>
+        </div>
+        <div class="tag">Reentry</div>
+      </div>
+      <div class="cap">
+        <div class="idx">07</div>
+        <div>
+          <div class="name">Infrastructure delivered by iT1</div>
+          <div class="desc">Corrections-grade devices, network design, and secure deployment — not a software-only vendor. iT1's public-sector team owns hardware, network, and rollout under one accountability line.</div>
+        </div>
+        <div class="tag">Infrastructure</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SECTION · OUTCOMES (dark canvas)
+       ======================================================== -->
+  <section class="section dark" id="outcomes" data-scene="outcomes">
+    <div class="inner">
+      <div class="section-head">
+        <div class="section-eyebrow-col">
+          <div class="section-kicker">Outcomes · Published evidence</div>
+        </div>
+        <div>
+          <h2 class="section-headline">Education is the most-studied<br>recidivism intervention in corrections.</h2>
+          <p class="section-lead">Grant reviewers don't reward promises. They reward outcomes tied to peer-reviewed evidence. AchieveDXP's program model anchors to the two most-cited studies in the field.</p>
+        </div>
+      </div>
+
+      <div class="outcomes">
+        <div class="outcome">
+          <div class="big"><span class="count-up" data-count="28" data-decimals="0">0</span><span class="unit">%</span></div>
+          <div class="title">Reduction in recidivism among incarcerated adults who participate in correctional education.</div>
+          <div class="src">MIT · RAND Corporation meta-analysis</div>
+        </div>
+        <div class="outcome">
+          <div class="big"><span class="count-up" data-count="17.6" data-decimals="1">0</span><span class="unit">%</span></div>
+          <div class="title">Reported three-year return-to-incarceration rate among releases engaged in correctional education — well below the ~45% national baseline.</div>
+          <div class="src">State-level corrections recidivism reporting · Virginia DOC and others</div>
+        </div>
+      </div>
+
+      <div class="outcome-secondary-row">
+        <div class="outcome-small">
+          <div class="num"><span class="count-up" data-count="7" data-decimals="0">0</span> in 10</div>
+          <div class="body">State-prison adults entered without a high school diploma. The credential gap is the single highest-leverage intervention point.
+            <cite>Source: nucleos.com</cite>
+          </div>
+        </div>
+        <div class="outcome-small">
+          <div class="num"><span class="count-up" data-count="6" data-decimals="0">0</span> in 10</div>
+          <div class="body">Formerly incarcerated adults struggle to secure employment post-release. Credentialed reentry changes the trajectory.
+            <cite>Source: nucleos.com</cite>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SECTION · COMPLIANCE
+       ======================================================== -->
+  <section class="section" id="compliance" data-scene="compliance">
+    <div class="section-head">
+      <div class="section-eyebrow-col">
+        <div class="section-kicker">Compliance · Continuously monitored</div>
+      </div>
+      <div>
+        <h2 class="section-headline">Reviewer-ready across every compliance framework federal grants demand.</h2>
+        <p class="section-lead">AchieveDXP operates inside the full security and privacy envelope federal and state grant programs require. Independently validated, continuously monitored, with a real-time audit trail across every framework below — so when reviewers ask for proof, the answer is today's posture, not last quarter's.</p>
+      </div>
+    </div>
+
+    <div class="badge-grid">
+      <div class="badge-tile">
+        <div class="std">FedRAMP</div>
+        <div class="std-sub">Federal cloud authorization</div>
+        <div class="std-desc">The federal cloud-authorization bar contracting officers expect. Cleared for federal corrections deployments — not a roadmap claim, a current operating posture.</div>
+      </div>
+      <div class="badge-tile">
+        <div class="std">HIPAA</div>
+        <div class="std-sub">Health information privacy</div>
+        <div class="std-desc">Protected handling of health-adjacent learner data — SUD enrollment, reentry case files, behavioral-health programming. Required for any grant that touches medical or mental-health outcomes.</div>
+      </div>
+      <div class="badge-tile">
+        <div class="std">ISO 27001:2022</div>
+        <div class="std-sub">Information security management</div>
+        <div class="std-desc">The international security-management standard required across most federal procurement paths and a growing number of state RFPs that touch personally identifiable data.</div>
+      </div>
+      <div class="badge-tile">
+        <div class="std">NIST SP 800-53</div>
+        <div class="std-sub">Federal security &amp; privacy controls</div>
+        <div class="std-desc">The baseline DOJ, ED, and HHS grant-funded systems must meet. Maps directly to the FedRAMP and FISMA reporting your CIO already tracks.</div>
+      </div>
+      <div class="badge-tile">
+        <div class="std">SOC 2</div>
+        <div class="std-sub">Security · availability · confidentiality</div>
+        <div class="std-desc">Trust-services attestation across security, availability, and confidentiality controls. Recognized by federal procurement officers and grant reviewers across DOJ, ED, and HHS.</div>
+      </div>
+      <div class="badge-tile">
+        <div class="std">CIPA</div>
+        <div class="std-sub">Children's Internet Protection Act</div>
+        <div class="std-desc">Required filtering and internet-access controls for any K–12 or juvenile-facility learning environment. Self-attested compliance — the standard agency route for this statute.</div>
+      </div>
+    </div>
+
+    <div class="compliance-callout">
+      <div class="cc-num">Reviewer-ready</div>
+      <div>
+        <div class="cc-title">posture, on demand</div>
+        <div class="cc-body">Real-time compliance evidence — not a once-a-year report. When a funder asks how your systems handle PII, learner data, or cloud authorization, the answer is today's posture in their inbox the same day.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SECTION · THE JOINT iT1 + NUCLEOS TEAM
+       ======================================================== -->
+  <section class="section" id="team" data-scene="team">
+    <div class="section-head">
+      <div class="section-eyebrow-col">
+        <div class="section-kicker">The Joint Team · iT1 + Nucleos</div>
+      </div>
+      <div>
+        <h2 class="section-headline">Hardware, network, platform, partners — one contract vehicle.</h2>
+        <p class="section-lead">Nucleos is an iT1 Company. Agencies procure the full stack under a single grant-compliant vehicle instead of negotiating five separate contracts across five vendors.</p>
+        <div class="vehicles">
+          <div class="vehicle">GSA</div>
+          <div class="vehicle">SEWP V</div>
+          <div class="vehicle">NASPO ValuePoint</div>
+          <div class="vehicle">State cooperative</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-rule">
+      <div class="section-kicker" style="margin-bottom: 28px;">In their words · Agencies shipping AchieveDXP</div>
+
+      <div class="testimonial-grid">
+        <div class="testimonial">
+          <div class="quote-mark">"</div>
+          <div class="quote">Our partnership is well on its way to increasing access and opportunity for our incarcerated students.</div>
+          <div class="attribution">
+            <img class="avatar" src="./assets/beth-dorado.png" alt="Beth Dorado" loading="lazy">
+            <div>
+              <div class="who">Beth Dorado</div>
+              <div class="where">Gordon Bernell Correctional Charter · NM</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial">
+          <div class="quote-mark">"</div>
+          <div class="quote">Nucleos is an innovative platform that allows our incarcerated population to continue to do course work within their housing units.</div>
+          <div class="attribution">
+            <img class="avatar" src="./assets/peter-abrahams.jpg" alt="Peter Abrahams" loading="lazy">
+            <div>
+              <div class="who">Peter Abrahams</div>
+              <div class="where">Dir. of Programs · USVI Bureau of Corrections</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial">
+          <div class="quote-mark">"</div>
+          <div class="quote">A secure option for our students to have access to technology — our collaboration with Nucleos has been exceptional.</div>
+          <div class="attribution">
+            <img class="avatar" src="./assets/sherry-fortner.jpg" alt="Sherry Fortner" loading="lazy">
+            <div>
+              <div class="who">Sherry Fortner</div>
+              <div class="where">Principal · Yuba County Office of Ed · CA</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="deployments">
+        <div class="dep">
+          <img src="./assets/wdoc-partner.webp" alt="Wyoming Department of Corrections partnership with iT1 and Nucleos" loading="lazy">
+          <div class="dep-cap">Wyoming Department of Corrections<span class="dep-meta">WDOC · iT1 partnership · 2024</span></div>
+        </div>
+        <div class="dep">
+          <img src="./assets/sf-tablet.jpg" alt="San Francisco County Jail free tablet program" loading="lazy">
+          <div class="dep-cap">San Francisco County Jail<span class="dep-meta">SFSO · Free tablet program · 2024</span></div>
+        </div>
+        <div class="dep">
+          <img src="./assets/dxp-launch.png" alt="AchieveDXP platform launch" loading="lazy">
+          <div class="dep-cap">AchieveDXP platform launch<span class="dep-meta">Nucleos · iT1 Company · 2024</span></div>
+        </div>
+      </div>
+
+      <!-- Aggregate reference line — no named client enumeration -->
+      <div class="reference-strip">
+        <div class="rs-head">
+          <div class="rs-label">Reference agencies</div>
+        </div>
+        <div class="rs-body">
+          AchieveDXP is deployed across correctional agencies spanning state departments of corrections, county jails, juvenile-justice facilities, charter schools, and U.S. territorial bureaus. Named references are provided on request during evaluation — contact <a href="mailto:leads@nucleos.com">leads@nucleos.com</a> for specifics matched to your agency type.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SECTION · FINAL CTA
+       ======================================================== -->
+  <section class="section dark" data-scene="final">
+    <div class="inner final-cta">
+      <div class="section-kicker" style="justify-content: center; margin-bottom: 24px;">Ready · Launch</div>
+      <h2>See your full funding stack in <span class="accent">under five minutes.</span></h2>
+      <p class="sub">Ten questions. A matched grant stack across five funding layers, a component-level program design, and a reviewer-ready narrative. No account, no email wall.</p>
+      <div class="cta-row">
+        <button class="btn btn-primary" onclick="startWizard()">Launch the Navigator  →</button>
+        <a class="btn btn-secondary" href="mailto:publicsafety@it1.com?subject=AchieveDXP%20inquiry">Talk to the team</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="sf-inner">
+      <div class="sf-brand">
+        <strong>AchieveDXP Grant Navigator</strong>
+        <span class="sf-sub">Nucleos · an iT1 Company</span>
+      </div>
+      <nav class="sf-links" aria-label="Footer">
+        <a href="./privacy.html">Privacy policy</a>
+        <a href="mailto:leads@nucleos.com">leads@nucleos.com</a>
+        <a href="tel:+18777775995">(877) 777-5995</a>
+      </nav>
+    </div>
+  </footer>
+</div>
+
+<!-- WIZARD -->
+<div class="wizard" id="wizard" style="display:none;">
+  <div class="wizard-head">
+    <a href="#" class="home-link wizard-home" onclick="returnToLanding(); return false;" aria-label="Back to home">
+      <img class="logo-src-n" alt="Nucleos">
+      <div class="divider"></div>
+      <img class="logo-src-a" alt="AchieveDXP">
+    </a>
+    <div class="wizard-mascot" aria-hidden="true"><img src="./assets/mascot.png" alt=""></div>
+    <h2 id="wizardTitle">Tell us about your agency</h2>
+    <div class="subtitle">Your answers shape your matched grants, funding stack, and program design.</div>
+    <div class="progress-bar" id="progressBar" role="progressbar" aria-label="Wizard progress" aria-valuemin="0" aria-valuemax="10" aria-valuenow="1"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+  <div class="wizard-body">
+
+    <!-- STEP 1 -->
+    <div class="step active" data-step="1" data-title="Tell us about your agency">
+      <div class="step-label">Question 1 of 10</div>
+      <h3>What type of agency are you?</h3>
+      <p class="desc">We'll match grants that are eligible for your agency type.</p>
+      <div class="option-grid" data-field="agencyType" data-type="single">
+        <button class="option" data-value="state_doc"><span class="check"></span>State Department of Corrections</button>
+        <button class="option" data-value="county_jail"><span class="check"></span>County Jail / Sheriff's Office</button>
+        <button class="option" data-value="juvenile"><span class="check"></span>Juvenile Justice Agency</button>
+        <button class="option" data-value="community"><span class="check"></span>Community Corrections / Parole</button>
+        <button class="option" data-value="other"><span class="check"></span>Other / Multi-agency</button>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step" data-step="2" data-title="Your location">
+      <div class="step-label">Question 2 of 10</div>
+      <h3>What state or territory?</h3>
+      <p class="desc">Determines state administered programs (AEFLA, Perkins V, WIOA, Byrne JAG SAA).</p>
+      <div class="field">
+        <label>State</label>
+        <select class="select-input" id="stateSelect">
+          <option value="">Select state...</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step" data-step="3" data-title="Scope and scale">
+      <div class="step-label">Question 3 of 10</div>
+      <h3>What's your population size?</h3>
+      <p class="desc">Average daily population or headcount you'd serve with this program.</p>
+      <div class="option-grid cols-3" data-field="populationSize" data-type="single">
+        <button class="option" data-value="xs"><span class="check"></span>Under 100</button>
+        <button class="option" data-value="sm"><span class="check"></span>100 – 500</button>
+        <button class="option" data-value="md"><span class="check"></span>500 – 2,000</button>
+        <button class="option" data-value="lg"><span class="check"></span>2,000 – 5,000</button>
+        <button class="option" data-value="xl"><span class="check"></span>5,000 – 15,000</button>
+        <button class="option" data-value="xxl"><span class="check"></span>Over 15,000</button>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step" data-step="4" data-title="Program goals">
+      <div class="step-label">Question 4 of 10 — select all that apply</div>
+      <h3>What are your primary goals?</h3>
+      <p class="desc">Drives grant matching and your program design.</p>
+      <div class="option-grid" data-field="goals" data-type="multi">
+        <button class="option" data-value="ged"><span class="check square"></span>GED / HSE completion</button>
+        <button class="option" data-value="cte"><span class="check square"></span>CTE / industry certifications</button>
+        <button class="option" data-value="postsec"><span class="check square"></span>College / post-secondary credits</button>
+        <button class="option" data-value="reentry"><span class="check square"></span>Reentry &amp; workforce connection</button>
+        <button class="option" data-value="digital"><span class="check square"></span>Digital literacy</button>
+        <button class="option" data-value="sud"><span class="check square"></span>SUD / mental health education</button>
+        <button class="option" data-value="sel"><span class="check square"></span>SEL / life skills</button>
+        <button class="option" data-value="juv_ed"><span class="check square"></span>Juvenile K-12 education</button>
+      </div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="step" data-step="5" data-title="What's in place today">
+      <div class="step-label">Question 5 of 10 — select all that apply</div>
+      <h3>What's your current infrastructure?</h3>
+      <p class="desc">Helps describe the resources and delivery capacity available to your program.</p>
+      <div class="option-grid" data-field="infra" data-type="multi">
+        <button class="option" data-value="tablets"><span class="check square"></span>Tablets / devices for residents</button>
+        <button class="option" data-value="network"><span class="check square"></span>Education-space Wi-Fi or network</button>
+        <button class="option" data-value="lms"><span class="check square"></span>LMS / learning platform in place</button>
+        <button class="option" data-value="partners"><span class="check square"></span>Active content / education partners</button>
+        <button class="option" data-value="staff"><span class="check square"></span>Dedicated education staff</button>
+        <button class="option option-soft" data-value="none"><span class="check square"></span>Starting mostly from scratch</button>
+      </div>
+    </div>
+
+    <!-- STEP 6 -->
+    <div class="step" data-step="6" data-title="Budget">
+      <div class="step-label">Question 6 of 10</div>
+      <h3>Approximate annual education budget</h3>
+      <p class="desc">So we can size the funding stack and the gap.</p>
+      <div class="option-grid cols-3" data-field="budget" data-type="single">
+        <button class="option" data-value="xs"><span class="check"></span>Under $50K</button>
+        <button class="option" data-value="sm"><span class="check"></span>$50K – $250K</button>
+        <button class="option" data-value="md"><span class="check"></span>$250K – $1M</button>
+        <button class="option" data-value="lg"><span class="check"></span>$1M – $5M</button>
+        <button class="option" data-value="xl"><span class="check"></span>Over $5M</button>
+        <button class="option" data-value="unsure"><span class="check"></span>Not sure yet</button>
+      </div>
+    </div>
+
+    <!-- STEP 7 -->
+    <div class="step" data-step="7" data-title="Your grant history">
+      <div class="step-label">Question 7 of 10</div>
+      <h3>Grant experience</h3>
+      <p class="desc">Record your team’s experience to help plan application support and review.</p>
+      <div class="option-grid" data-field="grantExp" data-type="single">
+        <button class="option" data-value="active"><span class="check"></span>Active grantee (current federal or state award)</button>
+        <button class="option" data-value="past"><span class="check"></span>Previously awarded, not currently active</button>
+        <button class="option" data-value="applied"><span class="check"></span>Applied but not yet awarded</button>
+        <button class="option" data-value="first"><span class="check"></span>First-time applicant</button>
+      </div>
+    </div>
+
+    <!-- STEP 8 -->
+    <div class="step" data-step="8" data-title="Timeline">
+      <div class="step-label">Question 8 of 10</div>
+      <h3>When do you want to apply?</h3>
+      <p class="desc">Record your planning horizon. Confirm each opportunity’s official deadline before scheduling application work.</p>
+      <div class="option-grid cols-3" data-field="timeline" data-type="single">
+        <button class="option" data-value="now"><span class="check"></span>Active cycle (0-3 months)</button>
+        <button class="option" data-value="next"><span class="check"></span>Next cycle (3-6 months)</button>
+        <button class="option" data-value="plan"><span class="check"></span>Planning (6-12 months)</button>
+      </div>
+    </div>
+
+    <!-- STEP 9 -->
+    <div class="step" data-step="9" data-title="Your partners">
+      <div class="step-label">Question 9 of 10 — select all that apply</div>
+      <h3>Which partners do you already work with?</h3>
+      <p class="desc">Identify partners who may contribute expertise, evidence, or an eligible lead applicant.</p>
+      <div class="option-grid" data-field="existingPartners" data-type="multi">
+        <button class="option" data-value="university"><span class="check square"></span>College or university</button>
+        <button class="option" data-value="coursera"><span class="check square"></span>Online course / MOOC provider</button>
+        <button class="option" data-value="ged"><span class="check square"></span>GED / HSE provider</button>
+        <button class="option" data-value="ascend"><span class="check square"></span>Adaptive math content</button>
+        <button class="option" data-value="icev"><span class="check square"></span>CTE / career content</button>
+        <button class="option" data-value="wioa"><span class="check square"></span>Local workforce board</button>
+        <button class="option" data-value="nonprofit"><span class="check square"></span>Reentry nonprofits</button>
+        <button class="option option-soft" data-value="none"><span class="check square"></span>None yet</button>
+      </div>
+      <div class="field" style="margin-top: 20px;">
+        <label for="partnersOther">Other partners (optional) — list any specific vendors or programs</label>
+        <input id="partnersOther" class="text-input" type="text" placeholder="e.g. Khan Academy, local community college, specific reentry nonprofit" oninput="state.existingPartnersOther = this.value">
+      </div>
+    </div>
+
+    <!-- STEP 10 -->
+    <div class="step" data-step="10" data-title="Your details">
+      <div class="step-label">Last step · Get your plan</div>
+      <h3>Name your agency’s grant plan</h3>
+      <p class="desc">Your plan opens here and is saved in this browser. Contact details are optional unless you request a follow-up conversation.</p>
+      <div class="field-row">
+        <div class="field">
+          <label>Agency name <span style="color:var(--orange)">*</span></label>
+          <input class="text-input" id="agencyName" placeholder="e.g. Kent County Sheriff's Office" required aria-required="true">
+        </div>
+        <div class="field">
+          <label>Program name <span class="muted" style="font-weight:400">(optional)</span></label>
+          <input class="text-input" id="programName" placeholder="e.g. Kent Reentry Academy">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Your name <span class="muted">(optional)</span></label>
+          <input class="text-input" id="contactName" placeholder="First and last name" autocomplete="name">
+        </div>
+        <div class="field">
+          <label>Your role <span class="muted">(optional)</span></label>
+          <input class="text-input" id="contactRole" placeholder="e.g. Director of Reentry Programs" autocomplete="organization-title">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Work email <span class="muted">(optional)</span></label>
+          <input class="text-input" id="contactEmail" type="email" placeholder="you@agency.gov" autocomplete="email">
+        </div>
+        <div class="field">
+          <label>Phone <span class="muted" style="font-weight:400">(optional)</span></label>
+          <input class="text-input" id="contactPhone" type="tel" placeholder="(555) 123-4567" autocomplete="tel">
+        </div>
+      </div>
+      <label class="consent-check"><input type="checkbox" id="requestFollowup"> I would like the Nucleos team to contact me about this plan.</label>
+      <p class="small muted">Your details are sent only when you request follow-up or submit a callback request. See the <a href="./privacy.html" target="_blank" rel="noopener noreferrer">privacy policy</a>. Planning data is stored in this browser; export a copy before clearing site data.</p>
+    </div>
+  </div>
+
+  <div class="wizard-nav">
+    <button class="btn btn-ghost" id="backBtn" onclick="prevStep()" style="visibility:hidden">← Back</button>
+    <div class="step-counter"><strong id="stepNum">1</strong> of 10</div>
+    <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">Next  →</button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div class="results" id="results">
+
+  <div class="print-banner" id="printBanner" aria-hidden="true">AchieveDXP Grant Navigator · plan generated for your agency</div>
+
+  <div class="results-header">
+    <a href="#" class="home-link results-home" onclick="returnToLanding(); return false;" aria-label="Back to home">
+      <img class="logo-src-n" alt="Nucleos">
+      <div class="divider"></div>
+      <img class="logo-src-a" alt="AchieveDXP">
+    </a>
+    <div class="kicker">DOC education · grant planning workspace</div>
+    <h2 id="reportTitle">Corrections Education Grant Plan</h2>
+    <p id="reportSummary">A personalized funding and program strategy, built for your agency in under five minutes.</p>
+    <div class="ctas">
+      <button class="btn btn-primary" onclick="exportPlan()">Export plan</button>
+      <a class="btn btn-call" href="tel:8777775995">(877) 777-5995</a>
+      <button class="btn btn-secondary" onclick="window.print()">Download PDF (Print)</button>
+      <button class="btn btn-secondary" onclick="copyFullReport()">Copy full report</button>
+      <button class="btn btn-secondary" onclick="copyShareLink(this)">Copy share link</button>
+      <button class="btn btn-ghost" style="color:white; background:rgba(255,255,255,0.1);" onclick="restart()">↺ Start over</button>
+    </div>
+  </div>
+
+  <p id="planSaveStatus" class="plan-save-status" role="status">Saved in this browser</p>
+
+  <!-- TL;DR — default view of the report. Toggled with .results.view-full. -->
+  <div class="tldr" id="tldr">
+    <div class="tldr-grid">
+      <div class="tldr-score-card">
+        <div class="tldr-label">Application preparation</div>
+        <div class="tldr-score-row"><div class="tldr-today"><div class="tldr-num"><span id="tldrScoreToday">0</span>%</div><div class="tldr-cap">checklist completed by your team</div></div></div>
+
+        <div class="tldr-score-label" id="tldrScoreLabel">—</div>
+      </div>
+      <div class="tldr-funding-card">
+        <div class="tldr-label">Your funding shortlist</div>
+        <div class="tldr-funding-amount" id="tldrFundingAmount">0</div>
+        <div class="tldr-funding-sub" id="tldrFundingSub">across the matched grant stack</div>
+      </div>
+    </div>
+
+    <div class="tldr-grants-card">
+      <div class="tldr-label">Funding routes to explore</div>
+      <div id="tldrGrants"></div>
+      <button class="tldr-grants-more" type="button" onclick="toggleReportView('full', 'grants')">Discover opportunities →</button>
+    </div>
+
+    <div class="tldr-cta">
+      <div class="tldr-cta-text">
+        <div class="tldr-cta-head">Need help with your education program?</div>
+        <div class="tldr-cta-blurb">Request an optional implementation conversation. Or call <a href="tel:8777775995">(877) 777-5995</a>.</div>
+      </div>
+      <button class="btn btn-primary tldr-cta-btn" type="button" onclick="openCallbackModal('primary')">📞 Request a call</button>
+    </div>
+
+    <div class="tldr-toggle">
+      <button class="btn btn-secondary" type="button" onclick="toggleReportView('full')">Explore the full plan →</button>
+      <span class="tldr-toggle-sub">Checklist · grants · shortlist · program scope · budget · proposal tools</span>
+    </div>
+  </div>
+
+  <div class="full-toggle" id="fullToggle">
+    <button class="btn btn-ghost" type="button" onclick="toggleReportView('summary')">← Back to summary</button>
+  </div>
+
+  <div class="tab-bar" id="tabBar">
+    <button class="tab active" data-tab="readiness"><span class="tab-num">01</span>Application Checklist</button>
+    <button class="tab" data-tab="acquisition"><span class="tab-num">02</span>Proposal Workbench</button>
+    <button class="tab" data-tab="grants"><span class="tab-num">03</span>Grants</button>
+    <button class="tab" data-tab="stack"><span class="tab-num">04</span>Saved Shortlist</button>
+    <button class="tab" data-tab="program"><span class="tab-num">05</span>Program Builder</button>
+    <button class="tab" data-tab="gap"><span class="tab-num">06</span>Agency Budget</button>
+  </div>
+
+  <!-- PANEL: READINESS -->
+  <div class="panel active" data-panel="readiness">
+    <div class="card preparation-card"><div><div class="kicker">Your team’s progress</div><div class="preparation-score" id="scoreVal">0%</div><strong id="scoreLabel">START YOUR CHECKLIST</strong><p>This checklist records preparation work your team confirms. It does not predict an award or establish eligibility.</p></div><div id="readinessChecklist"></div></div>
+    <div class="next-step-cta" data-ctx="readiness"></div>
+  </div>
+
+  <!-- PANEL: PROPOSAL WORKBENCH -->
+  <div class="panel" data-panel="acquisition">
+    <div class="card"><div class="card-title">Prepare a stronger application</div><p class="card-desc">Start from the funder’s scoring criteria. These editable-copy templates use your agency profile, selected activities, shortlist, and budget. Complete the evidence placeholders before internal review.</p><p class="evidence-note">These are planning templates, not AI output or a guarantee of funding.</p></div>
+    <div class="card">
+      <div class="card-title">AI evidence brief</div>
+      <p class="card-desc">Choose a saved opportunity and prepare a source-backed brief. Copy it to an agency-approved assistant, or request an in-app analysis when your agency has enabled OpenAI. Nothing is sent to OpenAI until you choose Generate analysis.</p>
+      <div class="ai-brief-controls">
+        <label for="aiBriefTask">Application task<select class="text-input" id="aiBriefTask" onchange="renderAiBrief()"><option value="eligibility">Eligibility and partner review</option><option value="narrative">Proposal outline and evidence gaps</option><option value="review">Independent preparation review</option></select></label>
+        <label for="aiBriefOpportunity">Saved opportunity<select class="text-input" id="aiBriefOpportunity" onchange="renderAiBrief()"></select></label>
+      </div>
+      <details class="notice-excerpt"><summary>Add evidence from the official notice</summary><p class="small muted">Paste public eligibility rules, scoring criteria, or requirements. Include the source URL and section or page. Excerpts stay in this session unless you export the brief or request analysis. Do not include personal, case, or confidential records.</p><div class="review-grid"><label>Official notice URL<input class="text-input" id="aiNoticeUrl" type="url" maxlength="2000" oninput="renderAiBrief()"></label><label>Section or page reference<input class="text-input" id="aiNoticeSection" maxlength="300" oninput="renderAiBrief()"></label></div><label>Public notice excerpt<textarea class="text-input" id="aiNoticeText" rows="5" maxlength="24000" oninput="renderAiBrief()"></textarea></label></details>
+      <label class="consent-check"><input type="checkbox" id="aiBriefBudget" onchange="renderAiBrief()"> Include my agency-entered budget totals in this brief.</label>
+      <p id="aiBriefStatus" class="small muted" role="status"></p>
+      <label for="aiBriefPreview" class="small">Review the exact text before copying</label>
+      <textarea class="text-input ai-brief-preview" id="aiBriefPreview" readonly rows="14" placeholder="Your evidence brief will appear here after you save an opportunity."></textarea>
+      <div class="copy-btn-wrap"><button class="btn btn-teal btn-sm" type="button" data-ai-brief-action onclick="copyAiBrief()" disabled>Copy AI brief</button><button class="btn btn-secondary btn-sm" type="button" data-ai-brief-action onclick="downloadAiBrief()" disabled>Download AI brief</button></div>
+      <p class="evidence-note">A source synopsis is not the full application package. Verify AI output against the current notice, amendments, scoring criteria, and your agency’s evidence.</p>
+      <div class="ai-service">
+        <h3>Analyze this opportunity</h3>
+        <p id="aiServiceUnavailable" class="workspace-empty">In-app AI analysis has not been enabled for this workspace. You can still copy or download the evidence brief for an agency-approved assistant.</p>
+        <div id="aiServiceControls" hidden>
+          <p class="small muted">Generate analysis sends the displayed agency context, selected source, and any notice excerpt to OpenAI through this workspace’s server. Budget totals are included only if selected. Contact fields, budget notes, and private opportunity reviews are excluded. The access code stays in this browser session and is not included in exports.</p>
+          <label for="aiWorkspaceCode" id="aiAccessCodeField">Workspace access code<input class="text-input" type="password" id="aiWorkspaceCode" autocomplete="off" maxlength="256" placeholder="Provided by your agency administrator"></label>
+          <button class="btn btn-teal" type="button" id="runAiAnalysis" onclick="runAiAnalysis()" disabled>Generate analysis with OpenAI</button>
+        </div>
+        <p id="aiAnalysisStatus" role="status" aria-live="polite"></p>
+        <div id="aiAnalysisOutput"></div>
+        <button class="btn btn-teal btn-sm" id="copyAiAnalysis" type="button" onclick="copyAiAnalysis()" hidden>Copy AI analysis</button>
+        <button class="btn btn-secondary btn-sm" id="downloadAiAnalysis" type="button" onclick="downloadAiAnalysis()" hidden>Download AI analysis</button>
+      </div>
+    </div>
+    <div class="card"><div class="card-title">Application roadmap</div><div class="card-desc" id="roadmapDesc"></div><div class="roadmap" id="roadmap"></div></div>
+    <div class="card"><div class="card-title">Narrative working draft</div><div class="narrative-box" id="narrativeBox"></div><div class="copy-btn-wrap"><button class="btn btn-teal btn-sm" onclick="copyNarrative()">Copy narrative</button></div></div>
+    <div class="card"><div class="card-title">Sustainability working draft</div><div class="narrative-box" id="sustBox"></div><div class="copy-btn-wrap"><button class="btn btn-teal btn-sm" onclick="copySustainability()">Copy sustainability paragraph</button></div></div>
+    <div class="card"><div class="card-title">Internal planning memo</div><div class="narrative-box" id="loiBox"></div><div class="copy-btn-wrap"><button class="btn btn-teal btn-sm" onclick="copyLOI()">Copy memo</button><button class="btn btn-secondary btn-sm" onclick="downloadLOI()">Download memo</button></div></div>
+  </div>
+
+  <!-- PANEL: GRANTS -->
+  <div class="panel" data-panel="grants">
+    <div class="livefeed-banner" id="liveFeedBanner">
+      <div class="lf-dot"></div>
+      <div>
+        <div class="lf-label">Published source snapshot</div>
+        <div class="lf-text" id="liveFeedText">
+          Syncing from <strong>grants.gov</strong>…
+        </div>
+        <div class="livefeed-sources" id="liveFeedSources"></div>
+      </div>
+      <button class="lf-refresh" onclick="refreshMatches()">↻ Refresh matches</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Discover funding opportunities</div>
+      <p class="card-desc">Search source records across federal, state, workforce, and corporate categories. Coverage depends on connected sources; the directory below helps you research additional funding routes.</p>
+      <div class="opportunity-filters">
+        <label>Search titles and descriptions<input class="text-input" id="opportunitySearch" type="search" placeholder="e.g. reentry, adult education" oninput="renderOpportunityExplorer()"></label>
+        <label>Status<select class="text-input" id="opportunityStatus" onchange="renderOpportunityExplorer()"><option value="open">Open in source</option><option value="forecast">Forecast</option><option value="closed">Closed</option><option value="all">All statuses</option></select></label>
+        <label>Funding category<select class="text-input" id="opportunitySource" onchange="renderOpportunityExplorer()"><option value="all">All categories</option><option value="federal">Federal</option><option value="state">State</option><option value="workforce">Workforce</option><option value="corporate">Corporate</option></select></label>
+      </div>
+      <label class="consent-check"><input type="checkbox" id="opportunityRelevant" checked onchange="renderOpportunityExplorer()"> Show only topics related to my education and reentry goals</label>
+      <label class="opportunity-sort">Sort opportunities<select class="text-input" id="opportunitySort" onchange="renderOpportunityExplorer()"><option value="fit">Research priority · explained</option><option value="deadline">Source closing date</option></select></label>
+      <p id="opportunityCount" role="status"></p><div id="opportunityList" class="grants-list"></div>
+    </div>
+    <div class="card">
+      <details><summary class="card-title">Add opportunities from official notices</summary>
+        <p class="card-desc">Bring state, workforce, corporate, or federal opportunities into your plan. Copy facts from the official notice; leave missing information blank. Additions stay in this browser, appear in search, and can be shortlisted and reviewed. They are not independently verified by the Navigator.</p>
+        <form id="opportunityImportForm" onsubmit="previewOpportunityForm(event)">
+          <div class="review-grid">
+            <label>Opportunity title<input class="text-input" name="title" maxlength="500" required></label>
+            <label>Official notice URL<input class="text-input" name="source_url" type="url" maxlength="2000" placeholder="https://" required></label>
+            <label>Funder<input class="text-input" name="agency" maxlength="300"></label>
+            <label>Funding category<select class="text-input" name="source_kind"><option value="state">State</option><option value="workforce">Workforce</option><option value="corporate">Corporate / foundation</option><option value="federal">Federal</option></select></label>
+            <label>Published status<select class="text-input" name="status"><option value="unknown">Not yet confirmed</option><option value="posted">Open in source</option><option value="forecasted">Forecast</option><option value="closed">Closed</option></select></label>
+            <label>Published closing date<input class="text-input" name="close_date" type="date"></label>
+            <label>State restrictions, if stated<input class="text-input" name="states" placeholder="e.g. MI, OH — leave blank if unknown" maxlength="180"></label>
+            <label>Published award ceiling, if stated<input class="text-input" name="award_ceiling" type="number" min="0" max="10000000000" step="0.01"></label>
+            <label>Applicant types from the notice<input class="text-input" name="applicant_types" maxlength="500"></label>
+            <label>Record ID (optional; use an existing ID to update)<input class="text-input" name="source_id" pattern="[a-zA-Z0-9._-]+" maxlength="100"></label>
+          </div>
+          <label>Source excerpt<textarea class="text-input" name="synopsis" rows="4" maxlength="24000" placeholder="Relevant public notice text, not personal or confidential records"></textarea></label>
+          <button class="btn btn-teal btn-sm" type="submit">Preview opportunity</button>
+        </form>
+        <label class="import-file-label">Or import a JSON opportunity file<input type="file" accept=".json,application/json" onchange="previewOpportunityFile(this)"></label>
+        <div id="importPreview" class="small" role="status"></div>
+        <button class="btn btn-secondary btn-sm" id="confirmOpportunityImport" type="button" onclick="confirmOpportunityImport()" disabled>Save reviewed import</button>
+        <p class="small muted">Review each linked notice before saving. Imports do not update the public feed. Share links do not carry imported source text; export your plan to retain selected source records.</p>
+        <div id="importedOpportunityList"></div>
+      </details>
+    </div>
+    <div class="card"><div class="card-title">Find funding beyond the corrections category</div><p class="card-desc">Your education goals may connect to adult education, career training, reentry, rural learning, and philanthropic programs. Use these pathways to identify the right funder, lead applicant, and evidence. Confirm current rules before pursuing a route.</p><div class="source-grid" id="fundingStrategy"></div></div>
+    <div class="card"><div class="card-title">Federal, state, workforce &amp; corporate source directory</div><p class="card-desc">Official research destinations, not a list of confirmed open grants. State routes appear below for your selected state. Corporate giving may require an eligible nonprofit or education partner.</p><div id="sourceDirectory" class="source-grid"></div></div>
+    <div class="card" style="background:linear-gradient(135deg, rgba(47,179,154,0.08) 0%, rgba(11,42,74,0.03) 100%); border-color: rgba(47,179,154,0.3);">
+      <div class="card-title" id="grantsCardTitle">Program routes for further research</div>
+      <div class="card-desc" id="grantsCardDesc">Suggested by your stated goals. Verify current calls and applicant eligibility.</div>
+      <div class="peer-benchmark" id="peerBenchmark" hidden></div>
+      <div class="grants-actions">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="downloadDeadlinesICS()">Export saved source closing dates (.ics)</button>
+      </div>
+    </div>
+    <div class="grants-list" id="grantsList"></div>
+
+    <!-- Your state's administering agency (Byrne JAG pass-through) -->
+    <div class="card saa-card" id="saaCard" hidden>
+      <div class="card-title">Your state's administering agency</div>
+      <div class="card-desc">Start with the relevant justice administering office. Education, workforce, and health funds may use different state agencies; confirm the correct program administrator.</div>
+      <div id="saaContent"></div>
+    </div>
+
+    <!-- Peer agencies that recently won federal awards under your ALNs -->
+    <div class="card peer-awards-card" id="peerAwardsCard" hidden>
+      <div class="card-title">Historical federal awards for research</div>
+      <div class="card-desc">Historical awards under related program numbers. These recipients may differ from your agency, and these amounts are not available grant offers. Source: USASpending.gov.</div>
+      <div class="peer-awards-list" id="peerAwardsList"></div>
+    </div>
+
+    <!-- Foundations active in your focus area (private philanthropy) -->
+    <div class="card foundations-card" id="foundationsCard" hidden>
+      <div class="card-title">Foundation prospects to research</div>
+      <div class="card-desc">Private philanthropy active in corrections, reentry, and education. Not on grants.gov — pursued directly or through community foundations. Source: IRS 990 filings via ProPublica Nonprofit Explorer.</div>
+      <div class="foundations-list" id="foundationsList"></div>
+    </div>
+
+    <div class="next-step-cta" data-ctx="grants"></div>
+  </div>
+
+  <!-- PANEL: SAVED SHORTLIST -->
+  <div class="panel" data-panel="stack">
+    <div class="card"><div class="card-title">Your saved funding shortlist</div><p class="card-desc">Keep specific opportunities and program routes together. Research entries remain separate from verified source deadlines.</p><div id="stackLayers"></div><div class="stack-total"><div class="label">Shortlist</div><div class="value" id="stackTotal">0 saved</div></div><button class="btn btn-teal" onclick="exportPlan()">Export agency plan</button></div>
+    <div class="card" id="qualificationCard">
+      <div class="card-title">DOC eligibility and application review</div>
+      <p class="card-desc">Record your team’s assessment for each specific opportunity. Cite the notice for every confirmed requirement, identify the lead applicant, and track the next action. Reviews stay in this browser and your exported plan; share links exclude them.</p>
+      <label for="qualificationOpportunity">Saved opportunity<select class="text-input" id="qualificationOpportunity" onchange="renderQualification()"></select></label>
+      <p id="qualificationEmpty" class="workspace-empty">Save a specific opportunity to begin its review.</p>
+      <form id="qualificationFields" onsubmit="saveQualification(event)" hidden>
+        <div class="review-grid">
+          <label>Applicant route under review<select class="text-input" id="reviewRoute"><option value="unknown">Not yet reviewed</option><option value="direct">Direct DOC application</option><option value="partner">Partner-led / subrecipient</option><option value="not_eligible">Agency determined not eligible</option></select></label>
+          <label>Application stage<select class="text-input" id="reviewStage"><option value="research">Researching</option><option value="prepare">Preparing application</option><option value="submitted">Submitted</option><option value="awarded">Awarded (agency reported)</option><option value="declined">Declined / not pursuing</option></select></label>
+          <label>Proposed lead partner<input class="text-input" id="reviewPartner" maxlength="300"></label>
+          <label>Responsible team or role<input class="text-input" id="reviewOwner" maxlength="150"></label>
+          <label>Next action<textarea class="text-input" id="reviewNextAction" rows="2" maxlength="1000"></textarea></label>
+          <label>Internal target date<input class="text-input" id="reviewDue" type="date"></label>
+        </div>
+        <div id="qualificationRequirements"></div>
+        <p id="qualificationStatus" class="evidence-note" role="status"></p>
+        <button type="submit" class="btn btn-teal">Save opportunity review</button>
+      </form>
+    </div>
+    <div class="card"><div class="card-title">Plan how funds may work together</div><div id="stackRationale"></div></div>
+    <div class="card"><div class="card-title">Education and implementation partners to evaluate</div><p class="card-desc">Explore potential roles and obtain evidence of capability. Confirm commitments and allowable costs with the funder. No supplier prices are listed.</p><div id="partnerCatalog" class="source-grid"></div></div>
+  </div>
+
+  <!-- PANEL: PROGRAM BUILDER -->
+  <div class="panel" data-panel="program">
+    <div class="card">
+      <div class="card-title">Build your program</div>
+      <div class="card-desc">Select the activities your agency intends to deliver. Your choices are saved and included in the proposal draft. Enter approved budget figures separately.</div>
+      <div class="builder-grid" id="builderGrid"></div>
+      <div class="builder-summary">
+        <h4>Your program scope</h4>
+        <div class="total-range" id="builderTotal">—</div>
+        <div class="total-note" id="builderNote">Select the program activities you want to include.</div>
+        <div class="components" id="builderComponents"></div>
+      </div>
+    </div>
+    <div class="next-step-cta" data-ctx="program"></div>
+  </div>
+
+  <!-- PANEL: GAP CALC -->
+  <div class="panel" data-panel="gap">
+    <div class="gap-calc">
+      <div class="card-title">Funding Gap Calculator</div>
+      <div class="card-desc">Enter your agency’s own planning figures. No Nucleos prices, supplier rates, or assumed costs are included.</div>
+      <div class="row" style="margin-top:20px;">
+        <div>
+          <div class="field">
+            <label for="gapCost">Agency-planned program budget (year 1)</label>
+            <input class="text-input" type="number" id="gapCost" value="0" min="0">
+          </div>
+          <div class="field">
+            <label for="gapHave">Already committed funding</label>
+            <input class="text-input" type="number" id="gapHave" value="0" min="0">
+          </div>
+          <div class="field">
+            <label for="gapNotes">Notes on current sources (optional)</label>
+            <input class="text-input" id="gapNotes" placeholder="e.g. state DOC block grant, existing Byrne JAG" maxlength="2000" aria-describedby="gapNotesHelp">
+            <small id="gapNotesHelp">Included in shared links and exports. Keep these notes free of confidential information.</small>
+          </div>
+        </div>
+        <div class="gap-visual">
+          <div style="font-size:12px; font-weight:700; color:var(--grey-700); letter-spacing:0.6px; text-transform:uppercase;">Coverage</div>
+          <div class="gap-bar"><div class="fill" id="gapFill" style="width:0%"></div><span class="label" id="gapPct">0%</span></div>
+          <div style="margin-top:14px;">
+            <div class="gap-amount" id="gapAmount">$0</div>
+            <div class="gap-label" id="gapLabel">Gap to fund</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-title" style="margin-top:24px;">Funding research next steps</div>
+      <div class="grants-list" id="gapRecs" style="margin-top:12px;"></div>
+    </div>
+    <div class="next-step-cta" data-ctx="gap"></div>
+  </div>
+
+
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- Callback request modal — replaces mailto: CTAs, keeps user in-app -->
+<div class="callback-modal" id="callbackModal" role="dialog" aria-modal="true" aria-labelledby="cmHeadline" hidden>
+  <div class="cm-backdrop" onclick="closeCallbackModal()"></div>
+  <div class="cm-panel" role="document">
+    <button type="button" class="cm-close" onclick="closeCallbackModal()" aria-label="Close">×</button>
+    <div class="cm-team">Nucleos Public Safety Team · iT1 + Nucleos</div>
+    <h3 id="cmHeadline">Request a callback</h3>
+    <p class="cm-sub" id="cmSub">A specialist will reach out within one business day.</p>
+    <div class="cm-ctx" id="cmCtx"></div>
+    <p id="cmError" role="alert" hidden></p>
+    <form id="callbackForm" onsubmit="submitCallback(event); return false;">
+      <div class="cm-grid">
+        <label>Name<input type="text" id="cmName" required autocomplete="name"></label>
+        <label>Role<input type="text" id="cmRole" required autocomplete="organization-title"></label>
+        <label>Email<input type="email" id="cmEmail" required autocomplete="email"></label>
+        <label>Phone<input type="tel" id="cmPhone" autocomplete="tel" placeholder="(optional)"></label>
+      </div>
+      <label>Preferred contact time
+        <select id="cmWhen">
+          <option value="morning">Mornings (8am–12pm local)</option>
+          <option value="afternoon">Afternoons (12pm–5pm local)</option>
+          <option value="flexible" selected>Flexible — any business hour</option>
+        </select>
+      </label>
+      <label>What's most important to cover?
+        <textarea id="cmNotes" rows="3"></textarea>
+      </label>
+      <button type="submit" class="btn btn-primary cm-submit" id="cmSubmit">Request callback</button>
+      <div class="cm-guarantee">Sent to the Nucleos team through Formsubmit. See the privacy policy for details.</div>
+    </form>
+    <div class="cm-success" id="cmSuccess" hidden>
+      <div class="cm-check" aria-hidden="true">✓</div>
+      <h3>Request received</h3>
+      <p>A Nucleos specialist will reach you within one business day. Need to talk sooner? <a id="cmCall" href="tel:8777775995">Call (877) 777-5995</a>.</p>
+      <button type="button" class="btn btn-secondary" onclick="closeCallbackModal()">Close</button>
+    </div>
+  </div>
+</div>
+</div>
+<script src="config.js"></script>
+<script defer src="grant-core.js?v=2026-11-04.2"></script>
+<script defer src="matching.js?v=2026-11-04.2"></script>
+<script defer src="opportunity-tools.js?v=2026-11-04.2"></script>
+<script defer src="opportunity-workspace.js?v=2026-11-04.2"></script>
+<script defer src="ai-workspace.js?v=2026-11-04.2"></script>
+<script defer src="workspace.js?v=2026-11-04.2"></script>
+<script defer src="app.js?v=2026-11-04.2"></script>
+</body>
+</html>
