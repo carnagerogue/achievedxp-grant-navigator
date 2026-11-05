@@ -1,9 +1,9 @@
 /* Persist only agency-owned planning data. Never persist connection credentials. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports)
-    module.exports = factory(require("./grant-core.js"));
-  else root.NavigatorState = factory(root.GrantCore);
-})(typeof globalThis !== "undefined" ? globalThis : this, function (core) {
+    module.exports = factory(require("./grant-core.js"), require("./journey-state.js"));
+  else root.NavigatorState = factory(root.GrantCore, root.JourneyState);
+})(typeof globalThis !== "undefined" ? globalThis : this, function (core, journey) {
   const KEY = "achievedxp_workspace_v3";
   const text = (v, n = 1000) => (typeof v === "string" ? v.slice(0, n) : "");
   const goals = [
@@ -73,6 +73,7 @@
   function clean(v = {}) {
     return {
       version: 3,
+      journey: journey.clean(v.journey),
       profile: {
         agencyName: text(v.profile?.agencyName, 300),
         programName: text(v.profile?.programName, 300),

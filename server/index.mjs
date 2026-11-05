@@ -10,10 +10,10 @@ export function aiConfig(env=process.env,{allowLocalSession=false}={}){
   let validOrigin=false,localOrigin=false;
   try{const url=new URL(origin);localOrigin=url.protocol==='http:'&&['localhost','127.0.0.1'].includes(url.hostname);validOrigin=url.origin===origin&&(url.protocol==='https:'||localOrigin);}catch(_){}
   const authMode=(env.GRANT_AI_ACCESS_TOKEN||'').length>=32?'access_code':allowLocalSession&&localOrigin?'local_session':'disabled';
-  return {apiKey:env.GRANT_AI_KEY||'',model:env.GRANT_AI_MODEL||'',accessToken:env.GRANT_AI_ACCESS_TOKEN||'',origin,
+  return {apiKey:env.GRANT_AI_KEY||'',model:env.GRANT_AI_MODEL||'',researchModel:env.GRANT_AI_RESEARCH_MODEL||env.GRANT_AI_MODEL||'',accessToken:env.GRANT_AI_ACCESS_TOKEN||'',origin,
     authMode,enabled:!!env.GRANT_AI_KEY&&!!env.GRANT_AI_MODEL&&authMode!=='disabled'&&validOrigin};
 }
-const staticFiles=new Set(['index.html','legacy.html','privacy.html','navigator.css','intelligence.css','intelligence.js','navigator.js','navigator-state.js','styles.css','workspace.css','app.js','grant-core.js','matching.js','opportunity-tools.js','opportunity-workspace.js','workspace.js','ai-workspace.js','opportunities.json']);
+const staticFiles=new Set(['index.html','legacy.html','privacy.html','navigator.css','intelligence.css','journey.css','journey.js','journey-state.js','agency-directory.js','intelligence.js','navigator.js','navigator-state.js','styles.css','workspace.css','app.js','grant-core.js','matching.js','opportunity-tools.js','opportunity-workspace.js','workspace.js','ai-workspace.js','opportunities.json']);
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.svg':'image/svg+xml','.webp':'image/webp','.ico':'image/x-icon'};
 const digest=v=>createHash('sha256').update(v).digest();
 async function jsonBody(req){

@@ -1,6 +1,6 @@
 # Intelligence workspace — design and validation
 
-The primary screen now centers the agency’s funding mission and a source-linked AI strategy. The full workspace uses a light neutral design system, system typography, restrained blue actions, and contextual AI assistance. There is no generated artwork used as a substitute for application UI.
+This design pass centers the agency’s funding mission and a source-linked AI strategy. The subsequent [guided journey review](GUIDED_JOURNEY_REVIEW.md) documents the new default entry. The full workspace uses a light neutral design system, system typography, restrained blue actions, and contextual AI assistance. There is no generated artwork used as a substitute for application UI.
 
 ## Reference and implementation review
 

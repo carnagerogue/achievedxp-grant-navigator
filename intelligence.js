@@ -14,6 +14,8 @@ window.FundingIntelligence = {
         profile: ui.context().profile,
         imports: ui.context().imports,
         uses: ui.context().usesAchieveDXP,
+        agencyResearch: ui.context().agencyResearch,
+        programBrief: ui.context().programBrief,
       });
     const suggestions = [
       [
@@ -34,10 +36,11 @@ window.FundingIntelligence = {
     ];
     const hint = (n, title, detail, view) =>
       `<button class="mission-step" data-view="${view}"><span class="step-number">${n}</span><span><strong>${title}</strong><span>${detail}</span></span>${icon("arrow")}</button>`;
-    function render() {
+    function render(compact = false) {
       const c = ui.context(),
         stale = result && contextAtRequest !== contextKey();
-      return `<section class="intelligence-home"><div class="intelligence-heading"><div class="eyebrow">${icon("spark")} INTELLIGENCE FOR YOUR MISSION</div><h1>A clearer path to funding.</h1><p>Your mission. Your evidence. An intelligent next step.</p></div>
+      if (compact && !mission && !result) mission = c.mission || "";
+      return `<section class="intelligence-home ${compact ? "intelligence-embedded" : ""}"><div class="intelligence-heading"><div class="eyebrow">${icon("spark")} INTELLIGENCE FOR YOUR MISSION</div>${compact ? "<h2>Research funding around your program.</h2>" : "<h1>A clearer path to funding.</h1>"}<p>Your mission. Your evidence. An intelligent next step.</p></div>
         <form id="strategyForm" class="strategy-composer ${busy ? "is-thinking" : ""}" aria-busy="${busy}"><label class="sr-only" for="missionPrompt">What would you like to make possible?</label><textarea id="missionPrompt" maxlength="3000" minlength="12" required placeholder="What would you like to make possible?">${e(mission)}</textarea>
         <div class="composer-context"><span>${icon("agency")} ${e(c.profile.agencyName || "Your agency profile")} ${c.profile.stateCode ? "· " + e(c.profile.stateCode) : "· Nationwide research"}</span><button class="text-button" type="button" data-intent="context">Review AI context ${icon("arrow")}</button></div>
         <div class="composer-footer">${button(icon("link") + " Add notice text", "import", "")}<div class="composer-controls"><label class="sr-only" for="strategyMode">Research scope</label><select id="strategyMode"><option value="mission" ${mode === "mission" ? "selected" : ""}>Mission research</option><option value="shortlist" ${mode === "shortlist" ? "selected" : ""}>Saved shortlist · up to 8</option></select><button class="btn primary" type="submit" ${busy ? "disabled" : ""}>${busy ? "Developing your strategy…" : result ? "Refine my strategy" : "Build my strategy"} ${icon("arrow")}</button></div></div></form>
@@ -60,7 +63,7 @@ window.FundingIntelligence = {
       const c = ui.context();
       ui.modal(
         "The evidence behind your strategy",
-        `<p>On your request, OpenAI receives your agency profile, your mission, a bounded selection of up to 12 relevant source records, and official research pathways.</p><dl class="context-list"><dt>Agency</dt><dd>${e(c.profile.agencyName || "Not yet defined")}</dd><dt>Program priorities</dt><dd>${e(c.profile.activities || "Set priorities in Agency profile")}</dd><dt>Research scope</dt><dd>${mode === "shortlist" ? "First eight saved opportunities that remain in the source snapshot, including selected imported notices." : "Relevant open and forecast records selected from the server’s source snapshot. Up to eight imported notices are also considered."}</dd><dt>Follow-up context</dt><dd>Up to four messages from this strategy session. Strategies are kept in memory; export a brief to keep one.</dd></dl><p class="note">Budgets, application narratives, and your result library are not sent by this strategist. Use the proposal and reporting assistants to work with those specific records. No individual learner data.</p>`,
+        `<p>On your request, OpenAI receives your agency profile, your mission, a bounded selection of up to 12 relevant source records, and official research pathways.</p><dl class="context-list"><dt>Agency</dt><dd>${e(c.profile.agencyName || "Not yet defined")}</dd><dt>Program priorities</dt><dd>${e(c.profile.activities || "Set priorities in Agency profile")}</dd><dt>Research scope</dt><dd>${mode === "shortlist" ? "First eight saved opportunities that remain in the source snapshot, including selected imported notices." : "Relevant open and forecast records selected from the server’s source snapshot. Up to eight imported notices are also considered."}</dd><dt>Reviewed agency research</dt><dd>${(c.agencyResearch || []).length} reviewed public-source notes and the program brief. These explain agency context; they do not establish grant eligibility.</dd><dt>Follow-up context</dt><dd>Up to four messages from this strategy session. Strategies are kept in memory; export a brief to keep one.</dd></dl><p class="note">Budgets, application narratives, and your result library are not sent by this strategist. Use the proposal and reporting assistants to work with those specific records. No individual learner data.</p>`,
       );
     }
     document.addEventListener("input", (ev) => {
@@ -133,6 +136,8 @@ window.FundingIntelligence = {
           mode,
           profile: c.profile,
           uses_achievedxp: c.usesAchieveDXP,
+          agency_research: c.agencyResearch,
+          program_brief: c.programBrief,
           opportunity_keys: c.saved.slice(0, 8),
           custom_opportunities: (mode === "shortlist"
             ? c.imports.filter((o) =>
@@ -182,6 +187,15 @@ window.FundingIntelligence = {
         if (ui.isActive()) ui.render();
       }
     });
-    return { render };
+    return {
+      render,
+      setMission(value) {
+        mission = value;
+        mode = "mission";
+        result = null;
+        history = [];
+        error = "";
+      },
+    };
   },
 };

@@ -81,7 +81,7 @@ async function open(page, { path = "/", saved = false, feed = true } = {}) {
       },
     }),
   );
-  await page.goto(path);
+  await page.goto(path + "#intelligence");
   await expect(
     page.getByRole("heading", { name: "A clearer path to funding." }),
   ).toBeVisible();

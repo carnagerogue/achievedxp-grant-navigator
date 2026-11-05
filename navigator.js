@@ -67,6 +67,7 @@
     (icons[name] || icons.doc) +
     "</svg>";
   const navs = [
+    ["journey", "Funding journey", "path"],
     ["intelligence", "Intelligence", "spark"],
     ["discover", "Discover", "search"],
     ["pathways", "Funding pathways", "path"],
@@ -125,7 +126,7 @@
   }
   let view = navs.some((n) => n[0] === location.hash.slice(1))
       ? location.hash.slice(1)
-      : "intelligence",
+      : "journey",
     selected = "",
     workKey = "",
     workTab = "qualify",
@@ -329,7 +330,7 @@
   function render() {
     const current = navs.find((n) => n[0] === view);
     $("#app").innerHTML =
-      '<div class="layout"><aside class="sidebar"><a href="#intelligence" data-view="intelligence" class="brand">Grant Navigator<small>by AchieveDXP</small></a>' +
+      '<div class="layout"><aside class="sidebar"><a href="#journey" data-view="journey" class="brand">Grant Navigator<small>by AchieveDXP</small></a>' +
       button(icon("menu") + "<span>Menu</span>", "menu", "mobile-menu") +
       '<nav class="nav" aria-label="Main navigation">' +
       navs
@@ -370,7 +371,15 @@
       ) +
       '</div></header><main id="main" class="page" tabindex="-1">' +
       (loadError ? '<div class="alert">' + esc(loadError) + "</div>" : "") +
+      (view !== "journey" && state.journey.identityConfirmed
+        ? '<div class="journey-return"><span>Your funding journey · ' +
+          esc(state.profile.agencyName) +
+          "</span>" +
+          button("Return to guided plan", "journey", "text-button") +
+          "</div>"
+        : "") +
       {
+        journey: () => journey.render(),
         intelligence: () => intelligence.render(),
         discover: discovery,
         pathways: pathways,
@@ -1460,6 +1469,11 @@
       b = S.budget(a);
     return {
       task,
+      agency_research: JourneyState.researchContext(
+        state.profile,
+        state.journey,
+      ),
+      program_brief: state.journey.program,
       ...(task === "refine" ? { revision_request: revisionRequest } : {}),
       opportunity_key: appKey,
       profile: profile(),
@@ -1486,6 +1500,11 @@
       uses: state.usesAchieveDXP,
       budgetIncluded: aiIncludeBudget,
       revisionRequest,
+      agencyResearch: JourneyState.researchContext(
+        state.profile,
+        state.journey,
+      ),
+      programBrief: state.journey.program,
     });
   }
   async function analyze(task) {
@@ -3483,13 +3502,68 @@
     ready: aiReady,
     request: requestAI,
     access: () => aiAccess("intelligence-access"),
-    isActive: () => view === "intelligence",
+    isActive: () =>
+      view === "intelligence" ||
+      (view === "journey" && journey.step() === "funding"),
     context: () => ({
       profile: state.profile,
       saved: state.saved,
       imports: state.imports,
       usesAchieveDXP: state.usesAchieveDXP,
+      agencyResearch: JourneyState.researchContext(
+        state.profile,
+        state.journey,
+      ),
+      programBrief: state.journey.program,
+      mission: JourneyState.mission(state.profile, state.journey),
     }),
+  });
+  const journey = FundingJourney.create({
+    esc,
+    icon,
+    button,
+    external,
+    field,
+    save,
+    render,
+    navigate,
+    toast,
+    download,
+    ready: aiReady,
+    request: requestAI,
+    access: () => aiAccess("journey-access"),
+    active: () => view === "journey",
+    context: () => ({ state, records: records() }),
+    record,
+    application,
+    strategy: () => intelligence.render(true),
+    seedStrategy: (value) => intelligence.setMission(value),
+    choose: (k) => {
+      if (!record(k)) return false;
+      if (!state.saved.includes(k)) {
+        if (state.saved.length >= 100) {
+          toast("The workspace supports 100 saved opportunities.");
+          return false;
+        }
+        state.saved.push(k);
+      }
+      preserveNotice(k);
+      application(k);
+      save();
+      return true;
+    },
+    openApplication: (k, tab) => {
+      if (!k) return;
+      workKey = k;
+      workTab = tab;
+      ai.result = null;
+      ai.error = "";
+      navigate("workbench");
+    },
+    openReport: (k) => {
+      reportKey = k;
+      navigate("outcomes");
+    },
   });
   render();
   fetch("opportunities.json", { cache: "no-cache" })

@@ -10,19 +10,19 @@ Review the implementation in the target repository before publishing. A draft pu
 3. Verify the Pages workflow output URL is the target above. Test a fresh visit and reload under the repository subdirectory. The browser must load the new `navigator.js` and `navigator.css`, not the old wizard as the root page.
 4. The daily source refresh commits `opportunities.json`. The Pages workflow also listens for successful completion of that refresh, because pushes using `GITHUB_TOKEN` do not trigger ordinary push workflows.
 
-The site’s discovery, comparison, planning, evidence library, reporting, backups and exports work without AI hosting.
+The site’s six-stage guide, manual agency research, program definition, discovery, comparison, planning, evidence library, reporting, backups and exports work without AI hosting.
 
 ## Connect the AI service
 
 `render.yaml` supplies an optional Render Node-service blueprint. Another Node 24 HTTPS host is also supported. This service has not been provisioned here.
 
 1. Deploy the same reviewed repository with `node server/index.mjs`, `GRANT_AI_STATIC=off`, and the host-provided `PORT`.
-2. Set the provider credential in the **host’s secret field `GRANT_AI_KEY`**. Choose an approved structured-output Responses model in `GRANT_AI_MODEL`.
+2. Set the provider credential in the **host’s secret field `GRANT_AI_KEY`**. Choose an approved structured-output Responses model in `GRANT_AI_MODEL`. Agency research also needs a Responses model that supports hosted `web_search` with domain filters. Set `GRANT_AI_RESEARCH_MODEL` separately if needed; otherwise the main model is used. Verify that model/tool combination with a real request.
 3. Set `GRANT_AI_ORIGIN=https://carnagerogue.github.io`. Origin means scheme and host, not `/achievedxp-grant-navigator/`.
 4. Create a separate random `GRANT_AI_ACCESS_TOKEN` of at least 32 characters. Give it only to authorized users. The blueprint can generate it. This is a pilot access mechanism; add organization authentication before a broad client rollout.
 5. In the website repository, set **Settings → Secrets and variables → Actions → Variables → `GRANT_AI_BASE_URL`** to the service’s actual HTTPS base URL. This URL is public; never put a secret in this variable.
 6. Run the Pages workflow again. Alternatively, enter that same URL in **Sources & connections** in the website for a browser-local connection.
-7. Open a saved opportunity, enter the workspace access code, and run an explicit analysis. Verify an actual provider response, displayed source quotations, and a failed-authentication state. A green configuration/status response alone is insufficient.
+7. Start **Funding journey**, identify an agency, and run **Research my agency**. Verify that source citations open relevant public pages, findings require review, and errors offer a manual path. Then open a saved opportunity, enter the workspace access code, and run an explicit analysis. Verify an actual provider response, displayed source quotations, and a failed-authentication state. A green configuration/status response alone is insufficient.
 
 All analysis POSTs still require the configured origin and valid workspace code. CORS preflight admits only that origin. Secrets never enter the Pages artifact. Do not put an OpenAI provider key in the website’s access-code field.
 

@@ -1,13 +1,7 @@
 import { AiError } from "./ai-errors.mjs";
 // One provider boundary for every workflow: no prompt logging, no persistent provider storage.
-export async function requestStructured(
-  {
-    instructions,
-    input,
-    schema,
-    name = "doc_grant_analysis",
-    maxOutput = 6000,
-  },
+export async function requestProvider(
+  body,
   { apiKey, model, fetchImpl = fetch, timeoutMs = 60000 },
 ) {
   let response;
@@ -19,14 +13,7 @@ export async function requestStructured(
         "Content-Type": "application/json",
       },
       signal: AbortSignal.timeout(timeoutMs),
-      body: JSON.stringify({
-        model,
-        store: false,
-        max_output_tokens: maxOutput,
-        instructions,
-        input: JSON.stringify(input),
-        text: { format: { type: "json_schema", name, strict: true, schema } },
-      }),
+      body: JSON.stringify({ model, store: false, ...body }),
     });
   } catch (error) {
     throw new AiError(
@@ -69,14 +56,37 @@ export async function requestStructured(
       422,
       "The AI provider could not analyze this request. Use the evidence brief and manual review instead.",
     );
+  return payload;
+}
+export async function requestStructured(
+  {
+    instructions,
+    input,
+    schema,
+    name = "doc_grant_analysis",
+    maxOutput = 6000,
+  },
+  config,
+) {
+  const payload = await requestProvider(
+    {
+      max_output_tokens: maxOutput,
+      instructions,
+      input: JSON.stringify(input),
+      text: { format: { type: "json_schema", name, strict: true, schema } },
+    },
+    config,
+  );
   try {
     return JSON.parse(
-      content
+      payload.output
+        .filter((o) => o.type === "message")
+        .flatMap((o) => o.content || [])
         .filter((c) => c.type === "output_text")
         .map((c) => c.text)
         .join(""),
     );
-  } catch (_) {
+  } catch {
     throw new AiError(
       502,
       "The AI response was not a structured review. No draft was accepted.",
