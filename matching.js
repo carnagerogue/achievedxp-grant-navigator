@@ -8,7 +8,7 @@
     ged: {
       label: "Adult education and literacy",
       terms:
-        /adult education|adult literacy|\bliteracy\b|high school equivalency|\bGED\b|basic education/i,
+        /adult education|adult literacy|literacy (?:education|instruction|program|tutor)|reading and writing|high school equivalency|\bGED\b|basic education/i,
     },
     cte: {
       label: "Career training and credentials",

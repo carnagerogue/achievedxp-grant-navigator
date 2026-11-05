@@ -101,6 +101,17 @@ test("guided plans require goal alignment and do not confuse document correction
     education,
   );
   assert.equal(matching.alignedForPlan(aircraft), false);
+  const cyber = matching.assess(
+    {
+      ...source,
+      title: "Workforce development for cyberinfrastructure",
+      synopsis:
+        "Integrate core literacy and advanced skills in cyberinfrastructure for university researchers.",
+    },
+    education,
+  );
+  assert.equal(cyber.goalMatches, 1);
+  assert.equal(matching.alignedForPlan(cyber), false);
   assert.equal(
     matching.alignedForPlan(matching.assess(source, education)),
     true,
