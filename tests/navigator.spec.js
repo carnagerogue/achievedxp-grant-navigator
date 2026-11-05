@@ -61,7 +61,7 @@ async function open(page, { ai = false, path = "/" } = {}) {
   await page.route("https://fonts.googleapis.com/**", (r) =>
     r.fulfill({ body: "", contentType: "text/css" }),
   );
-  await page.goto(path);
+  await page.goto(path + "#discover");
   await expect(page.locator(".opportunity")).toHaveCount(2);
 }
 async function workbench(page) {

@@ -8,6 +8,8 @@ const files = [
   "privacy.html",
   "navigator.css",
   "navigator.js",
+  "intelligence.js",
+  "intelligence.css",
   "navigator-state.js",
   "grant-core.js",
   "matching.js",

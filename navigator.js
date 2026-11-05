@@ -67,6 +67,7 @@
     (icons[name] || icons.doc) +
     "</svg>";
   const navs = [
+    ["intelligence", "Intelligence", "spark"],
     ["discover", "Discover", "search"],
     ["pathways", "Funding pathways", "path"],
     ["pipeline", "Application pipeline", "pipeline"],
@@ -124,7 +125,7 @@
   }
   let view = navs.some((n) => n[0] === location.hash.slice(1))
       ? location.hash.slice(1)
-      : "discover",
+      : "intelligence",
     selected = "",
     workKey = "",
     workTab = "qualify",
@@ -142,7 +143,10 @@
     connectionStatus = "",
     aiIncludeBudget = false,
     saveTimer,
-    toastTimer;
+    toastTimer,
+    revisionRequest = "",
+    reportBusy = false,
+    reportAnalysis = null;
   function validEndpoint(v) {
     if (!v) return "";
     try {
@@ -311,6 +315,7 @@
   }
   function navigate(next) {
     if (!navs.some((n) => n[0] === next)) return;
+    $("#modal")?.close();
     view = next;
     history.replaceState(null, "", "#" + next);
     render();
@@ -324,7 +329,7 @@
   function render() {
     const current = navs.find((n) => n[0] === view);
     $("#app").innerHTML =
-      '<div class="layout"><aside class="sidebar"><a href="#discover" data-view="discover" class="brand"><small>ACHIEVEDXP</small>Grant Navigator</a>' +
+      '<div class="layout"><aside class="sidebar"><a href="#intelligence" data-view="intelligence" class="brand">Grant Navigator<small>by AchieveDXP</small></a>' +
       button(icon("menu") + "<span>Menu</span>", "menu", "mobile-menu") +
       '<nav class="nav" aria-label="Main navigation">' +
       navs
@@ -342,7 +347,7 @@
             "</button>",
         )
         .join("") +
-      '</nav><div class="sidebar-bottom"><p class="sidebar-note">Education changes futures.<br>Evidence helps fund them.</p><p class="sidebar-note">Saved in this browser.<br>' +
+      '</nav><div class="sidebar-bottom"><p class="sidebar-note">Saved on this device.<br>' +
       (state.updatedAt
         ? "Last saved " +
           esc(new Date(state.updatedAt).toLocaleDateString("en-US"))
@@ -357,9 +362,16 @@
               (state.profile.agencyName || "Agency workspace")
           : "Nationwide coverage",
       ) +
+      button(
+        icon("search") + "<kbd>⌘ K</kbd>",
+        "command",
+        "command-trigger",
+        'aria-label="Search or enter a command"',
+      ) +
       '</div></header><main id="main" class="page" tabindex="-1">' +
       (loadError ? '<div class="alert">' + esc(loadError) + "</div>" : "") +
       {
+        intelligence: () => intelligence.render(),
         discover: discovery,
         pathways: pathways,
         pipeline: pipeline,
@@ -851,8 +863,8 @@
     const o = record(workKey);
     return (
       heading(
-        "Turn evidence into<br>a stronger application.",
-        "Build to the funder’s criteria. Make every claim traceable.",
+        "A stronger story. Built on evidence.",
+        "An intelligent writing partner. Your agency stays in control.",
         button(
           "Export application",
           "export-application",
@@ -1088,11 +1100,12 @@
   }
   function write(a) {
     return (
-      '<div class="panel-title"><div><h2>Make the story verifiable.</h2><p class="quiet">Draft your application here. AI uses the notice, mapped criteria, and evidence you choose to include.</p></div><span class="save-state">Saved as you edit</span></div><label>Application narrative<textarea class="draft" data-app="narrative" maxlength="24000" placeholder="Explain the unmet education need, your program model, partner responsibilities, measurable outcomes, and sustainability. Support each claim with evidence.">' +
+      '<div class="panel-title"><div><h2>Application narrative</h2><p class="quiet">Draft your application here. AI uses the notice, mapped criteria, and evidence you choose to include.</p></div><span class="save-state">Saved as you edit</span></div><label>Application narrative<textarea class="draft" data-app="narrative" maxlength="24000" placeholder="Explain the unmet education need, your program model, partner responsibilities, measurable outcomes, and sustainability. Support each claim with evidence.">' +
       esc(a.narrative) +
       '</textarea></label><div class="actions">' +
       button("Assemble criterion responses", "assemble") +
       button("Copy narrative", "copy-narrative") +
+      button("Version history", "narrative-history") +
       '</div><div class="divider"></div>' +
       field(
         "Measurement & reporting plan",
@@ -1228,31 +1241,70 @@
     const local =
       !aiEndpoint() && window.NAV_CONFIG?.aiAuthMode === "local_session";
     return (
-      '<aside class="ai-panel"><div class="ai-label">Evidence-first AI</div><h2>Your grant strategist.</h2><p>Establish the route. Find missing proof. Build and challenge the application against its source requirements.</p>' +
-      button(
-        icon("spark") + " Check eligibility",
-        "ai-eligibility",
-        "primary",
-        !o || o.retained_snapshot || ai.busy ? "disabled" : "",
-      ) +
-      button(
-        icon("path") + " Extract notice criteria",
-        "ai-rubric",
-        "",
-        !o || o.retained_snapshot || ai.busy ? "disabled" : "",
-      ) +
-      button(
-        icon("doc") + " Draft from evidence",
-        "ai-narrative",
-        "",
-        !o || o.retained_snapshot || ai.busy ? "disabled" : "",
-      ) +
-      button(
-        icon("search") + " Review my application",
-        "ai-review",
-        "",
-        !o || o.retained_snapshot || ai.busy ? "disabled" : "",
-      ) +
+      '<aside class="ai-panel"><div class="ai-label">' +
+      icon("spark") +
+      " OPENAI ASSISTANT</div><h2>" +
+      (workTab === "write" ? "Writing partner" : "Your grant strategist") +
+      "</h2><p>Source-linked insights. Thoughtful revisions. Every decision stays with you.</p>" +
+      (workTab === "write"
+        ? field(
+            "What should improve?",
+            '<textarea id="revisionRequest" maxlength="2000" placeholder="Make the case clearer, align to the criterion, or challenge an unsupported claim…">' +
+              esc(revisionRequest) +
+              "</textarea>",
+          ) +
+          button(
+            icon("spark") + " Propose a revision",
+            "ai-refine",
+            "primary",
+            !o || o.retained_snapshot || ai.busy ? "disabled" : "",
+          ) +
+          '<p class="note">Compare a suggested revision with your original before applying it. Your original is kept in version history.</p><div class="divider"></div>'
+        : "") +
+      (workTab === "write"
+        ? '<div class="writing-tools">' +
+          [
+            ["Draft", "ai-narrative", "Draft from evidence"],
+            ["Review", "ai-review", "Review my application"],
+            ["Criteria", "ai-rubric", "Extract notice criteria"],
+          ]
+            .map(([label, action, name]) =>
+              button(
+                label,
+                action,
+                "small",
+                'aria-label="' +
+                  name +
+                  '" ' +
+                  (!o || o.retained_snapshot || ai.busy ? "disabled" : ""),
+              ),
+            )
+            .join("") +
+          "</div>"
+        : button(
+            icon("spark") + " Check eligibility",
+            "ai-eligibility",
+            "primary",
+            !o || o.retained_snapshot || ai.busy ? "disabled" : "",
+          ) +
+          button(
+            icon("path") + " Extract notice criteria",
+            "ai-rubric",
+            "",
+            !o || o.retained_snapshot || ai.busy ? "disabled" : "",
+          ) +
+          button(
+            icon("doc") + " Draft from evidence",
+            "ai-narrative",
+            "",
+            !o || o.retained_snapshot || ai.busy ? "disabled" : "",
+          ) +
+          button(
+            icon("search") + " Review my application",
+            "ai-review",
+            "",
+            !o || o.retained_snapshot || ai.busy ? "disabled" : "",
+          )) +
       '<div class="divider"></div>' +
       (!aiEnabled()
         ? "<p>Connect your organization’s AI service to use OpenAI in this workspace.</p>" +
@@ -1266,9 +1318,9 @@
               "Kept in memory for this session. This is not your OpenAI API key.",
             )
           : '<p class="quiet">Secure local AI service configured.</p>') +
-      '<label class="check-label"><input id="includeBudget" type="checkbox" ' +
+      '<details class="ai-context-detail"><summary>Source context & sharing</summary><label class="check-label section-space"><input id="includeBudget" type="checkbox" ' +
       (aiIncludeBudget ? "checked" : "") +
-      '> Include agency budget</label><p class="note">On your request, the selected notice, profile, criteria, draft, and attached evidence are sent to OpenAI. Output is a planning draft for your review.</p><div class="ai-status ' +
+      '> Include agency budget</label><p class="note">On your request, the selected notice, profile, criteria, draft, and attached evidence are sent to OpenAI. Output is a planning draft for your review.</p></details><div class="ai-status ' +
       (ai.busy ? "loading" : "") +
       '" role="status">' +
       esc(
@@ -1292,7 +1344,12 @@
               "<blockquote>" +
               esc(plain(c.quote)) +
               "<br>" +
-              external(c.url, "Source " + c.source_id, "") +
+              (c.kind === "agency_result"
+                ? '<span class="note">Agency-reported measure ' +
+                  esc(c.source_id) +
+                  " · not independently verified</span>" +
+                  (c.url ? "<br>" + external(c.url, "Evidence link", "") : "")
+                : external(c.url, "Source " + c.source_id, "")) +
               "</blockquote>",
           )
           .join("");
@@ -1384,18 +1441,27 @@
       '<div class="actions section-space">' +
       button("Export analysis", "export-ai", "small") +
       (a.draft_sections.length
-        ? button("Append draft to narrative", "use-ai-draft", "small")
+        ? r.task === "refine"
+          ? button(
+              "Compare proposed revision",
+              "compare-revision",
+              "primary small",
+            )
+          : r.task === "reporting"
+            ? ""
+            : button("Append draft to narrative", "use-ai-draft", "small")
         : "") +
       '</div><p class="note">Quotes are checked against the supplied text. This does not verify reasoning, source authenticity, or complete eligibility.</p></div>'
     );
   }
-  function analysisBody(task) {
-    const o = record(workKey),
-      a = application(),
+  function analysisBody(task, appKey = workKey) {
+    const o = record(appKey),
+      a = application(appKey),
       b = S.budget(a);
     return {
       task,
-      opportunity_key: workKey,
+      ...(task === "refine" ? { revision_request: revisionRequest } : {}),
+      opportunity_key: appKey,
       profile: profile(),
       notice_excerpt: a.notice.text ? a.notice : undefined,
       include_budget: aiIncludeBudget,
@@ -1419,6 +1485,7 @@
       app: state.applications[workKey],
       uses: state.usesAchieveDXP,
       budgetIncluded: aiIncludeBudget,
+      revisionRequest,
     });
   }
   async function analyze(task) {
@@ -1441,6 +1508,13 @@
     if (!local && !connectionCode) {
       toast("Enter your organization’s workspace access code.");
       $("#accessCode")?.focus();
+      return;
+    }
+    if (
+      task === "refine" &&
+      (!application().narrative.trim() || revisionRequest.trim().length < 8)
+    ) {
+      toast("Add a narrative and describe what the revision should improve.");
       return;
     }
     const body = analysisBody(task);
@@ -1693,7 +1767,18 @@
           ) +
           "</select>",
       ) +
-      button("Prepare progress report", "export-report", "primary full") +
+      button(
+        icon("spark") + " Draft report with AI",
+        "ai-report",
+        "primary full",
+        reportBusy ? "disabled" : "",
+      ) +
+      button("Prepare progress report", "export-report", "full") +
+      '<p class="note">AI receives only this grant’s selected measures, its application work, notice and agency profile. Up to 20 measures per request. No individual learner records.</p>' +
+      (reportBusy
+        ? '<p role="status" class="thinking-status">Drafting a report from your selected evidence…</p>'
+        : "") +
+      aiAccess("report-access") +
       '<div class="divider"></div><h3>How AchieveDXP fits</h3><p class="quiet">Use the measures available in your AchieveDXP exports to document education delivery and progress. Add workforce, financial, and partner evidence where the grant requires it.</p><p class="quiet">A traceable record can support new applications, renewal requests, and reporting. Funding decisions remain with the funder.</p>' +
       button("Use results in a proposal", "workbench", "subtle") +
       "</aside></div>"
@@ -2279,6 +2364,11 @@
   }
   document.addEventListener("input", (e) => {
     const el = e.target;
+    if (el.id === "revisionRequest") {
+      revisionRequest = el.value;
+      persistEdit();
+      return;
+    }
     if (el.id === "accessCode") {
       connectionCode = el.value;
       return;
@@ -2390,6 +2480,59 @@
     }
     const a = workKey ? application() : null;
     switch (action) {
+      case "command":
+        openCommand();
+        break;
+      case "ai-refine":
+        await analyze("refine");
+        break;
+      case "compare-revision":
+        compareRevision();
+        break;
+      case "apply-revision":
+        applyRevision();
+        break;
+      case "narrative-history":
+        narrativeHistory();
+        break;
+      case "restore-narrative": {
+        const version = a?.narrativeVersions?.[Number(b.dataset.version)];
+        if (!version) break;
+        openModal(
+          "Restore this narrative?",
+          '<p>Your current narrative will be kept in version history.</p><pre class="revision-copy">' +
+            esc(version.text) +
+            "</pre>" +
+            button(
+              "Restore narrative",
+              "confirm-narrative-restore",
+              "primary",
+              'data-version="' + b.dataset.version + '"',
+            ),
+        );
+        break;
+      }
+      case "confirm-narrative-restore": {
+        const prior = a?.narrativeVersions?.[Number(b.dataset.version)]?.text;
+        if (prior === undefined) break;
+        rememberNarrative(a, "Before restoring a version");
+        a.narrative = prior;
+        ai.result = null;
+        save("Previous narrative restored.");
+        $("#modal").close();
+        render();
+        break;
+      }
+      case "ai-report":
+        await draftReport();
+        break;
+      case "download-ai-report":
+        if (reportAnalysis)
+          download(
+            "ai-progress-report-review-draft.txt",
+            JSON.stringify(reportAnalysis, null, 2),
+          );
+        break;
       case "menu":
         $(".sidebar").classList.toggle("nav-open");
         break;
@@ -2961,6 +3104,392 @@
       view = v;
       render();
     }
+  });
+  function aiAccess(className = "") {
+    if (!aiEnabled())
+      return (
+        '<div class="ai-connection-note ' +
+        className +
+        '">' +
+        icon("spark") +
+        "<span>Bring your strategy to life with your organization’s AI service.</span>" +
+        button("Connect AI", "sources", "text-button") +
+        "</div>"
+      );
+    if (!aiEndpoint() && window.NAV_CONFIG?.aiAuthMode === "local_session")
+      return "";
+    return (
+      '<details class="ai-access ' +
+      className +
+      '" ' +
+      (!connectionCode ? "open" : "") +
+      "><summary>Secure workspace access</summary>" +
+      field(
+        "Workspace access code",
+        '<input id="accessCode" type="password" autocomplete="off" value="' +
+          esc(connectionCode) +
+          '" placeholder="Organization-provided access code">',
+        "This is not an OpenAI API key. Kept in memory for this session.",
+      ) +
+      "</details>"
+    );
+  }
+  function aiReady() {
+    if (!aiEnabled()) {
+      navigate("sources");
+      toast(
+        "Connect your organization’s secure AI service to use this assistant.",
+      );
+      return false;
+    }
+    if (/^sk-/.test(connectionCode)) {
+      connectionCode = "";
+      render();
+      toast(
+        "Use the workspace access code here. Keep your OpenAI key on the server.",
+      );
+      return false;
+    }
+    const local =
+      !aiEndpoint() && window.NAV_CONFIG?.aiAuthMode === "local_session";
+    if (!local && !connectionCode) {
+      toast("Enter your organization’s workspace access code.");
+      const input = $("#accessCode");
+      if (input) {
+        input.closest("details")?.setAttribute("open", "");
+        input.focus();
+      }
+      return false;
+    }
+    return true;
+  }
+  async function requestAI(body) {
+    const local =
+      !aiEndpoint() && window.NAV_CONFIG?.aiAuthMode === "local_session";
+    const response = await fetch(aiEndpoint() + "/api/ai/analyze", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(!local ? { Authorization: "Bearer " + connectionCode } : {}),
+      },
+      body: JSON.stringify(body),
+      credentials: local ? "same-origin" : "omit",
+      signal: AbortSignal.timeout(90000),
+    });
+    const result = await response.json();
+    if (!response.ok)
+      throw Error(
+        result.error ||
+          "The AI service could not complete the request. Please try again.",
+      );
+    return result;
+  }
+  function rememberNarrative(app, label) {
+    app.narrativeVersions = [
+      { text: app.narrative, at: new Date().toISOString(), label },
+      ...(app.narrativeVersions || []),
+    ].slice(0, 5);
+  }
+  function proposedNarrative() {
+    return (
+      ai.result?.analysis.draft_sections.map((s) => s.body).join("\n\n") || ""
+    );
+  }
+  function compareRevision() {
+    if (
+      ai.task !== "refine" ||
+      !ai.result ||
+      ai.fingerprint !== fingerprint()
+    ) {
+      toast("Generate a revision for the current draft first.");
+      return;
+    }
+    const proposal = proposedNarrative();
+    if (!proposal || proposal.length > 24000) {
+      toast(
+        "The proposed revision exceeds the narrative limit. Export the analysis and review it separately.",
+      );
+      return;
+    }
+    openModal(
+      "Review your proposed revision",
+      '<p class="quiet">Check every fact, commitment and source before applying. Your original will be saved in version history.</p><div class="revision-comparison"><section><h3>Current narrative</h3><pre class="revision-copy">' +
+        esc(application().narrative) +
+        '</pre></section><section><h3>Proposed revision <span class="tag">AI draft</span></h3><pre class="revision-copy">' +
+        esc(proposal) +
+        '</pre></section></div><div class="modal-actions">' +
+        button("Keep my original", "close-modal") +
+        button("Apply reviewed revision", "apply-revision", "primary") +
+        "</div>",
+    );
+  }
+  function applyRevision() {
+    if (
+      ai.task !== "refine" ||
+      !ai.result ||
+      ai.fingerprint !== fingerprint()
+    ) {
+      toast(
+        "The application changed. Generate a fresh revision before applying it.",
+      );
+      return;
+    }
+    const proposed = proposedNarrative();
+    if (!proposed || proposed.length > 24000) return;
+    const app = application();
+    rememberNarrative(app, "Before AI revision");
+    app.narrative = proposed;
+    ai.result = null;
+    ai.error = "";
+    save("Reviewed revision applied. Your original is in version history.");
+    $("#modal").close();
+    render();
+  }
+  function narrativeHistory() {
+    const versions = application().narrativeVersions || [];
+    openModal(
+      "Narrative version history",
+      '<p class="quiet">The last five narratives replaced by a reviewed AI revision or a restoration are kept on this device. Ordinary typing is saved to the current draft.</p>' +
+        (versions.length
+          ? versions
+              .map(
+                (v, i) =>
+                  '<article class="version-row"><div><strong>' +
+                  esc(v.label) +
+                  '</strong><p class="quiet">' +
+                  esc(new Date(v.at).toLocaleString()) +
+                  " · " +
+                  v.text.length.toLocaleString() +
+                  " characters</p><p>" +
+                  esc(v.text.slice(0, 180)) +
+                  (v.text.length > 180 ? "…" : "") +
+                  "</p></div>" +
+                  button(
+                    "Review & restore",
+                    "restore-narrative",
+                    "small",
+                    'data-version="' + i + '"',
+                  ) +
+                  "</article>",
+              )
+              .join("")
+          : empty(
+              "Your first draft is still the current one.",
+              "Applying a reviewed AI revision will keep the original here.",
+            )),
+    );
+  }
+  function reportContext() {
+    const app = reportKey ? application(reportKey) : null;
+    return {
+      key: reportKey,
+      period: reportPeriod,
+      profile: state.profile,
+      uses: state.usesAchieveDXP,
+      app,
+      rows: state.results.filter(
+        (r) =>
+          app?.reportResultIds.includes(r.id) &&
+          (!reportPeriod || r.period === reportPeriod),
+      ),
+    };
+  }
+  async function draftReport() {
+    if (reportBusy) return;
+    const context = reportContext();
+    if (!context.key || context.rows.length < 1 || context.rows.length > 20) {
+      toast(
+        "Choose a grant and select 1–20 relevant measures for this reporting period.",
+      );
+      return;
+    }
+    if (!aiReady()) return;
+    const sig = JSON.stringify(context),
+      o = record(reportKey);
+    const body = {
+      ...analysisBody("reporting", reportKey),
+      include_budget: false,
+      budget: {},
+      aggregate_results: context.rows,
+      reporting_period: reportPeriod,
+      ...(o?.retained_snapshot ? { saved_opportunity: o } : {}),
+    };
+    if (body.notice_excerpt?.text && !C.safeUrl(body.notice_excerpt.url)) {
+      toast(
+        "Add the official HTTPS source to the application’s notice excerpt first.",
+      );
+      return;
+    }
+    reportBusy = true;
+    reportAnalysis = null;
+    render();
+    try {
+      const r = await requestAI(body);
+      if (
+        r.task !== "reporting" ||
+        r.opportunity_key !== context.key ||
+        r.requires_human_review !== true ||
+        !Array.isArray(r.analysis?.draft_sections) ||
+        !Array.isArray(r.analysis?.next_actions) ||
+        !Array.isArray(r.analysis?.missing_information)
+      )
+        throw Error(
+          "The service returned an unexpected report. No draft was accepted.",
+        );
+      if (sig !== JSON.stringify(reportContext()))
+        throw Error(
+          "The selected reporting evidence changed. Generate a new report with the current selection.",
+        );
+      reportAnalysis = r;
+      if (view === "outcomes")
+        openModal(
+          "Your progress report · review draft",
+          "<p>" +
+            esc(r.analysis.summary) +
+            "</p>" +
+            r.analysis.draft_sections
+              .map(
+                (s) =>
+                  '<section class="report-draft"><h3>' +
+                  esc(s.heading) +
+                  "</h3><p>" +
+                  esc(s.body) +
+                  "</p>" +
+                  s.evidence
+                    .map(
+                      (c) =>
+                        "<blockquote>" +
+                        esc(c.quote) +
+                        '<br><span class="note">' +
+                        (c.kind === "agency_result"
+                          ? "Agency-reported measure · not independently verified"
+                          : "Supplied notice evidence") +
+                        " · " +
+                        esc(c.source_id) +
+                        "</span>" +
+                        (c.url
+                          ? "<br>" + external(c.url, "Evidence source", "")
+                          : "") +
+                        "</blockquote>",
+                    )
+                    .join("") +
+                  "</section>",
+              )
+              .join("") +
+            "<h3>Review before submission</h3><ul>" +
+            [...r.analysis.next_actions, ...r.analysis.missing_information]
+              .map((t) => "<li>" + esc(t) + "</li>")
+              .join("") +
+            '</ul><p class="note">' +
+            esc(r.citation_check) +
+            " Confirm the funder’s template, financial reports and certification requirements.</p>" +
+            button("Export AI report draft", "download-ai-report", "primary"),
+        );
+    } catch (err) {
+      toast(
+        err.name === "TimeoutError"
+          ? "Reporting analysis timed out. Please try again."
+          : err.message,
+      );
+    } finally {
+      reportBusy = false;
+      if (view === "outcomes") render();
+    }
+  }
+  function openCommand() {
+    openModal(
+      "Where would you like to go?",
+      '<label class="sr-only" for="commandSearch">Search workspaces or saved opportunities</label><input id="commandSearch" placeholder="Search workspaces or saved opportunities…" autocomplete="off"><div id="commandResults" class="command-results"></div><p class="note">Type to filter · ↑ ↓ to move · Enter to open · Esc to close</p>',
+    );
+    fillCommands("");
+    $("#commandSearch").focus();
+  }
+  function fillCommands(query) {
+    const q = query.toLowerCase().trim();
+    const destinations = navs.filter((n) => n[1].toLowerCase().includes(q));
+    const saved = state.saved
+      .map((k) => ({ k, o: record(k) }))
+      .filter((x) => x.o && plain(x.o.title).toLowerCase().includes(q))
+      .slice(0, 6);
+    $("#commandResults").innerHTML =
+      destinations
+        .map(
+          ([v, label, i]) =>
+            '<button data-view="' +
+            v +
+            '">' +
+            icon(i) +
+            "<span>" +
+            esc(label) +
+            "</span>" +
+            icon("arrow") +
+            "</button>",
+        )
+        .join("") +
+      saved
+        .map(
+          ({ k, o }) =>
+            '<button data-action="review" data-key="' +
+            esc(k) +
+            '">' +
+            icon("save") +
+            "<span>" +
+            esc(plain(o.title)) +
+            "<small>Saved opportunity</small></span>" +
+            icon("arrow") +
+            "</button>",
+        )
+        .join("") +
+      (!destinations.length && !saved.length
+        ? '<p class="quiet">No matching workspace or saved opportunity.</p>'
+        : "");
+  }
+  document.addEventListener("input", (e) => {
+    if (e.target.id === "commandSearch") fillCommands(e.target.value);
+  });
+  document.addEventListener("keydown", (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+      e.preventDefault();
+      if ($("#modal").open) $("#modal").close();
+      openCommand();
+    }
+    if (!$("#commandSearch") || !$("#modal").open) return;
+    const items = $$("#commandResults button"),
+      index = items.indexOf(document.activeElement);
+    if (["ArrowDown", "ArrowUp"].includes(e.key)) {
+      e.preventDefault();
+      if (items.length)
+        items[
+          (index + (e.key === "ArrowDown" ? 1 : -1) + items.length) %
+            items.length
+        ].focus();
+    }
+    if (e.key === "Enter" && e.target.id === "commandSearch") {
+      e.preventDefault();
+      items[0]?.click();
+    }
+  });
+
+  const intelligence = FundingIntelligence.create({
+    esc,
+    icon,
+    button,
+    external,
+    render,
+    navigate,
+    toast,
+    modal: openModal,
+    download,
+    ready: aiReady,
+    request: requestAI,
+    access: () => aiAccess("intelligence-access"),
+    isActive: () => view === "intelligence",
+    context: () => ({
+      profile: state.profile,
+      saved: state.saved,
+      imports: state.imports,
+      usesAchieveDXP: state.usesAchieveDXP,
+    }),
   });
   render();
   fetch("opportunities.json", { cache: "no-cache" })

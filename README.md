@@ -1,6 +1,6 @@
 # AchieveDXP Grant Navigator
 
-A grant discovery, application, and outcomes workspace for corrections education teams. The primary website opens directly into the working application: discover → compare → qualify → map evidence → draft → budget → submit → report.
+A grant discovery, application, and outcomes workspace for corrections education teams. The primary website opens into **Intelligence**, an agency-focused funding strategy workspace, with a connected workflow: research → compare → qualify → map evidence → draft → budget → submit → report.
 
 **No Nucleos pricing, supplier rates, preset implementation costs, or award-probability claims.** Budgets use agency-entered values. Checklist and evidence coverage counts describe completed work, not application quality or likelihood of winning.
 
@@ -14,14 +14,15 @@ GitHub Pages cannot run a secure OpenAI backend. The website supports an HTTPS A
 
 ## Implemented workspace
 
+- **Intelligence:** mission-based strategy and saved-shortlist comparison using up to 12 server-selected source records, source-bound opportunity references and exact quotes, separately labeled state/corporate research pathways, concrete next actions, context inspection, bounded follow-up conversation, and strategy export. No automatic AI calls, web-browsing claims, or simulated answers.
 - **Discover:** paginated source-record search, source/status/scope filters, explained research priorities, detailed source inspection, save, and comparison of two to four opportunities. Default scope narrows the broad pool to DOC/education-related text; it does not establish eligibility.
 - **Funding pathways:** official federal, AEFLA/section 225, Perkins, WIOA, rural-learning, literacy and corporate-giving research routes; potential partner roles, deciding questions, and evidence requirements. State and corporate notices can be added from an official source.
 - **Application pipeline:** per-opportunity owner, next action, internal due date, and agency-reported research/preparing/submitted/awarded/not-awarded stages.
 - **Proposal workbench:** six source-cited qualification checks; exact funder criteria and weights; agency evidence and criterion responses; narrative editor; reporting plan; agency budget and allowability checks; preparation checklist; feedback and award records. Export a working application packet or official closing date calendar.
-- **AI strategist:** explicit requests for eligibility review, extraction of source-cited notice criteria, evidence-based drafting, and critique of the actual agency draft. Extracted criteria are reviewed before import; generated narrative is appended only on user action. Changes invalidate previous analysis. Budget inclusion is opt-in.
-- **Outcomes & reporting:** manual or CSV import of aggregate AchieveDXP/agency measures, periods, programs, actuals, targets, source links and definitions; attach selected results to an application criterion; select measures separately for each grant and export a progress-report draft against that application’s commitments. No individual learner data or live LMS integration is supported.
+- **AI strategist:** explicit requests for eligibility review, extraction of source-cited notice criteria, evidence-based drafting, and critique of the actual agency draft. Extracted criteria are reviewed before import; generated narrative is appended only on user action. Changes invalidate previous analysis. Budget inclusion is opt-in. A writing partner also proposes complete narrative revisions from an explicit editing request, presents the current and proposed drafts side by side, and applies a revision only after review. The previous five replaced narratives can be reviewed and restored.
+- **Outcomes & reporting:** manual or CSV import of aggregate AchieveDXP/agency measures, periods, programs, actuals, targets, source links and definitions; attach selected results to an application criterion; select measures separately for each grant and export a progress-report draft against that application’s commitments. A reporting assistant drafts from 1–20 selected aggregate measures and the application’s commitments; agency-result citations are explicitly distinguished from funder rules. Retained notices support reporting when an award leaves the live feed. No individual learner data or live LMS integration is supported.
 - **Agency-owned records:** browser persistence, retained source snapshots for saved applications even after notices leave the current feed, workspace backup/restore, no required contact gate. AI access codes stay in memory and are excluded from backups. Earlier wizard plans remain accessible through `legacy.html`, and old `#plan=` links redirect to that compatibility entry.
-- **Responsive design:** persistent desktop navigation, mobile menu, keyboard focus, responsive editor/inspector, restrained state/selection/loading motion, and reduced-motion support.
+- **Responsive design:** a light system-font interface, translucent neutral navigation, precise blue actions, an AI composer with a restrained spectral border, responsive editor/inspector, keyboard command palette (⌘/Ctrl K), purposeful motion, and reduced-motion support.
 
 ## Source coverage and live validation
 
@@ -38,7 +39,7 @@ The default research scope narrows this pool. Matching checks status, geographic
 
 Nationwide live state and corporate solicitation adapters are **not connected**. These are official research routes plus agency-added notices. Aggregate AchieveDXP CSVs are agency-entered evidence; there is **no live AchieveDXP data connection**, independently verified customer results, or certified funder reporting.
 
-A live OpenAI generation attempt on November 5 was rejected with HTTP 401 `invalid_api_key`; the provider received the cloud credential placeholder rather than a usable credential. The cloud reports the binding ready, but that is not proof of working provider authentication. Node and Python transports showed the same failure with inherited proxy/CA settings. Provider calls are not live-verified. Mocked tests exercise citations, request handling, actual-draft inclusion, and failure states.
+A live OpenAI generation attempt on November 5 was rejected with HTTP 401 `invalid_api_key`; the provider received the cloud credential placeholder rather than a usable credential. The cloud reports the binding ready, but that is not proof of working provider authentication. Node and Python transports showed the same failure with inherited proxy/CA settings. Provider calls are not live-verified. Mocked tests exercise strategy references, citations, context boundaries, revision comparison/restoration, reporting selections, request handling, and failure states.
 
 Accounts/SSO, cross-device/team synchronization, live LMS ingestion, document/PDF ingestion, automated nationwide state/corporate feeds, submission APIs, and award verification remain future work. The current shared-code API is a controlled pilot service, not a multi-tenant authorization system.
 
@@ -90,7 +91,7 @@ The **OpenAI API key does not belong in `config.js`, the Pages repository, the w
 
 Local development can use an eight-hour HttpOnly SameSite=Strict session only for exact loopback host/origin requests. Do not expose that mode through public forwarding. Hosted service requests use an in-memory access code; CORS allows the exact configured origin and requires authentication for analysis. A browser origin does not isolate repositories hosted under the same GitHub Pages account; access codes remain required.
 
-The backend calls OpenAI Responses with strict structured output and `store:false`. Provider retention policies still apply. Source quotes must literally match the supplied source text. Supported findings and extracted criteria require quotes; numeric criterion weights require a quoted explicit points/percent value. These checks do not establish correct reasoning, complete eligibility, document authenticity, or an official scoring interpretation.
+The backend calls OpenAI Responses with strict structured output and `store:false`. Strategy responses can reference only the server-selected records and pathways. Opportunity titles, status and URLs are supplied by the server, not accepted from model output. Strategy history is bounded to four messages and kept in page memory; export it to retain a brief. Provider retention policies still apply. Source quotes must literally match the supplied source text. Supported findings and extracted criteria require quotes; numeric criterion weights require a quoted explicit points/percent value. These checks do not establish correct reasoning, complete eligibility, document authenticity, or an official scoring interpretation.
 
 Source text, profile fields, actual narrative/criterion drafts, attached aggregate evidence and optional budget totals are whitelisted. No request content is logged or persisted by the service. Two concurrent requests and 30 provider attempts/hour/process are allowed, with a 128 KB body limit, bounded text and a 60-second provider timeout. These limits reset on process restart and are not a billing cap. Use provider project controls and shared limits before scaling.
 
@@ -121,6 +122,7 @@ API destinations: `api.grants.gov`, `api.usaspending.gov`, `projects.propublica.
 | `index.html`, `navigator.css`, `navigator.js` | Primary static website and interaction workflows |
 | `navigator-state.js` | Application/evidence validation, aggregate CSV parsing, budget and preparation rules |
 | `grant-core.js`, `matching.js`, `opportunity-tools.js` | Shared provenance, eligibility evidence, matching and notice validation |
+| `intelligence.js` / `intelligence.css` | AI strategy interface and shared light design system |
 | `server/` | Authenticated OpenAI service, strict citation validation, CORS, optional static serving |
 | `scripts/build-pages.mjs`, `.github/workflows/pages.yml` | Allowlisted Pages artifact and deployment |
 | `scripts/refresh-*.mjs`, `opportunities.json` | Source adapters and refreshed snapshot |

@@ -37,6 +37,16 @@
           draft: text(c.draft, 8000),
         })),
       narrative: text(v.narrative, 24000),
+      narrativeVersions: (Array.isArray(v.narrativeVersions)
+        ? v.narrativeVersions
+        : []
+      )
+        .slice(0, 5)
+        .map((r) => ({
+          text: text(r?.text, 24000),
+          at: text(r?.at, 100),
+          label: text(r?.label, 100),
+        })),
       outcomes: text(v.outcomes, 4000),
       budget: (Array.isArray(v.budget) ? v.budget : [])
         .slice(0, 30)
