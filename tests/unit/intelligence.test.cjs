@@ -206,6 +206,44 @@ test("strategy requests use structured Responses output, no browsing claims, and
   assert.equal(r.requires_human_review, true);
   assert.equal(r.task, "strategy");
 });
+test("strategy resolves provider passage selections to original quoted evidence and server-owned URLs", async () => {
+  const { prepareStrategy, runStrategy } = await import("../../server/intelligence.mjs");
+  const published = 'State governments may apply for the "Correctional Education" initiative.';
+  const p = prepareStrategy(body, {opportunities: [{...o, synopsis: published}]});
+  const result = await runStrategy(p, {
+    apiKey: "unit-test-key", model: "test-model",
+    fetchImpl: async (_, init) => {
+      const sent = JSON.parse(init.body), input = JSON.parse(sent.input);
+      const passage = input.citation_passages[0];
+      assert.equal(passage.text, published);
+      assert.deepEqual(sent.text.format.schema.properties.recommendations.items.properties.passage_ids.items.enum, [passage.passage_id]);
+      assert.ok(!JSON.stringify(sent.text.format.schema).includes(published));
+      const raw = {title: "Review the notice", summary: "Confirm applicant requirements.",
+        recommendations: [{route: "direct_review", rationale: "Review the full solicitation.", passage_ids: [passage.passage_id]}],
+        pathways: [], next_actions: [], questions: []};
+      return Response.json({status: "completed", output: [{type: "message", content: [{type: "output_text", text: JSON.stringify(raw)}]}]});
+    },
+  });
+  assert.deepEqual(result.strategy.recommendations[0].quotes, [published]);
+  assert.equal(result.strategy.recommendations[0].url, o.source_url);
+  assert.equal(result.requires_human_review, true);
+});
+test("strategy rejects unknown, mixed-source and mismatched passage selections and handles an empty catalog", async () => {
+  const { prepareStrategy, strategySchema, strategyPassages, resolveStrategyCitations } = await import("../../server/intelligence.mjs");
+  const p = prepareStrategy(body, {opportunities: [o, {...o, source_id: "second"}]});
+  const passages = strategyPassages(p);
+  const resolve = item => resolveStrategyCitations({recommendations: [{route: "unknown", rationale: "Check eligibility.", ...item}]}, passages);
+  assert.throws(() => resolve({passage_ids: ["invented"]}), /did not match/);
+  assert.throws(() => resolve({passage_ids: [passages[0].passage_id, passages[1].passage_id]}), /did not match/);
+  assert.throws(() => resolve({source_id: "R99", passage_ids: [passages[0].passage_id]}), /did not match/);
+  assert.throws(() => resolve({passage_ids: []}), /did not match/);
+  const empty = prepareStrategy(body, {opportunities: []});
+  const schema = strategySchema({...empty, paths: []});
+  assert.equal(schema.properties.recommendations.maxItems, 0);
+  assert.equal(schema.properties.pathways.maxItems, 0);
+  assert.ok(!JSON.stringify(schema).includes('"enum":[]'));
+  assert.deepEqual(strategySchema(p).properties.pathways.items.properties.source_id.enum, p.paths.map(path => path.id));
+});
 test("revision requests require a real draft and include only bounded explicit editing context", async () => {
   const { prepareAnalysis } = await import("../../server/ai.mjs");
   const request = {
