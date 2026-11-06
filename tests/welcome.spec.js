@@ -165,9 +165,9 @@ test("mobile welcome, responsive tabs and workspace transitions stay usable with
   ).toBe(true);
   await page.getByRole("button", { name: "Menu", exact: true }).click();
   await page
-    .getByRole("button", { name: "Sources & connections", exact: true })
+    .getByRole("button", { name: "Sources & evidence", exact: true })
     .click();
   await expect(page.locator(".crumb strong")).toHaveText(
-    "Sources & connections",
+    "Sources & evidence",
   );
 });

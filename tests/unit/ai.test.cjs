@@ -114,3 +114,42 @@ test('AI-extracted criteria require real source quotes and explicitly quoted wei
  const {validateAnalysis}=await import('../../server/ai.mjs');const q='Statement of need is worth 20 points. Describe the education gap.';const refs={S2:{text:q,url:'https://example.gov/rubric',title:'Scoring'}};
  const r=output();r.findings=[];r.extracted_criteria=[{title:'Statement of need',points:20,evidence:[{source_id:'S2',quote:q}]}];assert.equal(validateAnalysis(r,refs).extracted_criteria[0].points,20);r.extracted_criteria[0].points=90;assert.throws(()=>validateAnalysis(r,refs),/could not be verified/);r.extracted_criteria[0].points=null;r.extracted_criteria[0].evidence=[];assert.throws(()=>validateAnalysis(r,refs),/could not be verified/);
 });
+
+test('site-managed AI uses the private server key without a client code and retains origin and daily limits', async () => {
+  const {createApp, aiConfig} = await import('../../server/index.mjs');
+  const config = aiConfig({GRANT_AI_KEY:'private-provider-key',GRANT_AI_MODEL:'test',GRANT_AI_ORIGIN:'https://carnagerogue.github.io',GRANT_AI_ACCESS_MODE:'site'});
+  assert.equal(config.enabled,true);
+  assert.equal(config.authMode,'site');
+  assert.equal(aiConfig({GRANT_AI_ACCESS_MODE:'site',GRANT_AI_ORIGIN:config.origin,GRANT_AI_MODEL:'test'}).enabled,false);
+  let time=0,calls=0;
+  const app=createApp({config,serveStatic:false,loadFeed:async()=>feed,now:()=>time,maxRequests:1,maxDailyRequests:2,analyze:async(_,serverConfig)=>{calls++;assert.equal(serverConfig.apiKey,'private-provider-key');return {ok:true};}});
+  assert.equal((await invoke(app,{headers:{origin:'https://other.example'}})).status,403);
+  assert.equal((await invoke(app)).status,403);
+  const headers={origin:config.origin};
+  assert.equal((await invoke(app,{headers})).status,200);
+  assert.equal((await invoke(app,{headers})).status,429);
+  time+=3600001;
+  assert.equal((await invoke(app,{headers})).status,200);
+  time+=3600001;
+  assert.equal((await invoke(app,{headers})).status,429);
+  assert.equal(calls,2);
+  const status=await invoke(app,{method:'GET',url:'/api/ai/status'});
+  assert.equal(JSON.parse(status.body).access,'site');
+  assert.ok(!status.body.includes(config.apiKey));
+  time+=86400000;
+  assert.equal((await invoke(app,{headers})).status,200);
+});
+
+test('concurrent validation cannot exceed the last provider allowance', async () => {
+  const {createApp}=await import('../../server/index.mjs');
+  let calls=0,release;
+  const ready=new Promise(resolve=>{release=resolve;});
+  const config={enabled:true,authMode:'site',origin:'https://workspace.example'};
+  const app=createApp({config,serveStatic:false,maxRequests:1,loadFeed:async()=>{await ready;return feed;},analyze:async()=>{calls++;return {ok:true};}});
+  const headers={origin:config.origin};
+  const first=invoke(app,{headers}),second=invoke(app,{headers});
+  release();
+  const responses=await Promise.all([first,second]);
+  assert.deepEqual(responses.map(r=>r.status).sort(),[200,429]);
+  assert.equal(calls,1);
+});

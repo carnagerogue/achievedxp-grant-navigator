@@ -53,7 +53,7 @@ async function open(page, { ai = false, path = "/" } = {}) {
     r.fulfill({
       body:
         "window.NAV_CONFIG=" +
-        JSON.stringify({ aiEnabled: ai, aiAuthMode: "access_code" }) +
+        JSON.stringify({ aiEnabled: ai, aiAuthMode: "site" }) +
         ";",
       contentType: "text/javascript",
     }),
@@ -264,9 +264,7 @@ test("AI receives the actual proposal only on request, handles failure and inval
     .getByLabel("Application narrative")
     .fill("Actual proposal for review.");
   expect(calls).toBe(0);
-  await page
-    .getByLabel("Workspace access code")
-    .fill("test-workspace-code-not-provider-key");
+  await expect(page.getByLabel("Workspace access code")).toHaveCount(0);
   await page.getByRole("button", { name: "Review my application" }).click();
   await expect(page.locator(".ai-status")).toContainText(
     "Provider unavailable",
@@ -361,9 +359,7 @@ test("extracted criteria require review before they enter the application", asyn
   );
   await open(page, { ai: true });
   await workbench(page);
-  await page
-    .getByLabel("Workspace access code")
-    .fill("test-workspace-access-code");
+  await expect(page.getByLabel("Workspace access code")).toHaveCount(0);
   await page.getByRole("button", { name: "Extract notice criteria" }).click();
   await expect(page.locator(".analysis")).toContainText("Measurable outcomes");
   expect(

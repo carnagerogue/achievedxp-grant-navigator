@@ -5,7 +5,7 @@ FROM nginxinc/nginx-unprivileged:1.27-alpine
 USER root
 RUN apk add --no-cache nodejs
 
-COPY --chown=101:101 index.html legacy.html privacy.html navigator.css intelligence.css intelligence.js welcome.css welcome.js journey.css journey.js journey-state.js agency-directory.js navigator.js navigator-state.js styles.css workspace.css app.js grant-core.js matching.js opportunity-tools.js opportunity-workspace.js ai-workspace.js workspace.js config.js opportunities.json /usr/share/nginx/html/
+COPY --chown=101:101 index.html legacy.html privacy.html navigator.css intelligence.css intelligence.js welcome.css welcome.js journey.css journey.js journey-state.js agency-directory.js navigator.js navigator-state.js styles.css workspace.css app.js grant-core.js matching.js opportunity-tools.js opportunity-workspace.js ai-workspace.js ai-client.js workspace.js config.js opportunities.json /usr/share/nginx/html/
 COPY --chown=101:101 grant-core.js matching.js opportunity-tools.js navigator-state.js journey-state.js /opt/navigator/
 COPY --chown=101:101 server /opt/navigator/server
 COPY --chown=101:101 assets /usr/share/nginx/html/assets

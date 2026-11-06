@@ -1,4 +1,3 @@
-// Per-environment settings, read by app.js. This default changes nothing.
-// The Node server/container generates public settings from server configuration.
-// Never put a provider key or workspace access code here.
-window.NAV_CONFIG = { aiEnabled: false };
+// Public site settings only. Never add an OpenAI key here.
+// Run npm run configure:ai -- https://YOUR-ACTUAL-SERVICE.onrender.com after deployment.
+window.NAV_CONFIG = {"aiEnabled":false,"aiAuthMode":"site","aiBaseUrl":""};

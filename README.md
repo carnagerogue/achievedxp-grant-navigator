@@ -12,7 +12,7 @@ The user’s website is hosted at **https://carnagerogue.github.io/achievedxp-gr
 
 The app remains static and works under the Pages repository subdirectory. There is no frontend framework build requirement. `npm run build` prepares an explicit public-file allowlist in `dist/`. The Pages workflow validates the site and deploys that artifact when Pages uses Actions publishing. The current branch-based setup publishes `main` through GitHub’s separate `pages-build-deployment` workflow. See [Pages deployment instructions](docs/GITHUB_PAGES_DEPLOYMENT.md). Production is published from `main` using the configured Pages publishing mode. A review branch or draft pull request does not change the live Pages site.
 
-GitHub Pages cannot run a secure OpenAI backend. The website supports an HTTPS AI service configured through `GRANT_AI_BASE_URL` at build time or **Sources & connections** in the UI. Provider credentials stay on that service. `render.yaml` is an optional deployment blueprint, not an already deployed service.
+AI is built into the client experience: visitors never enter a service URL, API key or access code. The site owner deploys the included Render service, stores `GRANT_AI_KEY` privately in Render, and configures the public service URL once with `npm run configure:ai -- https://ACTUAL-SERVICE.onrender.com`. The website stays on GitHub Pages. Both branch publishing and the Pages build use this committed public configuration; `GRANT_AI_BASE_URL` can override it for an Actions artifact. See [Render activation](docs/BUILT_IN_AI.md). The backend has not yet been provisioned in a Render account; the public site reports AI unavailable until activation.
 
 ## Implemented workspace
 
@@ -27,7 +27,7 @@ GitHub Pages cannot run a secure OpenAI backend. The website supports an HTTPS A
 - **Proposal workbench:** six source-cited qualification checks; exact funder criteria and weights; agency evidence and criterion responses; narrative editor; reporting plan; agency budget and allowability checks; preparation checklist; feedback and award records. Export a working application packet or official closing date calendar.
 - **AI strategist:** explicit requests for eligibility review, extraction of source-cited notice criteria, evidence-based drafting, and critique of the actual agency draft. Extracted criteria are reviewed before import; generated narrative is appended only on user action. Changes invalidate previous analysis. Budget inclusion is opt-in. A writing partner also proposes complete narrative revisions from an explicit editing request, presents the current and proposed drafts side by side, and applies a revision only after review. The previous five replaced narratives can be reviewed and restored.
 - **Outcomes & reporting:** manual or CSV import of aggregate AchieveDXP/agency measures, periods, programs, actuals, targets, source links and definitions; attach selected results to an application criterion; select measures separately for each grant and export a progress-report draft against that application’s commitments. A reporting assistant drafts from 1–20 selected aggregate measures and the application’s commitments; agency-result citations are explicitly distinguished from funder rules. Retained notices support reporting when an award leaves the live feed. No individual learner data or live LMS integration is supported.
-- **Agency-owned records:** browser persistence, retained source snapshots for saved applications even after notices leave the current feed, workspace backup/restore, no required contact gate. AI access codes stay in memory and are excluded from backups. Earlier wizard plans remain accessible through `legacy.html`, and old `#plan=` links redirect to that compatibility entry.
+- **Agency-owned records:** browser persistence, retained source snapshots for saved applications even after notices leave the current feed, workspace backup/restore, no required contact gate. Provider credentials and browser-local service overrides are never part of this workspace. Previously saved connection URLs are ignored. Earlier wizard plans remain accessible through `legacy.html`, and old `#plan=` links redirect to that compatibility entry.
 - **Responsive design:** a light system-font interface, translucent neutral navigation, precise blue actions, an AI composer with a restrained spectral border, responsive editor/inspector, keyboard command palette (⌘/Ctrl K), purposeful motion, and reduced-motion support.
 
 [Guided workflow previews and validation](docs/GUIDED_JOURNEY_REVIEW.md) include desktop/mobile screenshots and the agency-research boundaries.
@@ -48,9 +48,9 @@ The default research scope narrows this pool. Matching checks status, geographic
 
 Nationwide live state and corporate solicitation adapters are **not connected**. These are official research routes plus agency-added notices. Aggregate AchieveDXP CSVs are agency-entered evidence; there is **no live AchieveDXP data connection**, independently verified customer results, or certified funder reporting.
 
-A live OpenAI generation attempt on November 5 was rejected with HTTP 401 `invalid_api_key`; the provider received the cloud credential placeholder rather than a usable credential. The cloud reports the binding ready, but that is not proof of working provider authentication. Node and Python transports showed the same failure with inherited proxy/CA settings. Provider calls are not live-verified. Mocked tests exercise hosted web-search request shape, citation boundaries, agency approval and identity changes, strategy references, citations, context boundaries, revision comparison/restoration, reporting selections, request handling, and failure states.
+A server-side OpenAI check on November 6 was rejected with a provider authentication error. The cloud reports the credential binding ready, but this is not proof of working provider authentication. The production key must be set directly in Render's private `GRANT_AI_KEY` field and verified with a real AI action after deployment. Mocked tests exercise hosted web-search request shape, citation boundaries, agency approval and identity changes, strategy references, shared context, revision comparison/restoration, reporting selections, request handling, and failure states.
 
-Accounts/SSO, cross-device/team synchronization, live LMS ingestion, document/PDF ingestion, automated nationwide state/corporate feeds, submission APIs, and award verification remain future work. The current shared-code API is a controlled pilot service, not a multi-tenant authorization system.
+Accounts/SSO, cross-device/team synchronization, live LMS ingestion, document/PDF ingestion, automated nationwide state/corporate feeds, submission APIs, and award verification remain future work. The site-managed API offers public, owner-funded access with shared process limits. It is not an agency authentication or multi-tenant authorization system.
 
 ## Run and test
 
@@ -68,7 +68,7 @@ Static preview:
 python3 -m http.server 8765 --bind 127.0.0.1
 ```
 
-Optional AI/static Node service:
+Combined website/AI Node service:
 
 ```bash
 NODE_USE_ENV_PROXY=1 npm start
@@ -92,22 +92,22 @@ Set server variables using the hosting platform’s secret/configuration manager
 | `GRANT_AI_MODEL` | Approved Responses API model supporting structured outputs; initial configuration uses `gpt-4.1` |
 | `GRANT_AI_RESEARCH_MODEL` | Optional approved Responses model supporting the hosted `web_search` tool and domain filters; defaults to `GRANT_AI_MODEL`. Verify actual tool compatibility before release. |
 | `GRANT_AI_ORIGIN` | Exact browser origin; for this Pages site: `https://carnagerogue.github.io` (no repository path) |
-| `GRANT_AI_ACCESS_TOKEN` | Separate random workspace access code, at least 32 characters; never use the provider key |
+| `GRANT_AI_ACCESS_MODE` | `site` for the built-in, owner-funded public service; Render sets this automatically |
 | `GRANT_AI_STATIC` | `off` for a separately hosted API |
 | `GRANT_AI_HOST` | `0.0.0.0` on a host; loopback by default |
 | `PORT` / `GRANT_AI_PORT` | Hosting platform port / local override |
 
-The **OpenAI API key does not belong in `config.js`, the Pages repository, the website connection URL, or its workspace access-code field**. In this managed environment it belongs in the `GRANT_AI_KEY` secret binding scoped to `api.openai.com`. A ready binding still needs a successful actual provider request to verify forwarding.
+The **OpenAI API key does not belong in `config.js`, the Pages repository, or the public service URL**. There are no client credential fields. In this managed environment it belongs in the `GRANT_AI_KEY` secret binding scoped to `api.openai.com`. A ready binding still needs a successful actual provider request to verify forwarding.
 
-Local development can use an eight-hour HttpOnly SameSite=Strict session only for exact loopback host/origin requests. Do not expose that mode through public forwarding. Hosted service requests use an in-memory access code; CORS allows the exact configured origin and requires authentication for analysis. A browser origin does not isolate repositories hosted under the same GitHub Pages account; access codes remain required.
+Local development can use an eight-hour HttpOnly SameSite=Strict session only for exact loopback host/origin requests. Do not expose that mode through public forwarding. Render uses explicit `site` access mode with no client authentication or access codes. CORS and analysis requests require the configured origin, but an Origin header is not authentication and does not prevent direct API abuse. All visitors share two concurrent provider calls, 30 attempts per hour, and 120 attempts per rolling day per process. Invalid inputs are rejected before provider calls; failures still consume allowance. Concurrent validation cannot overrun the final allowance. These counts reset on restart, so use OpenAI project budget/usage controls and keep the blueprint at one instance. Durable quotas, bot protection and organization sign-in are separate production scale-up work. Older API-only shared-token mode remains supported server-side, but is not exposed by the website.
 
 The backend calls OpenAI Responses with `store:false`. Application and strategy tasks use strict structured output. Agency research instead requires a completed hosted web search and parses paragraph-level provider URL citations on allowed domains; unlinked or out-of-scope notes are discarded. Search results remain untrusted evidence and require human review. Only public agency identity, website, jurisdiction and optional unit are sent for that research request. Reviewed research and the program brief can then accompany explicitly requested strategy/application tasks; they are never promoted to funder requirements. Research notes, acceptance choices and guided progress are saved locally and included in workspace backups. Manual note edits and agency identity changes invalidate approval. The research model/tool combination has not been verified against the live provider in this environment.
 
 Strategy responses can reference only the server-selected records and pathways. Opportunity titles, status and URLs are supplied by the server, not accepted from model output. Your strategy prompt and research scope are saved locally; strategy history is bounded to four messages and kept in page memory. Export a strategy to retain the generated brief. Provider retention policies still apply. Source quotes must literally match the supplied source text. Supported findings and extracted criteria require quotes; numeric criterion weights require a quoted explicit points/percent value. These checks do not establish correct reasoning, complete eligibility, document authenticity, or an official scoring interpretation.
 
-Source text, profile fields, actual narrative/criterion drafts, attached aggregate evidence and optional budget totals are whitelisted. No request content is logged or persisted by the service. Two concurrent requests and 30 provider attempts/hour/process are allowed, with a 128 KB body limit, bounded text and a 60-second provider timeout. These limits reset on process restart and are not a billing cap. Use provider project controls and shared limits before scaling.
+Source text, profile fields, actual narrative/criterion drafts, attached aggregate evidence and optional budget totals are whitelisted. No request content is logged or persisted by the service. Two concurrent requests, 30 provider attempts/hour and 120/day/process are allowed, with a 128 KB body limit, bounded text and a 60-second provider timeout. These limits reset on process restart and are not a billing cap. Use provider project controls and shared limits before scaling.
 
-`GET /api/ai/status` reports configuration only. A failed provider response never produces a successful analysis state or overwrites the application.
+`GET /api/ai/status` reports configuration and access mode only. A failed provider response never produces a successful analysis state or overwrites the application.
 
 ## Aggregate evidence format
 

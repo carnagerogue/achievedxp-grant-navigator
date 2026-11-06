@@ -3,7 +3,7 @@ const profile={agencyType:'state_doc',stateCode:'MI',populationSize:'md',goals:[
 const opportunity={source:'grants_gov',source_id:'123',source_kind:'federal',title:'Correctional education',synopsis:'State governments are eligible applicants for correctional education activities.',status:'posted',close_date:'12/01/2099',source_url:'https://www.grants.gov/example'};
 async function open(page,{ai=false}={}){
   await page.route('**/opportunities.json*',r=>r.fulfill({json:{opportunities:[opportunity],awards:[],foundations:[],saa:null,errors:[]}}));
-  await page.route('**/config.js',r=>r.fulfill({body:'window.NAV_CONFIG = '+JSON.stringify({aiEnabled:ai,leadEndpoint:''})+';',contentType:'text/javascript'}));
+  await page.route('**/config.js',r=>r.fulfill({body:'window.NAV_CONFIG = '+JSON.stringify({aiEnabled:ai,aiAuthMode:'site',leadEndpoint:''})+';',contentType:'text/javascript'}));
   await page.route('https://fonts.googleapis.com/**',r=>r.fulfill({body:'',contentType:'text/css'}));
   await page.goto('/legacy.html#plan='+Buffer.from(JSON.stringify({...profile,plan:{gapCost:12345,gapNotes:'Private budget note'}})).toString('base64url'));
   await page.getByRole('button',{name:'Discover opportunities'}).click();
@@ -68,7 +68,7 @@ test('OpenAI analysis sends only explicit context, handles failure and retry, an
   await page.locator('#opportunityList article').getByRole('button',{name:'Save opportunity'}).click();
   await page.getByRole('button',{name:'Proposal Workbench'}).click();
   expect(calls).toBe(0);
-  await page.fill('#aiWorkspaceCode','workspace-access-code-for-test-only');
+  await expect(page.locator('#aiWorkspaceCode')).toHaveCount(0);
   await page.getByRole('button',{name:'Generate analysis with OpenAI'}).click();
   await expect(page.locator('#aiAnalysisStatus')).toContainText('could not complete');
   await expect(page.locator('#aiAnalysisOutput')).toBeEmpty();

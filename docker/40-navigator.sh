@@ -8,7 +8,7 @@ WEB=/usr/share/nginx/html
 NAVIGATOR_WEB_ROOT="$WEB" node /opt/navigator/server/write-config.mjs
 
 # Same-origin AI gateway. It makes no model calls unless all server settings
-# are present and a request passes origin, access-code, and rate-limit checks.
+# are present and a request passes origin, configured access mode, and rate-limit checks.
 GRANT_AI_STATIC=off NAVIGATOR_WEB_ROOT="$WEB" GRANT_AI_HOST=127.0.0.1 GRANT_AI_PORT=8787 node /opt/navigator/server/index.mjs &
 
 # Refresh opportunities.json now and then every FEED_REFRESH_INTERVAL_SECONDS (default daily).
