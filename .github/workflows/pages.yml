@@ -33,17 +33,32 @@ jobs:
         run: node scripts/build-pages.mjs
         env:
           GRANT_AI_BASE_URL: ${{ vars.GRANT_AI_BASE_URL }}
-      - name: Configure Actions publishing
+      - name: Inspect Pages publishing mode
+        id: pages_mode
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if [ "$(gh api "repos/$GITHUB_REPOSITORY/pages" --jq .build_type)" != "workflow" ]; then
-            gh api --method PUT "repos/$GITHUB_REPOSITORY/pages" -f build_type=workflow > /dev/null
-          fi
+          pages_build_type="$(gh api "repos/$GITHUB_REPOSITORY/pages" --jq .build_type)"
+          case "$pages_build_type" in
+            workflow|legacy) ;;
+            *) echo "Unsupported Pages publishing mode" >&2; exit 1 ;;
+          esac
+          echo "build_type=$pages_build_type" >> "$GITHUB_OUTPUT"
+      - name: Record branch publishing
+        if: steps.pages_mode.outputs.build_type == 'legacy'
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" <<'SUMMARY'
+          Website validation passed. This repository uses GitHub's existing branch-based Pages publisher.
+          The separate `pages-build-deployment` run publishes `main` at the configured site URL.
+          Build-time AI endpoint variables apply only to Actions artifact publishing; branch publishing uses the public `config.js` in `main` or the website's manual connection setting.
+          SUMMARY
       - uses: actions/configure-pages@v5
+        if: steps.pages_mode.outputs.build_type == 'workflow'
       - uses: actions/upload-pages-artifact@v3
+        if: steps.pages_mode.outputs.build_type == 'workflow'
         with:
           path: dist
       - name: Deploy website
         id: deployment
+        if: steps.pages_mode.outputs.build_type == 'workflow'
         uses: actions/deploy-pages@v4
