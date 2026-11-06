@@ -63,7 +63,13 @@
       website: publicUrl(v.website),
       unit: text(v.unit, 500),
       identityConfirmed: v.identityConfirmed === true,
+      identityAutofillComplete: v.identityAutofillComplete === true,
       focusKey: text(v.focusKey, 160),
+      strategyMode: v.strategyMode === "shortlist" ? "shortlist" : "mission",
+      strategyPrompt:
+        typeof v.strategyPrompt === "string"
+          ? text(v.strategyPrompt, 3000)
+          : null,
       researchMode: v.researchMode === "manual" ? "manual" : "web",
       manualNotes: text(v.manualNotes, 4000),
       manualUrl: publicUrl(v.manualUrl),

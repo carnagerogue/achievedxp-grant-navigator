@@ -48,6 +48,12 @@
           label: text(r?.label, 100),
         })),
       outcomes: text(v.outcomes, 4000),
+      programPlanSeeded: v.programPlanSeeded === true || !!text(v.outcomes, 4000),
+      workTab: ["qualify", "criteria", "write", "budget", "submit"].includes(v.workTab)
+        ? v.workTab
+        : "qualify",
+      reportPeriod: text(v.reportPeriod, 100),
+      revisionRequest: text(v.revisionRequest, 2000),
       budget: (Array.isArray(v.budget) ? v.budget : [])
         .slice(0, 30)
         .map((b) => ({

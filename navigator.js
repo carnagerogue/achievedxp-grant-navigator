@@ -190,6 +190,104 @@
       return false;
     }
   }
+  function updateAgency(field, value) {
+    const j = state.journey,
+      p = state.profile;
+    const before = JourneyState.identity(p, j);
+    const current = {
+      agencyName: p.agencyName,
+      agencyType: p.agencyType,
+      stateCode: p.stateCode,
+      website: j.website,
+      unit: j.unit,
+    };
+    const initialized = j.identityAutofillComplete;
+    const next =
+      !field && initialized
+        ? current
+        : AgencyDirectory.resolveIdentity(current, field, value);
+    j.identityAutofillComplete = true;
+    const previousLocation = AgencyDirectory.location(current);
+    for (const key of ["agencyName", "agencyType", "stateCode"])
+      p[key] = next[key];
+    j.website = next.website;
+    j.unit = next.unit;
+    if (!j.program.location || j.program.location === previousLocation)
+      j.program.location = AgencyDirectory.location(next);
+    const changed = before !== JourneyState.identity(p, j);
+    if (changed) {
+      j.identityConfirmed = false;
+      j.reviewedIdentity = "";
+    }
+    // Patch related controls in place so autofill never drops keyboard focus.
+    for (const [key, value] of Object.entries(next)) {
+      document
+        .querySelectorAll(
+          `[data-j-profile="${key}"],[data-j-field="${key}"],#profileForm [name="${key}"]`,
+        )
+        .forEach((el) => {
+          if (el.value !== value) el.value = value;
+        });
+    }
+    const note = document.getElementById("agencyAutofillStatus");
+    if (note && changed)
+      note.textContent =
+        next.agencyType === "state_doc" &&
+        AgencyDirectory.states.some((a) => a.name === next.agencyName)
+          ? "DOC details filled from the directory. You can edit them; they are shared across your workspace."
+          : "Your agency details are shared across the workspace. Enter the details for this applicant.";
+    return changed || (!initialized && !!(p.agencyName || p.stateCode));
+  }
+  function captureProfile(el) {
+    if (!el.closest("#profileForm") || !el.name) return false;
+    const name = el.name;
+    if (
+      ["agencyName", "agencyType", "stateCode", "website", "unit"].includes(
+        name,
+      )
+    )
+      updateAgency(name, el.value);
+    else if (name === "goals")
+      state.profile.goals = [
+        ...document.querySelectorAll('#profileForm [name="goals"]:checked'),
+      ].map((x) => x.value);
+    else if (name === "usesAchieveDXP") state.usesAchieveDXP = el.checked;
+    else if (["programName", "activities", "baseline"].includes(name))
+      state.profile[name] = el.value;
+    save();
+    return true;
+  }
+  function syncApplicationContext() {
+    const k = state.saved.includes(state.journey.focusKey)
+      ? state.journey.focusKey
+      : state.saved[0] || "";
+    if (workKey !== k) {
+      ai.result = null;
+      ai.error = "";
+      reportAnalysis = null;
+    }
+    workKey = reportKey = k;
+    if (state.journey.focusKey !== k) {
+      state.journey.focusKey = k;
+      save();
+    }
+    const app = k ? application(k) : null;
+    workTab = app?.workTab || "qualify";
+    if (app) reportPeriod = app.reportPeriod || "";
+    revisionRequest = app?.revisionRequest || "";
+  }
+  function selectApplication(k) {
+    if (!state.saved.includes(k)) return;
+    state.journey.focusKey = k;
+    syncApplicationContext();
+    save();
+  }
+  function selectWorkTab(tab) {
+    if (!workKey) return;
+    application().workTab = tab;
+    workTab = tab;
+    save();
+  }
   function records() {
     return [...feed.opportunities, ...state.imports];
   }
@@ -218,8 +316,14 @@
   }
   function application(k = workKey) {
     if (!state.applications[k]) state.applications[k] = S.cleanApplication();
-    state.applications[k].reportResultIds ||= [];
-    return state.applications[k];
+    const app = state.applications[k];
+    app.reportResultIds ||= [];
+    if (!app.programPlanSeeded && state.journey.program.evaluation.trim()) {
+      if (!app.outcomes.trim()) app.outcomes = state.journey.program.evaluation;
+      app.programPlanSeeded = true;
+      save();
+    }
+    return app;
   }
   function profile() {
     return {
@@ -336,6 +440,7 @@
     });
   }
   function render() {
+    syncApplicationContext();
     if (view === "home") {
       $("#app").innerHTML = welcome.render();
       return;
@@ -1134,6 +1239,7 @@
         '<textarea data-app="outcomes" maxlength="4000" placeholder="Metric definitions, baseline, target, reporting cadence, data source, and responsible owner…">' +
           esc(a.outcomes) +
           "</textarea>",
+        "Starts with your program’s measurement plan when available. Tailor it to this grant’s requirements.",
       ) +
       '<p class="note">For AchieveDXP clients: use verified aggregate results from Outcomes & reporting. Specify which measures are available and which need a partner or additional data collection.</p>'
     );
@@ -1552,7 +1658,7 @@
     const body = analysisBody(task);
     if (body.notice_excerpt?.text && !C.safeUrl(body.notice_excerpt.url)) {
       toast("Add an HTTPS source URL for the notice excerpt first.");
-      workTab = "qualify";
+      selectWorkTab("qualify");
       render();
       return;
     }
@@ -1603,14 +1709,11 @@
   }
   function profilePage() {
     const p = state.profile,
-      states = Object.entries(feed.saa?.states || {}).map(([v, s]) => [
-        v,
-        s.name,
-      ]);
+      states = AgencyDirectory.jurisdictions;
     return (
       heading(
         "Build around your<br>agency’s mission.",
-        "Tell the workspace what you want to fund. No contact information is required.",
+        "Your agency and program details are shared with the funding journey. Changes save automatically.",
       ) +
       '<div class="two-column"><form id="profileForm" class="panel"><div class="form-grid">' +
       field(
@@ -1619,7 +1722,7 @@
           max: 300,
           required: true,
           placeholder: "Department of Corrections",
-        }),
+        }).replace("<input ", '<input list="profileDocAgencyNames" '),
       ) +
       field(
         "Program name",
@@ -1650,7 +1753,23 @@
           ) +
           "</select>",
       ) +
-      '</div><fieldset style="border:0;padding:0;margin:18px 0"><legend class="field-label">Education and reentry priorities</legend><div class="checkbox-grid">' +
+      field(
+        "Official website",
+        textInput("website", state.journey.website, { type: "url", max: 2000 }),
+      ) +
+      field(
+        "Facility, region or education unit",
+        textInput("unit", state.journey.unit, { max: 500 }),
+      ) +
+      '<datalist id="profileDocAgencyNames">' +
+      AgencyDirectory.states
+        .map(
+          (a) =>
+            '<option value="' + esc(a.name) + '">' + esc(a.state) + "</option>",
+        )
+        .join("") +
+      "</datalist>" +
+      '</div><p class="note" id="agencyAutofillStatus" role="status">DOC details fill automatically from applicant type and state. You can edit them.</p><fieldset style="border:0;padding:0;margin:18px 0"><legend class="field-label">Education and reentry priorities</legend><div class="checkbox-grid">' +
       Object.entries(goalLabels)
         .map(
           ([g, l]) =>
@@ -1678,7 +1797,7 @@
       ) +
       '<label class="check-label"><input type="checkbox" name="usesAchieveDXP" ' +
       (state.usesAchieveDXP ? "checked" : "") +
-      '> Our agency already uses AchieveDXP</label><button class="btn primary section-space" type="submit">Save agency profile ' +
+      '> Our agency already uses AchieveDXP</label><button class="btn primary section-space" type="submit">Explore funding ' +
       icon("arrow") +
       '</button></form><aside class="inspector"><h2>From learning<br>to lasting funding.</h2><p class="quiet">Your program’s existing results can strengthen a credible application and support reporting after an award.</p><div class="steps">' +
       [
@@ -1786,13 +1905,15 @@
             "Your program’s evidence belongs here.",
             "Add aggregate enrollment, completion, credential, or other funder-required measures with their period and source. The workspace never invents your results.",
           )) +
-      '</section><aside class="inspector"><h2>Report against<br>the application.</h2><p class="quiet">Choose a saved opportunity and period, then select its relevant measures in the library. Each application keeps its own selections. Review the export against the funder’s required format.</p>' +
+      '</section><aside class="inspector"><h2>Report against<br>the application.</h2><p class="quiet">Your active application carries over from the funding journey and proposal workspace. Choose its reporting period and relevant measures; each application keeps its own selections. Review the export against the funder’s required format.</p>' +
       field(
         "Grant or application",
         '<select id="reportGrant">' +
           options(
             [
-              ["", "Choose a saved opportunity"],
+              ...(state.saved.length
+                ? []
+                : [["", "Choose a saved opportunity"]]),
               ...state.saved.map((k) => [k, plain(record(k)?.title || k)]),
             ],
             reportKey,
@@ -2321,6 +2442,12 @@
         b.unreviewed +
         " cost lines still need an allowability review. Reconcile match, indirect costs, and each cost allocation before submission.";
   }
+  window.addEventListener("pagehide", () => {
+    if (saveTimer) {
+      clearTimeout(saveTimer);
+      save();
+    }
+  });
   function persistEdit() {
     refreshDerived();
     if (ai.result) {
@@ -2336,6 +2463,7 @@
   function readEdits(el) {
     const a = application();
     if (el.dataset.app) {
+      if (el.dataset.app === "outcomes") a.programPlanSeeded = true;
       const name = el.dataset.app,
         v = el.value;
       if (name === "notice.section") a.notice.section = v;
@@ -2396,8 +2524,10 @@
   }
   document.addEventListener("input", (e) => {
     const el = e.target;
+    if (captureProfile(el)) return;
     if (el.id === "revisionRequest") {
       revisionRequest = el.value;
+      if (workKey) application().revisionRequest = el.value;
       persistEdit();
       return;
     }
@@ -2424,6 +2554,7 @@
   });
   document.addEventListener("change", (e) => {
     const el = e.target;
+    if (captureProfile(el)) return;
     if (["category", "status", "scope"].includes(el.id)) {
       if (el.id === "category") category = el.value;
       if (el.id === "status") status = el.value;
@@ -2448,17 +2579,17 @@
       render();
     }
     if (el.id === "workOpportunity") {
-      workKey = el.value;
-      ai.result = null;
-      ai.error = "";
+      selectApplication(el.value);
       render();
     }
     if (el.id === "reportPeriod") {
       reportPeriod = el.value;
+      if (reportKey) application(reportKey).reportPeriod = el.value;
+      save();
       render();
     }
     if (el.id === "reportGrant") {
-      reportKey = el.value;
+      selectApplication(el.value);
       render();
     }
     if (el.dataset.reportResult && reportKey) {
@@ -2500,7 +2631,7 @@
       return;
     }
     if (b.dataset.workTab) {
-      workTab = b.dataset.workTab;
+      selectWorkTab(b.dataset.workTab);
       render();
       return;
     }
@@ -2611,10 +2742,8 @@
           }
           state.saved.push(k);
         }
-        workKey = k;
         preserveNotice(k);
-        application(k);
-        workTab = "qualify";
+        selectApplication(k);
         ai.result = null;
         ai.error = "";
         save();
@@ -2629,7 +2758,7 @@
         compareModal();
         break;
       case "criteria":
-        workTab = "criteria";
+        selectWorkTab("criteria");
         render();
         break;
       case "add-criterion":
@@ -2767,7 +2896,7 @@
         ai.result = null;
         save("Source-cited criteria added. Attach agency evidence to each.");
         $("#modal").close();
-        workTab = "criteria";
+        selectWorkTab("criteria");
         render();
         break;
       }
@@ -2788,7 +2917,7 @@
             .slice(0, 24000);
           ai.result = null;
           save("Draft appended. Review every claim and placeholder.");
-          workTab = "write";
+          selectWorkTab("write");
           render();
         }
         break;
@@ -2858,7 +2987,9 @@
         break;
       case "confirm-restore":
         state = $("#modal")._candidate;
-        workKey = "";
+        workKey = reportKey = reportPeriod = "";
+        updateAgency();
+        ai.result = reportAnalysis = null;
         loadError = "";
         save("Workspace restored.");
         $("#modal").close();
@@ -3045,9 +3176,7 @@
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form));
     if (form.id === "profileForm") {
-      data.goals = new FormData(form).getAll("goals");
-      state.profile = S.clean({ profile: data }).profile;
-      state.usesAchieveDXP = data.usesAchieveDXP === "on";
+      for (const el of form.elements) captureProfile(el);
       save("Agency priorities saved. Your research view is updated.");
       navigate("discover");
     }
@@ -3069,11 +3198,10 @@
           throw new Error("The workspace supports 100 imported notices.");
         state.imports.push(o);
         state.saved.push(key(o));
-        workKey = key(o);
-        application(workKey);
+        selectApplication(key(o));
         save("Notice validated and added to your pipeline.");
         $("#modal").close();
-        workTab = "qualify";
+        selectWorkTab("qualify");
         navigate("workbench");
       } catch (error) {
         $("#importError").textContent = error.message;
@@ -3518,7 +3646,17 @@
     isActive: () =>
       view === "intelligence" ||
       (view === "journey" && journey.step() === "funding"),
+    saveMission: (value) => {
+      state.journey.strategyPrompt = value;
+      save();
+    },
+    saveStrategyMode: (value) => {
+      state.journey.strategyMode = value;
+      save();
+    },
     context: () => ({
+      strategyPrompt: state.journey.strategyPrompt,
+      strategyMode: state.journey.strategyMode,
       profile: state.profile,
       saved: state.saved,
       imports: state.imports,
@@ -3550,7 +3688,8 @@
     record,
     application,
     strategy: () => intelligence.render(true),
-    seedStrategy: (value) => intelligence.setMission(value),
+    updateAgency,
+    selectApplication,
     choose: (k) => {
       if (!record(k)) return false;
       if (!state.saved.includes(k)) {
@@ -3567,14 +3706,14 @@
     },
     openApplication: (k, tab) => {
       if (!k) return;
-      workKey = k;
-      workTab = tab;
+      selectApplication(k);
+      selectWorkTab(tab);
       ai.result = null;
       ai.error = "";
       navigate("workbench");
     },
     openReport: (k) => {
-      reportKey = k;
+      selectApplication(k);
       navigate("outcomes");
     },
   });
@@ -3593,6 +3732,7 @@
       $("#main")?.focus({ preventScroll: true });
     },
   });
+  if (updateAgency()) save();
   render();
   fetch("opportunities.json", { cache: "no-cache" })
     .then((r) => {
@@ -3618,6 +3758,14 @@
     })
     .finally(() => {
       feedLoading = false;
-      if (view !== "home") render();
+      if (
+        view !== "home" &&
+        view !== "profile" &&
+        !(
+          view === "journey" &&
+          ["agency", "research", "program"].includes(journey.step())
+        )
+      )
+        render();
     });
 })();

@@ -266,7 +266,9 @@ test("a strategy result is rejected when agency context changes during its reque
   await expect.poll(() => requested).toBe(true);
   await page.locator(".nav [data-view=profile]").click();
   await page.getByLabel("Agency name", { exact: true }).fill("Changed DOC");
-  await page.getByRole("button", { name: "Save agency profile" }).click();
+  await page
+    .getByRole("button", { name: "Explore funding", exact: true })
+    .click();
   await page.locator(".nav [data-view=intelligence]").click();
   release();
   await expect(page.locator(".strategy-status")).toContainText(
