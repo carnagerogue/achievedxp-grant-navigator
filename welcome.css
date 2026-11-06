@@ -189,7 +189,7 @@ a > svg.external-icon {
 }
 .welcome-hero {
   text-align: center;
-  padding: 57px 24px 48px;
+  padding: 32px 24px 48px;
 }
 .welcome-hero h1 {
   font-size: clamp(54px, 7.3vw, 108px);
@@ -545,7 +545,7 @@ a > svg.external-icon {
     white-space: nowrap;
   }
   .welcome-hero {
-    padding: 58px 20px 38px;
+    padding: 32px 20px 38px;
   }
   .welcome-hero h1 {
     font-size: clamp(39px, 8.9vw, 61px);
@@ -764,4 +764,76 @@ a > svg.external-icon {
   background: #f8f9fb;
   border-radius: 14px;
   padding: 44px 24px;
+}
+
+/* Original AchieveDXP artwork, shared by the public site and funding workspace. */
+.achievedxp-wordmark {
+  display: block;
+  width: 200px;
+  height: auto;
+  flex: 0 0 auto;
+}
+.brand .achievedxp-wordmark {
+  width: 176px;
+  max-width: 100%;
+}
+.brand small {
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 10px;
+}
+.achieve-mascot {
+  display: block;
+  width: 64px;
+  height: auto;
+  flex: 0 0 auto;
+}
+.welcome-hero > .achieve-mascot {
+  width: 80px;
+  margin: 0 auto 18px;
+}
+.intelligence-heading > .achieve-mascot {
+  margin-bottom: 18px;
+}
+.ai-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ai-label .achieve-mascot {
+  width: 48px;
+  margin-right: 4px;
+}
+.welcome-footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.welcome-footer-brand .achievedxp-wordmark {
+  width: 150px;
+}
+@media (max-width: 880px) {
+  .brand .achievedxp-wordmark {
+    width: 150px;
+  }
+  .brand small {
+    font-size: 12px;
+    margin: 6px 0 0;
+  }
+}
+@media (max-width: 700px) {
+  .welcome-brand .achievedxp-wordmark {
+    width: 148px;
+  }
+  .welcome-hero > .achieve-mascot {
+    width: 68px;
+    margin-bottom: 20px;
+  }
+  .welcome-footer-brand {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .welcome-footer-brand .achievedxp-wordmark {
+    width: 132px;
+  }
 }

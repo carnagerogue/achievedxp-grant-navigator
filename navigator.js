@@ -342,7 +342,7 @@
     }
     const current = navs.find((n) => n[0] === view);
     $("#app").innerHTML =
-      '<div class="layout"><aside class="sidebar"><a href="#home" data-view="home" class="brand" aria-label="Grant Navigator home">Grant Navigator<small>by AchieveDXP</small></a>' +
+      '<div class="layout"><aside class="sidebar"><a href="#home" data-view="home" class="brand" aria-label="Grant Navigator home"><img class="achievedxp-wordmark" src="assets/achievedxp-logo.png" alt="AchieveDXP" width="859" height="160"><small>Grant Navigator</small></a>' +
       button(icon("menu") + "<span>Menu</span>", "menu", "mobile-menu") +
       '<nav class="nav" aria-label="Main navigation">' +
       navs
@@ -1264,7 +1264,7 @@
       !aiEndpoint() && window.NAV_CONFIG?.aiAuthMode === "local_session";
     return (
       '<aside class="ai-panel"><div class="ai-label">' +
-      icon("spark") +
+      '<img class="achieve-mascot" src="assets/mascot.png" alt="Achieve robot mascot" width="400" height="367">' +
       " OPENAI ASSISTANT</div><h2>" +
       (workTab === "write" ? "Writing partner" : "Your grant strategist") +
       "</h2><p>Source-linked insights. Thoughtful revisions. Every decision stays with you.</p>" +
