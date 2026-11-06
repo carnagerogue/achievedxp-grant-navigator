@@ -22,6 +22,6 @@ The current branch-based Pages publisher reads `config.js` from `main`. The arti
 
 - The public website is published from `main`. In the current branch mode, confirm the separate `pages-build-deployment` run and the live URL. A successful validation-only `pages.yml` run is not proof of publication. Direct Pages-settings updates are not available to the integration credential, so the existing working publishing mode is retained.
 - Real federal/award/foundation refresh succeeded. State/corporate sources are research pathways and manual notice imports, not live nationwide connectors.
-- Actual OpenAI generation is blocked in the development environment by HTTP 401: the upstream rejected the forwarded credential placeholder. The server handles this visibly; tests use mock provider responses until the binding is corrected.
+- Production OpenAI generation is enabled through `https://achievedxp-grant-ai.onrender.com`. Real agency web research, funding strategy and source-checked grant analysis passed on November 6. The key stays in Render; the public website contains only its service URL. Continue to verify actual provider output after model or backend changes.
 - Current clients can import approved aggregate AchieveDXP exports. A live AchieveDXP integration needs an authenticated API contract, client authorization, and a metric mapping validated against each grant’s reporting requirements.
 - Browser storage is local to each device and origin. Backups can move work; accounts, team collaboration and synchronization are not implemented.
