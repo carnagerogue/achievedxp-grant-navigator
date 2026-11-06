@@ -201,3 +201,22 @@ test('provider schema diagnostics stay separate from UI errors and authenticatio
   await assert.rejects(()=>requestProvider({},{apiKey:'secret',model:'test',fetchImpl:async()=>Response.json({error:{code:'invalid_json_schema',message:'Invalid schema at evidence.items'}},{status:400})}),error=>error.status===503&&error.diagnostic.code==='invalid_json_schema'&&!error.message.includes('evidence.items'));
   await assert.rejects(()=>requestProvider({},{apiKey:'secret',model:'test',fetchImpl:async()=>Response.json({error:{code:'invalid_api_key',message:'Incorrect key: sk-private-credential'}},{status:401})}),error=>error.status===503&&!error.diagnostic&&!error.message.includes('sk-private'));
 });
+
+test('live-format passage IDs become verified public quotations across the full provider boundary',async()=>{
+  const {prepareAnalysis,runAnalysis}=await import('../../server/ai.mjs');
+  const source={...opportunity,synopsis:'The funder supports "correctional education" for state government applicants.'};
+  const prepared=prepareAnalysis(request,{opportunities:[source]});
+  const result=await runAnalysis(prepared,{apiKey:'test-only',model:'test',fetchImpl:async(_,init)=>{
+    const body=JSON.parse(init.body),context=JSON.parse(body.input);
+    const chosen=context.citation_passages.find(p=>p.text.includes('"correctional education"'));
+    assert.ok(chosen);
+    assert.ok(body.text.format.schema.$defs.citation.properties.passage_id.enum.includes(chosen.passage_id));
+    const data=output();data.findings[0].evidence=[{passage_id:chosen.passage_id}];
+    return response(data);
+  }});
+  const citation=result.analysis.findings[0].evidence[0];
+  assert.equal(citation.source_id,'S1');
+  assert.ok(citation.quote.includes('"correctional education"'));
+  assert.equal(citation.url,opportunity.source_url);
+  assert.equal(result.requires_human_review,true);
+});
