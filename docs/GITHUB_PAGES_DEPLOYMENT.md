@@ -6,7 +6,7 @@ Target repository: https://github.com/carnagerogue/achievedxp-grant-navigator
 Review the implementation in the target repository before publishing. A draft pull request does not replace the live Pages website.
 
 1. Review the redesigned website and checks. Merge the reviewed implementation into the target repository’s `main` branch.
-2. In that repository, open **Settings → Pages → Build and deployment → Source → GitHub Actions**. The new `pages.yml` workflow builds an allowlisted `dist/` artifact and publishes it.
+2. The `pages.yml` workflow uses its `pages: write` permission to select Actions publishing when the existing site still uses branch publishing. It builds an allowlisted `dist/` artifact and publishes it. The equivalent repository setting is **Settings → Pages → Build and deployment → Source → GitHub Actions**.
 3. Verify the Pages workflow output URL is the target above. Test a fresh visit and reload under the repository subdirectory. The root should show the new welcome page, with `welcome.js` and `welcome.css` loaded alongside `navigator.js` and `navigator.css`. Confirm that **Start my funding journey** opens the guide and that a saved agency can resume its previous step.
 4. The daily source refresh commits `opportunities.json`. The Pages workflow also listens for successful completion of that refresh, because pushes using `GITHUB_TOKEN` do not trigger ordinary push workflows.
 
@@ -28,7 +28,7 @@ All analysis POSTs still require the configured origin and valid workspace code.
 
 ## Release boundaries
 
-- The new website is prepared for review; it has not been merged into the deployment branch or deployed.
+- The public website is published from `main` by `pages.yml`. Confirm the successful deployment run and the live URL before considering a release complete.
 - Real federal/award/foundation refresh succeeded. State/corporate sources are research pathways and manual notice imports, not live nationwide connectors.
 - Actual OpenAI generation is blocked in the development environment by HTTP 401: the upstream rejected the forwarded credential placeholder. The server handles this visibly; tests use mock provider responses until the binding is corrected.
 - Current clients can import approved aggregate AchieveDXP exports. A live AchieveDXP integration needs an authenticated API contract, client authorization, and a metric mapping validated against each grant’s reporting requirements.

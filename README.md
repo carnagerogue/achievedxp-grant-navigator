@@ -10,7 +10,7 @@ The guide is also directly accessible at `#journey`.
 
 The user’s website is hosted at **https://carnagerogue.github.io/achievedxp-grant-navigator/** from **carnagerogue/achievedxp-grant-navigator**. Changes are prepared on a review branch; the live website changes only after the reviewed implementation is merged and deployed.
 
-The app remains static and works under the Pages repository subdirectory. There is no frontend framework build requirement. `npm run build` prepares an explicit public-file allowlist in `dist/`. The included Pages workflow deploys that artifact and also refreshes deployment after a successful scheduled funding-data refresh. See [Pages deployment instructions](docs/GITHUB_PAGES_DEPLOYMENT.md). The redesigned website has not been deployed. A review branch or draft pull request does not change the live Pages site.
+The app remains static and works under the Pages repository subdirectory. There is no frontend framework build requirement. `npm run build` prepares an explicit public-file allowlist in `dist/`. The included Pages workflow deploys that artifact and also refreshes deployment after a successful scheduled funding-data refresh. See [Pages deployment instructions](docs/GITHUB_PAGES_DEPLOYMENT.md). Production is published from `main` by the Pages workflow. A review branch or draft pull request does not change the live Pages site.
 
 GitHub Pages cannot run a secure OpenAI backend. The website supports an HTTPS AI service configured through `GRANT_AI_BASE_URL` at build time or **Sources & connections** in the UI. Provider credentials stay on that service. `render.yaml` is an optional deployment blueprint, not an already deployed service.
 
@@ -37,7 +37,7 @@ The expanded connector searches 24 ALNs and 14 education, reentry and workforce 
 
 | Source | Records | Meaning |
 | --- | ---: | --- |
-| Grants.gov | 1,415 | Broad federal/workforce open or forecast research pool; includes unrelated opportunities |
+| Grants.gov | 1,443 | Broad federal/workforce open or forecast research pool; includes unrelated opportunities |
 | USASpending | 130 | Historical award research, not available grants |
 | ProPublica | 12 | Foundation/nonprofit research records, not open competitions |
 | State/territory directory | 56 | Manually maintained administering-office entries; confirm current offices and notices |

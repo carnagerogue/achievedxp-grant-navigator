@@ -33,6 +33,13 @@ jobs:
         run: node scripts/build-pages.mjs
         env:
           GRANT_AI_BASE_URL: ${{ vars.GRANT_AI_BASE_URL }}
+      - name: Configure Actions publishing
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$(gh api "repos/$GITHUB_REPOSITORY/pages" --jq .build_type)" != "workflow" ]; then
+            gh api --method PUT "repos/$GITHUB_REPOSITORY/pages" -f build_type=workflow > /dev/null
+          fi
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
