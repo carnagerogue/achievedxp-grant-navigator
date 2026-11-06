@@ -171,18 +171,23 @@ test('published applicant and deadline metadata are citable without accepting ag
 });
 
 test('structured citations can select only exact passages paired with their actual source',async()=>{
-  const {analysisSchema,citationPassages}=await import('../../server/ai.mjs');
+  const {analysisSchema,citationPassages,citationChoices,resolveAnalysisCitations}=await import('../../server/ai.mjs');
   const references={S1:{text:'Published applicant types: State governments.\n\nPublished closing date: 2099-12-01'},S2:{text:'Applications must describe measurable learner outcomes.'}};
   const schema=analysisSchema(references);
   const citation=schema.$defs.citation;
-  assert.deepEqual(citation.properties.source_id.enum,['S1','S2']);
+  assert.equal(citation.properties.source_id,undefined);
   assert.equal(citation.additionalProperties,false);
-  for(const quote of citation.properties.quote.enum){
+  for(const {text:quote} of citationChoices(references)){
     assert.ok(quote.length>=12&&quote.length<=1200);
     assert.ok(Object.values(references).some(r=>r.text.includes(quote)));
   }
   for(const key of ['findings','draft_sections','extracted_criteria'])assert.deepEqual(schema.properties[key].items.properties.evidence.items,{$ref:'#/$defs/citation'});
-  assert.ok(!citation.properties.quote.enum.includes('All DOC agencies qualify.'));
+  assert.ok(citation.properties.passage_id.enum.every(id=>/^S[12]-P\d+$/.test(id)));
+  assert.equal(citation.properties.quote,undefined);
+  const selected=output();selected.findings[0].evidence=[{passage_id:'S1-P1'}];
+  assert.equal(resolveAnalysisCitations(selected,citationChoices(references)).findings[0].evidence[0].quote,'Published applicant types: State governments.');
+  selected.findings[0].evidence=[{source_id:'S2',passage_id:'S1-P1'}];
+  assert.throws(()=>resolveAnalysisCitations(selected,citationChoices(references)),/did not match/);
   const {validateAnalysis}=await import('../../server/ai.mjs');
   const wrongSource=output();wrongSource.findings[0].evidence[0]={source_id:'S2',quote:'Published applicant types: State governments.'};
   assert.throws(()=>validateAnalysis(wrongSource,references),/quotation did not exactly match/);
