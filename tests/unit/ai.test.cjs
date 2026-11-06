@@ -169,3 +169,24 @@ test('published applicant and deadline metadata are citable without accepting ag
   valid.findings[0].evidence[0].quote='Published closing date: 2099-12-02';
   assert.throws(()=>validateAnalysis(valid,prepared.references),/quotation did not exactly match/);
 });
+
+test('structured citations can select only exact passages paired with their actual source',async()=>{
+  const {analysisSchema,citationPassages}=await import('../../server/ai.mjs');
+  const references={S1:{text:'Published applicant types: State governments.\n\nPublished closing date: 2099-12-01'},S2:{text:'Applications must describe measurable learner outcomes.'}};
+  const schema=analysisSchema(references);
+  const choices=schema.$defs.citation.anyOf;
+  assert.equal(choices.length,2);
+  for(const choice of choices){
+    const id=choice.properties.source_id.enum[0];
+    assert.equal(choice.additionalProperties,false);
+    for(const quote of choice.properties.quote.enum){
+      assert.ok(quote.length>=12&&quote.length<=1200);
+      assert.ok(references[id].text.includes(quote));
+    }
+  }
+  for(const key of ['findings','draft_sections','extracted_criteria'])assert.deepEqual(schema.properties[key].items.properties.evidence.items,{$ref:'#/$defs/citation'});
+  assert.ok(!choices[0].properties.quote.enum.includes('All DOC agencies qualify.'));
+  const text=('A source sentence with evidence and punctuation. '.repeat(700)).trim();
+  for(const quote of citationPassages(text))assert.ok(text.replace(/\s+/g,' ').includes(quote.replace(/\s+/g,' '))&&quote.length<=1200);
+  assert.equal(citationPassages('A'.repeat(1111))[0],'A'.repeat(1111));
+});
