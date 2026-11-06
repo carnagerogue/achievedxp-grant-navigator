@@ -96,6 +96,10 @@ export function researchFromResponse(payload, prepared) {
       if (!unique.length) continue;
       const value = match[0]
         .replace(/[^]*/g, "")
+        // Responses web search can render citations as Markdown links as well
+        // as citation tokens. Keep their verified sources in the source list.
+        .replace(/\s*\(\[[^\]\n]*\]\(https?:\/\/[^\s]*?\)\)/g, "")
+        .replace(/\[([^\]\n]*)\]\(https?:\/\/[^\s]*?\)/g, "$1")
         .replace(/\*\*/g, "")
         .replace(/https?:\/\/\S+/g, "[see linked source]")
         .replace(/^[\s#*\d.)-]+/, "")

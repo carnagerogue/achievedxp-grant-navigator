@@ -153,3 +153,19 @@ test('concurrent validation cannot exceed the last provider allowance', async ()
   assert.deepEqual(responses.map(r=>r.status).sort(),[200,429]);
   assert.equal(calls,1);
 });
+
+test('published applicant and deadline metadata are citable without accepting agency assertions as notice evidence',async()=>{
+  const {prepareAnalysis,validateAnalysis}=await import('../../server/ai.mjs');
+  const actual={...opportunity,applicant_types:['State governments'],states:['MI'],close_date:'2099-12-01',award_ceiling:500000};
+  const prepared=prepareAnalysis({...request,profile:{...request.profile,agencyName:'UNVERIFIED AGENCY CLAIM'}},{opportunities:[actual]});
+  assert.equal(prepared.references.S1.text,prepared.evidence.source.reference_text);
+  assert.ok(prepared.references.S1.text.includes('State governments'));
+  assert.ok(prepared.references.S1.text.includes('Published closing date: 2099-12-01'));
+  assert.ok(!prepared.references.S1.text.includes('UNVERIFIED AGENCY CLAIM'));
+  const valid=output();valid.findings[0].evidence[0].quote='State governments';
+  assert.equal(validateAnalysis(valid,prepared.references).findings[0].evidence[0].quote,'State governments');
+  valid.findings[0].evidence[0].quote='UNVERIFIED AGENCY CLAIM';
+  assert.throws(()=>validateAnalysis(valid,prepared.references),/quotation did not exactly match/);
+  valid.findings[0].evidence[0].quote='Published closing date: 2099-12-02';
+  assert.throws(()=>validateAnalysis(valid,prepared.references),/quotation did not exactly match/);
+});
