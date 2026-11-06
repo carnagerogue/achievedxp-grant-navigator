@@ -6,7 +6,7 @@ function syncAiOpportunity(id){
   aiSelectedOpportunity=id;
 }
 function syncAiAnalysis(item,input){
-  const enabled=window.NAV_CONFIG?.aiEnabled===true;
+  const enabled=GrantAI.enabled();
   const body=item?{task:input.task,opportunity_key:item.id,profile:input.profile,include_budget:input.includeBudget,
     budget:input.includeBudget?{gapCost:input.plan.gapCost,gapHave:input.plan.gapHave}:{},
     notice_excerpt:input.noticeExcerpt?.text?input.noticeExcerpt:null,
@@ -22,15 +22,11 @@ function syncAiAnalysis(item,input){
   aiRequestBody=body;aiRequestFingerprint=fingerprint;
   document.getElementById('aiServiceUnavailable').hidden=enabled;
   document.getElementById('aiServiceControls').hidden=!enabled;
-  document.getElementById('aiAccessCodeField').hidden=window.NAV_CONFIG?.aiAuthMode==='local_session';
   document.getElementById('runAiAnalysis').disabled=!enabled||!item||!!aiPendingRequest;
 }
 async function runAiAnalysis(){
   if(!aiRequestBody||aiPendingRequest)return;
   const status=document.getElementById('aiAnalysisStatus');
-  const token=document.getElementById('aiWorkspaceCode').value.trim();
-  const localSession=window.NAV_CONFIG?.aiAuthMode==='local_session';
-  if(!localSession&&!token){status.textContent='Enter the workspace access code provided by your agency administrator.';return;}
   if(aiRequestBody.notice_excerpt?.text&&!GrantCore.safeUrl(aiRequestBody.notice_excerpt.url)){status.textContent='Add the official HTTPS URL for your notice excerpt before requesting analysis.';return;}
   const body=JSON.stringify(aiRequestBody),version=++aiRequestVersion;
   const controller=new AbortController();aiPendingRequest=controller;
@@ -41,9 +37,7 @@ async function runAiAnalysis(){
   document.getElementById('copyAiAnalysis').hidden=true;
   status.textContent='Analyzing the supplied evidence with OpenAI…';
   try{
-    const response=await fetch('/api/ai/analyze',{method:'POST',headers:{'Content-Type':'application/json',...(!localSession?{'Authorization':'Bearer '+token}:{})},body,signal:controller.signal,credentials:'same-origin',cache:'no-store'});
-    const data=await response.json();
-    if(!response.ok)throw new Error(data.error||'Analysis could not be completed. Try again.');
+    const data=await GrantAI.request(JSON.parse(body),{signal:controller.signal});
     if(version!==aiRequestVersion)return;
     if(!data.analysis||data.requires_human_review!==true||data.opportunity_key!==aiRequestBody.opportunity_key)throw new Error('The response does not match this opportunity. No analysis was accepted.');
     aiAnalysisResult=data;renderAiAnalysis(data);

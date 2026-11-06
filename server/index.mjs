@@ -9,11 +9,11 @@ export function aiConfig(env=process.env,{allowLocalSession=false}={}){
   const origin=env.GRANT_AI_ORIGIN || '';
   let validOrigin=false,localOrigin=false;
   try{const url=new URL(origin);localOrigin=url.protocol==='http:'&&['localhost','127.0.0.1'].includes(url.hostname);validOrigin=url.origin===origin&&(url.protocol==='https:'||localOrigin);}catch(_){}
-  const authMode=(env.GRANT_AI_ACCESS_TOKEN||'').length>=32?'access_code':allowLocalSession&&localOrigin?'local_session':'disabled';
+  const authMode=env.GRANT_AI_ACCESS_MODE==='site'?'site':(env.GRANT_AI_ACCESS_TOKEN||'').length>=32?'access_code':allowLocalSession&&localOrigin?'local_session':'disabled';
   return {apiKey:env.GRANT_AI_KEY||'',model:env.GRANT_AI_MODEL||'',researchModel:env.GRANT_AI_RESEARCH_MODEL||env.GRANT_AI_MODEL||'',accessToken:env.GRANT_AI_ACCESS_TOKEN||'',origin,
     authMode,enabled:!!env.GRANT_AI_KEY&&!!env.GRANT_AI_MODEL&&authMode!=='disabled'&&validOrigin};
 }
-const staticFiles=new Set(['index.html','legacy.html','privacy.html','navigator.css','intelligence.css','welcome.css','welcome.js','journey.css','journey.js','journey-state.js','agency-directory.js','intelligence.js','navigator.js','navigator-state.js','styles.css','workspace.css','app.js','grant-core.js','matching.js','opportunity-tools.js','opportunity-workspace.js','workspace.js','ai-workspace.js','opportunities.json']);
+const staticFiles=new Set(['index.html','legacy.html','privacy.html','navigator.css','intelligence.css','welcome.css','welcome.js','journey.css','journey.js','journey-state.js','agency-directory.js','intelligence.js','navigator.js','navigator-state.js','styles.css','workspace.css','app.js','grant-core.js','matching.js','opportunity-tools.js','opportunity-workspace.js','workspace.js','ai-client.js','ai-workspace.js','opportunities.json']);
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.svg':'image/svg+xml','.webp':'image/webp','.ico':'image/x-icon'};
 const digest=v=>createHash('sha256').update(v).digest();
 async function jsonBody(req){
@@ -23,8 +23,9 @@ async function jsonBody(req){
   for await(const chunk of req){size+=chunk.length;if(size>128000)throw new AiError(413,'The source context is too large. Shorten the notice excerpt.');chunks.push(chunk);}
   try{return JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch(_){throw new AiError(400,'The request is not valid JSON.');}
 }
-export function createApp({config=aiConfig(),webRoot=resolve(dirname(fileURLToPath(import.meta.url)),'..'),serveStatic=true,loadFeed=()=>readFile(resolve(webRoot,'opportunities.json'),'utf8').then(JSON.parse),analyze=runAnalysis,now=Date.now,maxRequests=30,windowMs=3600000}={}){
+export function createApp({config=aiConfig(),webRoot=resolve(dirname(fileURLToPath(import.meta.url)),'..'),serveStatic=true,loadFeed=()=>readFile(resolve(webRoot,'opportunities.json'),'utf8').then(JSON.parse),analyze=runAnalysis,now=Date.now,maxRequests=30,windowMs=3600000,maxDailyRequests=120}={}){
   let inFlight=0,windowStart=now(),requestCount=0,failedAuth=0,authStart=now();
+  let dayStart=now(),dailyRequestCount=0;
   let localSession=randomBytes(32).toString('hex'),sessionExpires=now()+8*3600000;
   const isLocalRequest=req=>serveStatic&&['127.0.0.1','::1','::ffff:127.0.0.1'].includes(req.socket?.remoteAddress)&&req.headers.host===new URL(config.origin).host&&!req.headers['x-forwarded-for'];
   const send=(res,status,value)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(JSON.stringify(value));};
@@ -32,7 +33,8 @@ export function createApp({config=aiConfig(),webRoot=resolve(dirname(fileURLToPa
     try{
       const url=new URL(req.url,'http://localhost');
       // GitHub Pages may call a separately hosted API. Only the configured website
-      // origin receives CORS access; authentication and usage limits still apply.
+      // origin receives CORS access. Site mode is public, owner-funded access,
+      // not user authentication; server-wide usage limits bound provider calls.
       if(url.pathname.startsWith('/api/ai/')&&req.headers.origin===config.origin){
         res.setHeader?.('Access-Control-Allow-Origin',config.origin);
         res.setHeader?.('Vary','Origin');
@@ -41,7 +43,7 @@ export function createApp({config=aiConfig(),webRoot=resolve(dirname(fileURLToPa
           return res.end();
         }
       }
-      if(url.pathname==='/api/ai/status'&&req.method==='GET')return send(res,200,{enabled:config.enabled,provider:config.enabled?'OpenAI':null});
+      if(url.pathname==='/api/ai/status'&&req.method==='GET')return send(res,200,{enabled:config.enabled,provider:config.enabled?'OpenAI':null,access:config.authMode});
       if(url.pathname==='/api/ai/analyze'){
         if(req.method!=='POST')throw new AiError(405,'Use POST for analysis.');
         if(!config.enabled)throw new AiError(503,'In-app AI analysis is not configured. You can still export an evidence brief.');
@@ -51,18 +53,23 @@ export function createApp({config=aiConfig(),webRoot=resolve(dirname(fileURLToPa
         if(config.authMode==='local_session'){
           const cookie=/(?:^|;\s*)grant_ai_session=([a-f0-9]{64})(?:;|$)/.exec(req.headers.cookie||'')?.[1]||'';
           if(!isLocalRequest(req)||now()>sessionExpires||!timingSafeEqual(digest(cookie),digest(localSession)))throw new AiError(401,'Reload the local workspace to renew its analysis session.');
-        }else{
+        }else if(config.authMode!=='site'){
           const token=(req.headers.authorization||'').replace(/^Bearer /,'');
           if(token.length>256||!req.headers.authorization?.startsWith('Bearer ')||!timingSafeEqual(digest(token),digest(config.accessToken))){failedAuth++;throw new AiError(401,'Enter a valid workspace access code.');}
         }
         if(now()-windowStart>=windowMs){windowStart=now();requestCount=0;}
-        if(inFlight>=2||requestCount>=maxRequests)throw new AiError(429,'The workspace AI limit has been reached. Try again later.');
+        if(now()-dayStart>=86400000){dayStart=now();dailyRequestCount=0;}
+        if(inFlight>=2||requestCount>=maxRequests||dailyRequestCount>=maxDailyRequests)throw new AiError(429,'The workspace AI limit has been reached. Try again later.');
         // Reserve capacity before reading the request to bound concurrent work.
         inFlight++;
         try{
           const body=await jsonBody(req);
           const prepared=prepareAnalysis(body,await loadFeed());
+          // Concurrent requests may finish validation after the last allowance
+          // is consumed. Recheck immediately before starting a provider call.
+          if(requestCount>=maxRequests||dailyRequestCount>=maxDailyRequests)throw new AiError(429,'The workspace AI limit has been reached. Try again later.');
           requestCount++;
+          dailyRequestCount++;
           const result=await analyze(prepared,config);
           return send(res,200,result);
         }finally{inFlight--;}

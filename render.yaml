@@ -1,7 +1,8 @@
-# Optional secure API host for the GitHub Pages website. Configure secrets in the host dashboard.
+# Site-managed AI for the GitHub Pages website. Configure the owner key in Render secrets.
 services:
   - type: web
     name: achievedxp-grant-ai
+    plan: starter
     runtime: node
     buildCommand: node --version
     startCommand: node server/index.mjs
@@ -19,5 +20,5 @@ services:
         value: gpt-4.1
       - key: GRANT_AI_KEY
         sync: false
-      - key: GRANT_AI_ACCESS_TOKEN
-        generateValue: true
+      - key: GRANT_AI_ACCESS_MODE
+        value: site

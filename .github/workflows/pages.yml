@@ -50,7 +50,7 @@ jobs:
           cat >> "$GITHUB_STEP_SUMMARY" <<'SUMMARY'
           Website validation passed. This repository uses GitHub's existing branch-based Pages publisher.
           The separate `pages-build-deployment` run publishes `main` at the configured site URL.
-          Build-time AI endpoint variables apply only to Actions artifact publishing; branch publishing uses the public `config.js` in `main` or the website's manual connection setting.
+          The site owner configures the public AI service URL in `config.js`. An Actions variable can override it for artifact publishing. Visitors never configure an AI connection.
           SUMMARY
       - uses: actions/configure-pages@v5
         if: steps.pages_mode.outputs.build_type == 'workflow'

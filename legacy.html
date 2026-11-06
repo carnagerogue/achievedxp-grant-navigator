@@ -724,8 +724,7 @@
         <h3>Analyze this opportunity</h3>
         <p id="aiServiceUnavailable" class="workspace-empty">In-app AI analysis has not been enabled for this workspace. You can still copy or download the evidence brief for an agency-approved assistant.</p>
         <div id="aiServiceControls" hidden>
-          <p class="small muted">Generate analysis sends the displayed agency context, selected source, and any notice excerpt to OpenAI through this workspace’s server. Budget totals are included only if selected. Contact fields, budget notes, and private opportunity reviews are excluded. The access code stays in this browser session and is not included in exports.</p>
-          <label for="aiWorkspaceCode" id="aiAccessCodeField">Workspace access code<input class="text-input" type="password" id="aiWorkspaceCode" autocomplete="off" maxlength="256" placeholder="Provided by your agency administrator"></label>
+          <p class="small muted">Generate analysis sends the displayed agency context, selected source, and any notice excerpt to OpenAI through this workspace’s server. Budget totals are included only if selected. Contact fields, budget notes, and private opportunity reviews are excluded.</p>
           <button class="btn btn-teal" type="button" id="runAiAnalysis" onclick="runAiAnalysis()" disabled>Generate analysis with OpenAI</button>
         </div>
         <p id="aiAnalysisStatus" role="status" aria-live="polite"></p>
@@ -950,6 +949,7 @@
 </div>
 </div>
 <script src="config.js"></script>
+<script defer src="ai-client.js"></script>
 <script defer src="grant-core.js?v=2026-11-04.2"></script>
 <script defer src="matching.js?v=2026-11-04.2"></script>
 <script defer src="opportunity-tools.js?v=2026-11-04.2"></script>

@@ -1,6 +1,11 @@
 // Publish only the website. Server credentials and backend code never enter the Pages artifact.
 import { cp, mkdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import {
+  publicSiteConfig,
+  configScript,
+  readSiteConfig,
+} from "../server/site-config.mjs";
 const out = resolve("dist");
 await mkdir(out, { recursive: true });
 const files = [
@@ -28,39 +33,18 @@ const files = [
   "opportunity-workspace.js",
   "workspace.js",
   "ai-workspace.js",
+  "ai-client.js",
 ];
 for (const file of files) await cp(file, resolve(out, file));
 await cp("assets", resolve(out, "assets"), { recursive: true });
-const raw = process.env.GRANT_AI_BASE_URL || "";
-let base = "";
-if (raw) {
-  const url = new URL(raw);
-  if (
-    url.protocol !== "https:" ||
-    url.username ||
-    url.password ||
-    url.search ||
-    url.hash
-  )
-    throw new Error(
-      "GRANT_AI_BASE_URL must be an HTTPS service URL without credentials or query parameters.",
-    );
-  base = url.origin + url.pathname.replace(/\/$/, "");
-}
-await writeFile(
-  resolve(out, "config.js"),
-  "window.NAV_CONFIG = " +
-    JSON.stringify({
-      aiEnabled: !!base,
-      aiAuthMode: "access_code",
-      aiBaseUrl: base,
-    }) +
-    ";\n",
-);
+const config = process.env.GRANT_AI_BASE_URL
+  ? publicSiteConfig(process.env.GRANT_AI_BASE_URL)
+  : await readSiteConfig();
+await writeFile(resolve(out, "config.js"), configScript(config));
 await writeFile(resolve(out, ".nojekyll"), "");
 console.log(
   "GitHub Pages website prepared in dist/. AI endpoint " +
-    (base
+    (config.aiEnabled
       ? "configured."
-      : "not configured; manual service connection remains available."),
+      : "not configured; site owner deployment is still required."),
 );

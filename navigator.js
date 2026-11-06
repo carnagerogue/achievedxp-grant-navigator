@@ -80,7 +80,7 @@
     ["workbench", "Proposal workbench", "doc"],
     ["outcomes", "Outcomes & reporting", "chart"],
     ["profile", "Agency profile", "agency"],
-    ["sources", "Sources & connections", "link"],
+    ["sources", "Sources & evidence", "link"],
   ];
   const goalLabels = {
     ged: "Adult education & literacy",
@@ -121,7 +121,6 @@
     state = S.clean(raw);
     state.results = S.cleanResults(raw.results);
     state.usesAchieveDXP = raw.usesAchieveDXP === true;
-    state.connection = validEndpoint(raw.connection) || "";
     if (state.imports.length) state.imports = T.normalizeImport(state.imports);
   } catch (e) {
     state = S.clean();
@@ -145,31 +144,12 @@
     reportPeriod = "",
     reportKey = "";
   let ai = { busy: false, result: null, error: "", task: "", fingerprint: "" },
-    connectionCode = "",
-    connectionStatus = "",
     aiIncludeBudget = false,
     saveTimer,
     toastTimer,
     revisionRequest = "",
     reportBusy = false,
     reportAnalysis = null;
-  function validEndpoint(v) {
-    if (!v) return "";
-    try {
-      const u = new URL(v);
-      if (
-        u.protocol !== "https:" ||
-        u.username ||
-        u.password ||
-        u.search ||
-        u.hash
-      )
-        return "";
-      return u.origin + u.pathname.replace(/\/$/, "");
-    } catch (_) {
-      return "";
-    }
-  }
   function toast(message) {
     const e = $("#toast");
     e.textContent = message;
@@ -1357,17 +1337,10 @@
       '</div><p class="note section-space">Submit through the official funder portal. This workspace does not submit applications or verify award decisions.</p>'
     );
   }
-  function aiEndpoint() {
-    return (
-      state.connection || validEndpoint(window.NAV_CONFIG?.aiBaseUrl) || ""
-    );
-  }
   function aiEnabled() {
-    return !!aiEndpoint() || window.NAV_CONFIG?.aiEnabled === true;
+    return GrantAI.enabled();
   }
   function aiPanel(o) {
-    const local =
-      !aiEndpoint() && window.NAV_CONFIG?.aiAuthMode === "local_session";
     return (
       '<aside class="ai-panel"><div class="ai-label">' +
       '<img class="achieve-mascot" src="assets/mascot.png" alt="Achieve robot mascot" width="400" height="367">' +
@@ -1434,18 +1407,7 @@
             !o || o.retained_snapshot || ai.busy ? "disabled" : "",
           )) +
       '<div class="divider"></div>' +
-      (!aiEnabled()
-        ? "<p>Connect your organization’s AI service to use OpenAI in this workspace.</p>" +
-          button("Connect AI service", "sources", "small")
-        : !local
-          ? field(
-              "Workspace access code",
-              '<input id="accessCode" type="password" autocomplete="off" value="' +
-                esc(connectionCode) +
-                '" placeholder="Organization-provided access code">',
-              "Kept in memory for this session. This is not your OpenAI API key.",
-            )
-          : '<p class="quiet">Secure local AI service configured.</p>') +
+      aiAccess("workbench-access") +
       '<details class="ai-context-detail"><summary>Source context & sharing</summary><label class="check-label section-space"><input id="includeBudget" type="checkbox" ' +
       (aiIncludeBudget ? "checked" : "") +
       '> Include agency budget</label><p class="note">On your request, the selected notice, profile, criteria, draft, and attached evidence are sent to OpenAI. Output is a planning draft for your review.</p></details><div class="ai-status ' +
@@ -1628,26 +1590,7 @@
   }
   async function analyze(task) {
     if (ai.busy) return;
-    if (!aiEnabled()) {
-      navigate("sources");
-      toast("Connect the secure AI service to generate analysis.");
-      return;
-    }
-    if (/^sk-/.test(connectionCode)) {
-      connectionCode = "";
-      toast(
-        "Do not enter an OpenAI API key here. Use the organization’s workspace access code.",
-      );
-      render();
-      return;
-    }
-    const local =
-      !aiEndpoint() && window.NAV_CONFIG?.aiAuthMode === "local_session";
-    if (!local && !connectionCode) {
-      toast("Enter your organization’s workspace access code.");
-      $("#accessCode")?.focus();
-      return;
-    }
+    if (!aiReady()) return;
     if (
       task === "refine" &&
       (!application().narrative.trim() || revisionRequest.trim().length < 8)
@@ -1666,21 +1609,7 @@
     ai = { busy: true, result: null, error: "", task, fingerprint: sig };
     render();
     try {
-      const response = await fetch(aiEndpoint() + "/api/ai/analyze", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(!local ? { Authorization: "Bearer " + connectionCode } : {}),
-        },
-        body: JSON.stringify(body),
-        signal: AbortSignal.timeout(90000),
-        credentials: local ? "same-origin" : "omit",
-      });
-      const r = await response.json();
-      if (!response.ok)
-        throw new Error(
-          r.error || "The analysis service could not complete the request.",
-        );
+      const r = await requestAI(body);
       if (
         r.opportunity_key !== body.opportunity_key ||
         r.requires_human_review !== true ||
@@ -1942,26 +1871,9 @@
     return (
       heading(
         "Know the source.<br>Trust the evidence trail.",
-        "Official records, clear coverage limits, and a secure connection for AI analysis.",
+        "Official records, clear coverage limits, and evidence you can trace.",
       ) +
-      '<div class="panel connection"><h2>AI connection</h2><p class="quiet">The GitHub Pages website connects to your organization’s secure AI service. The OpenAI key stays on that server.</p><form id="connectionForm">' +
-      field(
-        "AI service URL",
-        '<input name="endpoint" type="url" value="' +
-          esc(aiEndpoint()) +
-          '" placeholder="https://your-grant-ai-service.example">',
-        "Use the HTTPS base URL of the deployed grant AI service.",
-      ) +
-      '<div class="actions"><button class="btn primary" type="submit">Save & test connection</button>' +
-      button("Use site default", "reset-connection") +
-      '</div></form><p class="quiet section-space" role="status">' +
-      esc(
-        connectionStatus ||
-          (!aiEndpoint() && window.NAV_CONFIG?.aiEnabled
-            ? "The local service is configured. Run an analysis to verify a provider response."
-            : "An AI service must be deployed separately from GitHub Pages."),
-      ) +
-      '</p></div><div class="panel connection"><h2>Your workspace, your records.</h2><p class="quiet">Agency work is stored in this browser. Export a backup to move devices or keep a recoverable copy. Import replaces the local workspace after you review it.</p><div class="actions">' +
+      '<div class="panel connection"><h2>Your workspace, your records.</h2><p class="quiet">Agency work is stored in this browser. Export a backup to move devices or keep a recoverable copy. Import replaces the local workspace after you review it.</p><div class="actions">' +
       button("Export workspace backup", "export-workspace") +
       button("Import workspace backup", "import-workspace") +
       '<a class="btn" href="legacy.html">Open earlier plans</a></div></div><section class="section-space"><h2>Coverage & refresh status</h2><div class="source-grid">' +
@@ -2531,10 +2443,7 @@
       persistEdit();
       return;
     }
-    if (el.id === "accessCode") {
-      connectionCode = el.value;
-      return;
-    }
+
     if (el.id === "search") {
       search = el.value;
       pageNum = 1;
@@ -2934,7 +2843,6 @@
           JSON.stringify(
             {
               ...state,
-              connection: undefined,
               exported_at: new Date().toISOString(),
             },
             null,
@@ -2959,7 +2867,6 @@
             const candidate = S.clean(raw);
             candidate.results = S.cleanResults(raw.results);
             candidate.usesAchieveDXP = raw.usesAchieveDXP === true;
-            candidate.connection = state.connection;
             if (candidate.imports.length)
               candidate.imports = T.normalizeImport(candidate.imports);
             openModal(
@@ -2993,13 +2900,6 @@
         loadError = "";
         save("Workspace restored.");
         $("#modal").close();
-        render();
-        break;
-      case "reset-connection":
-        state.connection = "";
-        connectionCode = "";
-        connectionStatus = "Using the site’s default service configuration.";
-        save();
         render();
         break;
       case "calendar": {
@@ -3167,12 +3067,7 @@
   });
   document.addEventListener("submit", async (e) => {
     const form = e.target;
-    if (
-      !["profileForm", "importForm", "resultForm", "connectionForm"].includes(
-        form.id,
-      )
-    )
-      return;
+    if (!["profileForm", "importForm", "resultForm"].includes(form.id)) return;
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form));
     if (form.id === "profileForm") {
@@ -3224,35 +3119,6 @@
       $("#modal").close();
       render();
     }
-    if (form.id === "connectionForm") {
-      const endpoint = validEndpoint(data.endpoint);
-      if (!endpoint) {
-        connectionStatus =
-          "Enter an HTTPS service URL without credentials, query parameters, or a fragment.";
-        render();
-        return;
-      }
-      state.connection = endpoint;
-      save();
-      connectionStatus = "Testing the configured service…";
-      render();
-      try {
-        const response = await fetch(endpoint + "/api/ai/status", {
-          credentials: "omit",
-          signal: AbortSignal.timeout(10000),
-        });
-        const body = await response.json();
-        if (!response.ok || !body.enabled)
-          throw new Error("The service is reachable but AI is not configured.");
-        connectionStatus =
-          "Service configuration is available. Use the workbench and your workspace access code to run an analysis.";
-      } catch (error) {
-        connectionStatus =
-          "Connection not verified. Check the service URL and its allowed website origin. " +
-          (error.message === "Failed to fetch" ? "" : error.message);
-      }
-      render();
-    }
   });
   window.addEventListener("beforeunload", () => {
     clearTimeout(saveTimer);
@@ -3266,83 +3132,21 @@
     }
   });
   function aiAccess(className = "") {
-    if (!aiEnabled())
-      return (
-        '<div class="ai-connection-note ' +
-        className +
-        '">' +
-        icon("spark") +
-        "<span>Bring your strategy to life with your organization’s AI service.</span>" +
-        button("Connect AI", "sources", "text-button") +
-        "</div>"
-      );
-    if (!aiEndpoint() && window.NAV_CONFIG?.aiAuthMode === "local_session")
-      return "";
-    return (
-      '<details class="ai-access ' +
-      className +
-      '" ' +
-      (!connectionCode ? "open" : "") +
-      "><summary>Secure workspace access</summary>" +
-      field(
-        "Workspace access code",
-        '<input id="accessCode" type="password" autocomplete="off" value="' +
-          esc(connectionCode) +
-          '" placeholder="Organization-provided access code">',
-        "This is not an OpenAI API key. Kept in memory for this session.",
-      ) +
-      "</details>"
-    );
+    return aiEnabled()
+      ? ""
+      : '<p class="note ' +
+          className +
+          '">' +
+          esc(GrantAI.unavailable) +
+          "</p>";
   }
   function aiReady() {
-    if (!aiEnabled()) {
-      navigate("sources");
-      toast(
-        "Connect your organization’s secure AI service to use this assistant.",
-      );
-      return false;
-    }
-    if (/^sk-/.test(connectionCode)) {
-      connectionCode = "";
-      render();
-      toast(
-        "Use the workspace access code here. Keep your OpenAI key on the server.",
-      );
-      return false;
-    }
-    const local =
-      !aiEndpoint() && window.NAV_CONFIG?.aiAuthMode === "local_session";
-    if (!local && !connectionCode) {
-      toast("Enter your organization’s workspace access code.");
-      const input = $("#accessCode");
-      if (input) {
-        input.closest("details")?.setAttribute("open", "");
-        input.focus();
-      }
-      return false;
-    }
-    return true;
+    if (aiEnabled()) return true;
+    toast(GrantAI.unavailable);
+    return false;
   }
   async function requestAI(body) {
-    const local =
-      !aiEndpoint() && window.NAV_CONFIG?.aiAuthMode === "local_session";
-    const response = await fetch(aiEndpoint() + "/api/ai/analyze", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(!local ? { Authorization: "Bearer " + connectionCode } : {}),
-      },
-      body: JSON.stringify(body),
-      credentials: local ? "same-origin" : "omit",
-      signal: AbortSignal.timeout(90000),
-    });
-    const result = await response.json();
-    if (!response.ok)
-      throw Error(
-        result.error ||
-          "The AI service could not complete the request. Please try again.",
-      );
-    return result;
+    return GrantAI.request(body);
   }
   function rememberNarrative(app, label) {
     app.narrativeVersions = [
