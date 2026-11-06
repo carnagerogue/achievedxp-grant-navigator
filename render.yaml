@@ -15,7 +15,7 @@ services:
       - key: GRANT_AI_STATIC
         value: off
       - key: GRANT_AI_ORIGIN
-        value: https://carnagerogue.github.io
+        value: https://grants.achievedxp.com
       - key: GRANT_AI_MODEL
         value: gpt-4.1
       - key: GRANT_AI_KEY
