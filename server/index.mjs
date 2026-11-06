@@ -95,7 +95,7 @@ export function createApp({config=aiConfig(),webRoot=resolve(dirname(fileURLToPa
       res.end(req.method==='HEAD'?undefined:data);
     }catch(error){
       const status=error instanceof AiError?error.status:error.code==='ENOENT'?404:500;
-      if(!res.headersSent)send(res,status,{error:error instanceof AiError?error.message:status===404?'Not found.':'The request could not be completed. Your saved plan is unchanged.'});
+      if(!res.headersSent)send(res,status,{error:error instanceof AiError?error.message:status===404?'Not found.':'The request could not be completed. Your saved plan is unchanged.',...(error instanceof AiError&&error.diagnostic?{configuration_error:error.diagnostic}:{})});
       else res.end();
     }
   });

@@ -23,8 +23,8 @@ export async function requestProvider(
         : "The AI provider could not be reached. Your plan is unchanged.",
     );
   }
-  if (!response.ok)
-    throw new AiError(
+  if (!response.ok) {
+    const error = new AiError(
       response.status === 429 ? 429 : 503,
       response.status === 429
         ? "The AI provider is at its usage limit. Try again later."
@@ -32,6 +32,22 @@ export async function requestProvider(
           ? "The AI service credential was rejected by OpenAI. Your administrator needs to verify the server credential and its forwarding configuration. Your plan is unchanged."
           : "The AI provider could not complete the request. Your plan is unchanged.",
     );
+    // Configuration diagnostics go to the requesting caller’s API
+    // response, never prompt logs or the client-facing error message. Do not
+    // forward authentication errors, which can contain credential fragments.
+    if (response.status === 400) {
+      try {
+        const raw = await response.text();
+        const detail = raw.length < 20000 ? JSON.parse(raw)?.error : null;
+        if (detail?.code === "invalid_json_schema")
+          error.diagnostic = {
+            code: detail.code,
+            message: String(detail.message || "").slice(0, 1500).replace(/sk-[A-Za-z0-9_-]{8,}/g, "[redacted]"),
+          };
+      } catch (_) {}
+    }
+    throw error;
+  }
   let payload;
   try {
     const raw = await response.text();

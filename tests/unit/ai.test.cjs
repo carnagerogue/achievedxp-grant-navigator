@@ -174,19 +174,25 @@ test('structured citations can select only exact passages paired with their actu
   const {analysisSchema,citationPassages}=await import('../../server/ai.mjs');
   const references={S1:{text:'Published applicant types: State governments.\n\nPublished closing date: 2099-12-01'},S2:{text:'Applications must describe measurable learner outcomes.'}};
   const schema=analysisSchema(references);
-  const choices=schema.$defs.citation.anyOf;
-  assert.equal(choices.length,2);
-  for(const choice of choices){
-    const id=choice.properties.source_id.enum[0];
-    assert.equal(choice.additionalProperties,false);
-    for(const quote of choice.properties.quote.enum){
-      assert.ok(quote.length>=12&&quote.length<=1200);
-      assert.ok(references[id].text.includes(quote));
-    }
+  const citation=schema.$defs.citation;
+  assert.deepEqual(citation.properties.source_id.enum,['S1','S2']);
+  assert.equal(citation.additionalProperties,false);
+  for(const quote of citation.properties.quote.enum){
+    assert.ok(quote.length>=12&&quote.length<=1200);
+    assert.ok(Object.values(references).some(r=>r.text.includes(quote)));
   }
   for(const key of ['findings','draft_sections','extracted_criteria'])assert.deepEqual(schema.properties[key].items.properties.evidence.items,{$ref:'#/$defs/citation'});
-  assert.ok(!choices[0].properties.quote.enum.includes('All DOC agencies qualify.'));
+  assert.ok(!citation.properties.quote.enum.includes('All DOC agencies qualify.'));
+  const {validateAnalysis}=await import('../../server/ai.mjs');
+  const wrongSource=output();wrongSource.findings[0].evidence[0]={source_id:'S2',quote:'Published applicant types: State governments.'};
+  assert.throws(()=>validateAnalysis(wrongSource,references),/quotation did not exactly match/);
   const text=('A source sentence with evidence and punctuation. '.repeat(700)).trim();
   for(const quote of citationPassages(text))assert.ok(text.replace(/\s+/g,' ').includes(quote.replace(/\s+/g,' '))&&quote.length<=1200);
   assert.equal(citationPassages('A'.repeat(1111))[0],'A'.repeat(1111));
+});
+
+test('provider schema diagnostics stay separate from UI errors and authentication errors never disclose credentials',async()=>{
+  const {requestProvider}=await import('../../server/provider.mjs');
+  await assert.rejects(()=>requestProvider({},{apiKey:'secret',model:'test',fetchImpl:async()=>Response.json({error:{code:'invalid_json_schema',message:'Invalid schema at evidence.items'}},{status:400})}),error=>error.status===503&&error.diagnostic.code==='invalid_json_schema'&&!error.message.includes('evidence.items'));
+  await assert.rejects(()=>requestProvider({},{apiKey:'secret',model:'test',fetchImpl:async()=>Response.json({error:{code:'invalid_api_key',message:'Incorrect key: sk-private-credential'}},{status:401})}),error=>error.status===503&&!error.diagnostic&&!error.message.includes('sk-private'));
 });
