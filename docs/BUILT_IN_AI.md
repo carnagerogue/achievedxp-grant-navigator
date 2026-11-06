@@ -2,7 +2,9 @@
 
 Clients use **Research my agency**, **Build my strategy**, and the application/reporting AI actions directly. There are no connection settings, API-key fields or shared access-code prompts. GitHub Pages serves the website; Render keeps the owner’s OpenAI key private and handles AI requests.
 
-## One-time owner setup
+Production service: **https://achievedxp-grant-ai.onrender.com**. The site configuration already points to this service. [Manage its private environment settings](https://dashboard.render.com/web/srv-dbml0eijnfac73apop5g/env).
+
+## Owner setup and future redeployments
 
 1. [Deploy this repository on Render](https://render.com/deploy?repo=https://github.com/carnagerogue/achievedxp-grant-navigator). Sign into your Render account and approve the blueprint. It creates one Node 24 service named `achievedxp-grant-ai` on Render’s paid Starter plan to avoid idle cold starts; review the plan in Render before creating it.
 2. When Render asks for **`GRANT_AI_KEY`**, paste your OpenAI project API key into that private environment value. Do not paste it into chat, GitHub code, Actions variables or the website. The blueprint supplies the model, website origin, host and `site` access mode. No separate workspace token is needed.
@@ -17,7 +19,7 @@ Clients use **Research my agency**, **Build my strategy**, and the application/r
    This changes only the public `config.js` URL. Commit it to `main` through the normal reviewed release. The current branch-based Pages publishing uses this file directly; visitors do nothing.
 5. Verify **Research my agency** for a real public DOC. Confirm actual cited findings, then review those findings before using them in strategy. Verify an application AI request and a failed-provider state. A green Render health check is not sufficient. The source-linked output must come from an actual successful OpenAI response.
 
-The managed cloud environment currently reports its OpenAI binding ready, but the November 6 provider check rejected the supplied credential. Set the real project key directly in Render; cloud-workspace secrets are not automatically copied to Render. The repository does not contain a key. Render account provisioning and this final provider verification are still required.
+The owner has provisioned Render and configured its private provider key. Live agency web research, funding strategy and source-checked grant analysis succeeded on November 6. Cloud-workspace secrets are not automatically copied to Render. The repository contains only the public service URL, never the key.
 
 ## Owner controls
 
