@@ -7,9 +7,8 @@
 // back to the repo, so Pages serves it from the same origin as index.html
 // — no CORS, no backend, no auth.
 //
-// When this HTML is opened as a local file or email attachment, the
-// fetch fails and the Navigator falls back to "cached baseline" mode
-// with the simulated freshness UI. That's the intentional offline path.
+// When source loading fails, show the failure and retain any source
+// records already loaded during the session. Never invent freshness.
 const GRANTS_FEED_URL = "./opportunities.json";
 
 const LIVE_FEED = {
@@ -19,7 +18,6 @@ const LIVE_FEED = {
   awards: [],                  // recent federal awards (USASpending.gov)
   foundations: [],             // foundations active in corrections (ProPublica)
   saa: null,                   // state administering agency map
-  byCfda: new Map(),           // cfda -> most recent opportunity
   error: null
 };
 
@@ -41,19 +39,15 @@ async function loadFeed(cacheBust) {
 }
 
 function applyFeed(data) {
-  LIVE_FEED.opportunities = Array.isArray(data.opportunities) ? data.opportunities : [];
+  const incoming = Array.isArray(data.opportunities) ? data.opportunities : [];
+  LIVE_FEED.opportunities = incoming.filter(o => o && typeof o.title === "string" && o.source_id != null);
   LIVE_FEED.awards        = Array.isArray(data.awards)        ? data.awards        : [];
   LIVE_FEED.foundations   = Array.isArray(data.foundations)   ? data.foundations   : [];
   LIVE_FEED.saa           = data.saa || null;
+  LIVE_FEED.errors        = Array.isArray(data.errors) ? [...data.errors] : [];
+  if (incoming.length !== LIVE_FEED.opportunities.length) LIVE_FEED.errors.push({ source: "schema", error: "Malformed opportunity records were excluded" });
+  LIVE_FEED.sourceHealth = data.source_health || {};
   LIVE_FEED.last_synced_at = data.last_synced_at || null;
-  LIVE_FEED.byCfda = new Map();
-  for (const opp of LIVE_FEED.opportunities) {
-    if (!opp.cfda) continue;
-    const prior = LIVE_FEED.byCfda.get(opp.cfda);
-    if (!prior || (opp.post_date && compareDates(opp.post_date, prior.post_date) > 0)) {
-      LIVE_FEED.byCfda.set(opp.cfda, opp);
-    }
-  }
   LIVE_FEED.status = "live";
 }
 
@@ -66,7 +60,7 @@ async function bootLiveFeed() {
   }
   try { renderHeroTelemetry(); } catch (_) {}
   if (document.getElementById('results') && document.getElementById('results').classList.contains('active')) {
-    try { renderLiveFeedBanner(); renderGrants(); } catch (_) {}
+    try { renderLiveFeedBanner(); renderGrants(); renderOpportunityExplorer(); renderSaa(); renderPeerAwards(); renderFoundations(); renderStack(); renderTLDR(); renderNarrative(); } catch (error) { console.warn("Report refresh failed", error); }
   }
 }
 
@@ -261,6 +255,10 @@ function encodePlanToHash() {
   try {
     const snap = {};
     SHARE_FIELDS.forEach(k => { snap[k] = state[k]; });
+    snap.plan = currentPlan();
+    // Private application reviews can be large and may name internal owners.
+    // Keep them in the local plan/export, not the shareable URL.
+    delete snap.plan.opportunityReviews;
     const json = JSON.stringify(snap);
     const b64 = btoa(unescape(encodeURIComponent(json)))
       .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -275,10 +273,19 @@ function decodePlanFromHash() {
     const pad = b64.length % 4 ? '='.repeat(4 - (b64.length % 4)) : '';
     const json = decodeURIComponent(escape(atob(b64 + pad)));
     const snap = JSON.parse(json);
-    return (snap && typeof snap === "object") ? snap : null;
+    if (!snap || typeof snap !== 'object' || Array.isArray(snap)) return null;
+    const clean = {};
+    SHARE_FIELDS.forEach(key => {
+      if (['goals', 'infra', 'existingPartners'].includes(key)) {
+        clean[key] = Array.isArray(snap[key]) ? snap[key].filter(v => typeof v === 'string' && v.length < 100).slice(0, 20) : [];
+      } else clean[key] = typeof snap[key] === 'string' ? snap[key].slice(0, 500) : '';
+    });
+    if (!clean.agencyType || !clean.agencyName || !US_STATES.some(([code]) => code === clean.stateCode) || !clean.goals.length) return null;
+    if (snap.plan) clean.plan = GrantCore.cleanPlan(snap.plan);
+    return clean;
   } catch (_) { return null; }
 }
-function copyShareLink(btn) {
+async function copyShareLink(btn) {
   const url = location.href;
   const restore = () => { if (btn) { btn.textContent = btn.dataset.origLabel || "Copy share link"; } };
   const flash = () => {
@@ -287,14 +294,7 @@ function copyShareLink(btn) {
     btn.textContent = "Link copied";
     setTimeout(restore, 1600);
   };
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(url).then(flash).catch(() => flash());
-  } else {
-    const ta = document.createElement('textarea');
-    ta.value = url; document.body.appendChild(ta); ta.select();
-    try { document.execCommand('copy'); } catch (_) {}
-    document.body.removeChild(ta); flash();
-  }
+  if (await copyText(url, 'Share link copied')) flash();
 }
 function hasMeaningfulProgress(snap) {
   if (!snap) return false;
@@ -353,7 +353,12 @@ const state = {
   contactPhone: "",
   programSelections: new Set(),
   gapCost: 0,
-  gapHave: 0
+  gapHave: 0,
+  gapNotes: "",
+  selectedGrantIds: [],
+  opportunityReviews: {},
+  applicationChecks: {},
+  _planInitialized: false
 };
 
 const US_STATES = [
@@ -367,7 +372,8 @@ const US_STATES = [
   ["NC","North Carolina"],["ND","North Dakota"],["OH","Ohio"],["OK","Oklahoma"],["OR","Oregon"],
   ["PA","Pennsylvania"],["PR","Puerto Rico"],["RI","Rhode Island"],["SC","South Carolina"],
   ["SD","South Dakota"],["TN","Tennessee"],["TX","Texas"],["UT","Utah"],["VT","Vermont"],
-  ["VA","Virginia"],["WA","Washington"],["WV","West Virginia"],["WI","Wisconsin"],["WY","Wyoming"]
+  ["VA","Virginia"],["WA","Washington"],["WV","West Virginia"],["WI","Wisconsin"],["WY","Wyoming"],
+  ["AS","American Samoa"],["GU","Guam"],["MP","Northern Mariana Islands"],["VI","U.S. Virgin Islands"]
 ];
 
 // ============================================================
@@ -632,18 +638,18 @@ const GRANTS = [
 // PROGRAM COMPONENTS
 // ============================================================
 const COMPONENTS = [
-  { id: "ged",      title: "GED / HSE program",             cost: [30000, 120000],   per: "per cohort",   sources: ["AEFLA","State Adult Ed","Byrne JAG"], goal: "ged" },
-  { id: "cte",      title: "CTE / industry certifications", cost: [75000, 300000],   per: "per program",  sources: ["Perkins V","WIOA","Second Chance Act"], goal: "cte" },
-  { id: "postsec",  title: "College / post-secondary",      cost: [100000, 600000],  per: "per cohort",   sources: ["Second Chance Pell","Ascendium"], goal: "postsec" },
-  { id: "reentry",  title: "Reentry curriculum & coaching", cost: [40000, 250000],   per: "per year",     sources: ["Second Chance Act","Smart Reentry","COSSUP"], goal: "reentry" },
-  { id: "digital",  title: "Digital literacy pathway",      cost: [15000, 75000],    per: "per cohort",   sources: ["AEFLA","Byrne JAG","USDA-DLT"], goal: "digital" },
-  { id: "sud",      title: "SUD / wellness education",      cost: [30000, 200000],   per: "per program",  sources: ["RSAT","COSSUP","SAMHSA"], goal: "sud" },
-  { id: "sel",      title: "SEL / life skills",             cost: [20000, 80000],    per: "per year",     sources: ["Byrne JAG","Safety & Justice Challenge"], goal: "sel" },
-  { id: "juv_ed",   title: "Juvenile K-12 education",       cost: [60000, 400000],   per: "per facility", sources: ["AEFLA","Title I","State juvenile ed"], goal: "juv_ed" },
-  { id: "tablets",  title: "Secure tablets / devices",      cost: [80000, 800000],   per: "deployment",   sources: ["Byrne JAG","USDA-DLT","State capital"], hardware: true },
-  { id: "network",  title: "Network & Wi-Fi build (iT1)",   cost: [50000, 400000],   per: "per facility", sources: ["Byrne JAG","USDA-DLT","State capital"], hardware: true },
-  { id: "platform", title: "AchieveDXP platform & SSO",     cost: [75000, 350000],   per: "annual",       sources: ["Byrne JAG","Second Chance Act","AEFLA"], platform: true },
-  { id: "services", title: "Implementation & training",     cost: [30000, 150000],   per: "one-time",     sources: ["Grant-eligible services line"], platform: true }
+  { id: "ged",      title: "GED / HSE program",             per: "per cohort",   sources: ["AEFLA","State Adult Ed","Byrne JAG"], goal: "ged" },
+  { id: "cte",      title: "CTE / industry certifications", per: "per program",  sources: ["Perkins V","WIOA","Second Chance Act"], goal: "cte" },
+  { id: "postsec",  title: "College / post-secondary",      per: "per cohort",   sources: ["Second Chance Pell","Ascendium"], goal: "postsec" },
+  { id: "reentry",  title: "Reentry curriculum & coaching", per: "per year",     sources: ["Second Chance Act","Smart Reentry","COSSUP"], goal: "reentry" },
+  { id: "digital",  title: "Digital literacy pathway",      per: "per cohort",   sources: ["AEFLA","Byrne JAG","USDA-DLT"], goal: "digital" },
+  { id: "sud",      title: "SUD / wellness education",      per: "per program",  sources: ["RSAT","COSSUP","SAMHSA"], goal: "sud" },
+  { id: "sel",      title: "SEL / life skills",             per: "per year",     sources: ["Byrne JAG","Safety & Justice Challenge"], goal: "sel" },
+  { id: "juv_ed",   title: "Juvenile K-12 education",       per: "per facility", sources: ["AEFLA","Title I","State juvenile ed"], goal: "juv_ed" },
+  { id: "tablets",  title: "Secure tablets / devices",      per: "deployment",   sources: ["Byrne JAG","USDA-DLT","State capital"], hardware: true },
+  { id: "network",  title: "Secure connectivity",   per: "per facility", sources: ["Byrne JAG","USDA-DLT","State capital"], hardware: true },
+  { id: "platform", title: "Learning platform & learner records",     per: "annual",       sources: ["Byrne JAG","Second Chance Act","AEFLA"], platform: true },
+  { id: "services", title: "Implementation & training",     per: "one-time",     sources: ["Grant-eligible services line"], platform: true }
 ];
 
 // ============================================================
@@ -651,27 +657,26 @@ const COMPONENTS = [
 // ============================================================
 // Each partner has:
 //   tier: "add" (separate licensing, grant-fundable) | "bundled" (included w/ platform) | "own" (bring your own)
-//   cost_note: one-line pricing/inclusion description
 //   grants: grant streams that typically cover this line
 const PARTNERS = [
   { id: "university", name: "Universities & colleges", cat: "Post-secondary", desc: "Accredited degree and credit programs behind the wire, delivered through secure streaming. Canvas, Moodle, Blackboard.",
-    tier: "add",     cost_note: "Tuition set by institution · typically per credit-hour", grants: ["Second Chance Pell", "Voc Rehab", "State higher-ed aid"] },
+    tier: "add",     grants: ["Second Chance Pell", "Voc Rehab", "State higher-ed aid"] },
   { id: "coursera",   name: "Coursera",                cat: "Credentials",    desc: "Industry-recognized certificates in tech, business, healthcare, and more. Pre-integrated with SSO.",
-    tier: "add",     cost_note: "Per-learner licensing · vendor-set · contact Nucleos for current rates", grants: ["AEFLA", "Perkins V", "Second Chance Act", "WIOA"] },
+    tier: "add",     grants: ["AEFLA", "Perkins V", "Second Chance Act", "WIOA"] },
   { id: "ascend",     name: "Ascend Math",             cat: "Adaptive math",  desc: "Adaptive math for learners below grade level. Feeds the unified learner record and progresses across housing transfers.",
-    tier: "add",     cost_note: "Per-learner licensing · annual", grants: ["AEFLA", "Title I", "State adult-ed"] },
+    tier: "add",     grants: ["AEFLA", "Title I", "State adult-ed"] },
   { id: "icev",       name: "iCEV",                    cat: "CTE",            desc: "CTE aligned to Perkins V: OSHA, ServSafe, logistics, agriculture, construction, business.",
-    tier: "add",     cost_note: "Per-seat licensing · annual", grants: ["Perkins V", "WIOA", "State CTE"] },
+    tier: "add",     grants: ["Perkins V", "WIOA", "State CTE"] },
   { id: "ged",        name: "Essential Education / NROC", cat: "GED / HSE",   desc: "NRS-aligned GED and HSE preparation. Persistent records follow individuals between facilities and reentry.",
-    tier: "add",     cost_note: "Per-learner licensing · vendor-set", grants: ["AEFLA", "Second Chance Act", "State adult-ed"] },
+    tier: "add",     grants: ["AEFLA", "Second Chance Act", "State adult-ed"] },
   { id: "workforce",  name: "GoEducate",               cat: "Workforce",      desc: "Regional career portals that connect learners to jobs in their return communities, with warm hand-off to workforce boards.",
-    tier: "add",     cost_note: "Regional licensing · varies by state/region", grants: ["WIOA Title I", "Voc Rehab"] },
+    tier: "add",     grants: ["WIOA Title I", "Voc Rehab"] },
   { id: "vant4ge",    name: "Vant4ge",                 cat: "Risk & needs",   desc: "Validated risk-and-needs assessment, case planning, and program tracking integrated to AchieveDXP.",
-    tier: "add",     cost_note: "Agency-level licensing · typically DOC-funded", grants: ["Byrne JAG", "Justice Reinvestment", "State DOC"] },
+    tier: "add",     grants: ["Byrne JAG", "Justice Reinvestment", "State DOC"] },
   { id: "jakapa",     name: "Jakapa",                  cat: "SEL",            desc: "Social-emotional learning and life skills curriculum for incarcerated and returning citizens.",
-    tier: "add",     cost_note: "Per-learner licensing · annual", grants: ["Second Chance Act", "SAMHSA", "Juvenile Justice"] },
+    tier: "add",     grants: ["Second Chance Act", "SAMHSA", "Juvenile Justice"] },
   { id: "own",        name: "Bring your own content",  cat: "Flexibility",    desc: "Your existing vendors, homegrown curriculum, or LMS — integrated via SSO, xAPI, or secure embedding.",
-    tier: "own",     cost_note: "No additional AchieveDXP licensing · keep your existing contracts", grants: ["Existing funding carries over"] }
+    tier: "own",     grants: ["Existing funding carries over"] }
 ];
 
 // ============================================================
@@ -791,17 +796,15 @@ function validateStep() {
     7: () => state.grantExp,
     8: () => state.timeline,
     9: () => state.existingPartners.length > 0 || (state.existingPartnersOther && state.existingPartnersOther.trim().length > 0),
-    10: () => (state.agencyName && state.agencyName.length > 1)
-           && (state.contactName && state.contactName.length > 1)
-           && (state.contactRole && state.contactRole.length > 1)
-           && isValidEmail(state.contactEmail)
+    10: () => state.agencyName.length > 1 && (!document.getElementById("requestFollowup")?.checked ||
+           (state.contactName.length > 1 && state.contactRole.length > 1 && isValidEmail(state.contactEmail)))
   };
   return required[state.step] ? required[state.step]() : true;
 }
 function nextStep() {
   if (!validateStep()) {
     if (state.step === 10) {
-      showToast("Please fill the required fields (name, role, email, agency)");
+      showToast("Enter your agency name. If requesting follow-up, add your name, role, and a valid email.");
     } else {
       showToast("Pick an option to continue");
     }
@@ -815,7 +818,7 @@ function nextStep() {
   } else {
     // Final step: compute results first (sets readiness score), then fire lead POST.
     generateResults();
-    submitLead();
+    if (document.getElementById("requestFollowup")?.checked) submitLead();
     clearProgress();
   }
 }
@@ -827,7 +830,23 @@ function nextStep() {
 // anti-abuse). We never block the user on the POST — report always
 // shows. Submission is also persisted to localStorage as a fallback.
 // ============================================================
-const LEAD_ENDPOINT = "https://formsubmit.co/ajax/leads@nucleos.com";
+// config.js may override this per environment; an empty string turns lead POSTs off
+// (stage sets it empty so test runs don't email sales).
+const LEAD_ENDPOINT = (window.NAV_CONFIG && typeof window.NAV_CONFIG.leadEndpoint === "string")
+  ? window.NAV_CONFIG.leadEndpoint
+  : "https://formsubmit.co/ajax/leads@nucleos.com";
+
+function postLead(payload) {
+  if (!LEAD_ENDPOINT) {
+    console.info("[AchieveDXP] lead POST disabled in this environment");
+    return Promise.reject(new Error("Contact requests are disabled in this environment"));
+  }
+  return fetch(LEAD_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+    body: JSON.stringify(payload)
+  });
+}
 
 function buildLeadPayload() {
   const partnersSelected = (state.existingPartners || []).join(", ");
@@ -868,56 +887,6 @@ function buildLeadPayload() {
 // Fires a second, tagged POST to the same endpoint. The sales team
 // recognizes these as procurement-ready (vs. the initial info-capture).
 // ============================================================
-function requestSOW() {
-  const btn = document.getElementById('acqCtaBtn');
-  const block = document.getElementById('acqCta');
-  if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
-
-  const base = buildLeadPayload();
-  const priority = isPriorityLead();
-  const sowSubject = `SOW REQUEST — ${state.agencyName || "(unnamed)"} — AchieveDXP`;
-  const payload = Object.assign({}, base, {
-    _subject: priority ? `[PRIORITY] ${sowSubject}` : sowSubject,
-    request_type: "procurement_sow",
-    requested_at: new Date().toISOString()
-  });
-
-  // Persist to localStorage backup as well
-  try {
-    const key = "achievedxp_sow_requests";
-    const queue = JSON.parse(localStorage.getItem(key) || "[]");
-    queue.push(payload);
-    localStorage.setItem(key, JSON.stringify(queue).slice(0, 1000000));
-  } catch (_) {}
-
-  fetch(LEAD_ENDPOINT, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "Accept": "application/json" },
-    body: JSON.stringify(payload)
-  }).then(res => {
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    return res.json();
-  }).then(() => {
-    if (block) {
-      const name = escapeHtml(state.contactName || "you");
-      const email = escapeHtml(state.contactEmail || "your email");
-      block.innerHTML =
-        '<div class="acq-cta-sent">' +
-          '<img src="./assets/mascot.png" alt="" aria-hidden="true">' +
-          '<div>' +
-            '<div class="acq-cta-sent-title">Request received — we\'re on it.</div>' +
-            '<div class="acq-cta-sent-body">The iT1 + Nucleos team will contact ' + name + ' within one business day at ' + email + '. Keep this page open or save it — your full plan is already generated below.</div>' +
-          '</div>' +
-        '</div>';
-    }
-    showToast("SOW request sent");
-  }).catch(err => {
-    console.warn("[AchieveDXP] SOW request failed:", err);
-    if (btn) { btn.disabled = false; btn.textContent = "Request SOW  →"; }
-    showToast("Couldn't send — try again or email leads@nucleos.com");
-  });
-}
-
 function submitLead() {
   const payload = buildLeadPayload();
   // Persist locally so the lead is never lost even if the network fails.
@@ -929,11 +898,7 @@ function submitLead() {
   } catch (_) { /* localStorage unavailable — proceed */ }
 
   // Fire-and-forget POST. No await — user sees their report immediately.
-  fetch(LEAD_ENDPOINT, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "Accept": "application/json" },
-    body: JSON.stringify(payload)
-  }).then(res => {
+  postLead(payload).then(res => {
     if (!res.ok) throw new Error("HTTP " + res.status);
     return res.json();
   }).then(() => {
@@ -959,7 +924,7 @@ function restart() {
     goals: [], infra: [], budget: null, grantExp: null, timeline: null,
     existingPartners: [], existingPartnersOther: "",
     agencyName: "", programName: "", contactName: "", contactRole: "", contactEmail: "", contactPhone: "",
-    programSelections: new Set(), gapCost: 0, gapHave: 0
+    programSelections: new Set(), gapCost: 0, gapHave: 0, gapNotes: "", selectedGrantIds: [], opportunityReviews: {}, applicationChecks: {}, _planInitialized: false
   });
   document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
   document.getElementById('stateSelect').value = "";
@@ -977,292 +942,15 @@ function restart() {
 // ============================================================
 // SCORING
 // ============================================================
-function computeReadinessScore(withAchieveDXP) {
-  const w = !!withAchieveDXP;
-  let score = 30; // base
-  const gaps = [];
-
-  // Infrastructure — AchieveDXP + iT1 Hardware-as-a-Service closes these
-  if (state.infra.includes('tablets') || w) score += 6;
-  else gaps.push({
-    t: "Device access",
-    b: "Residents need secure, locked-down tablets or devices for education delivery. Without them, reviewers see a program they can't run at scale.",
-    fix: "AchieveDXP plus iT1 Hardware-as-a-Service deploys tablets without capex — making the program grant-reportable from day one."
-  });
-
-  if (state.infra.includes('network') || w) score += 6;
-  else gaps.push({
-    t: "Network & connectivity",
-    b: "Education-space Wi-Fi or a dedicated network is a prerequisite for most federal awards. Without it, applications stall at feasibility review.",
-    fix: "iT1's infrastructure team (inside AchieveDXP) runs the site survey, designs the network, and installs it — scoped inside your grant budget."
-  });
-
-  if (state.infra.includes('lms') || w) score += 6;
-  else gaps.push({
-    t: "Central learning platform",
-    b: "Reviewers expect a single learner record across programs. Without a platform, your reporting is multiple spreadsheets and reviewer red flags.",
-    fix: "AchieveDXP is that platform — one login, one dashboard, unified reporting across every integrated partner."
-  });
-
-  if (state.infra.includes('staff')) score += 4;
-  if (state.infra.includes('partners') || w) score += 5;
-
-  // Program clarity — AchieveDXP enables multi-program breadth on one platform
-  if (state.goals.length >= 2 || w) score += 6;
-  if (state.goals.length >= 4 || w) score += 4;
-  else if (state.goals.length <= 1) gaps.push({
-    t: "Program scope",
-    b: "Narrow program scope limits the grants you qualify for. Federal reviewers reward programs that combine education, workforce, and reentry.",
-    fix: "AchieveDXP lets you run GED, CTE, post-secondary, and reentry programming on one platform — broadening your grant-eligible footprint without multiplying vendors."
-  });
-
-  // Partnerships — AchieveDXP ships with named, evidence-based partners pre-integrated
-  const hasOther = state.existingPartnersOther && state.existingPartnersOther.trim().length > 0;
-  const hasPartners = (state.existingPartners.length > 0 && !state.existingPartners.includes('none')) || hasOther;
-  if (hasPartners || w) score += 8;
-  else gaps.push({
-    t: "Evidence-based partners",
-    b: "Grant reviewers want named, evidence-based content partners. Without them, your application reads as untested.",
-    fix: "AchieveDXP comes pre-integrated with Coursera, iCEV, Ascend Math, NROC, GoEducate, and accredited universities — named partners reviewers already trust."
-  });
-  if (state.existingPartners.length >= 3 || w) score += 4;
-
-  // Grant experience — AchieveDXP's boilerplate + Nucleos track record substitutes for past-performance
-  if (state.grantExp === 'active') score += 10;
-  else if (state.grantExp === 'past') score += 6;
-  else if (state.grantExp === 'applied') score += 3;
-  else if (state.grantExp === 'first' && w) score += 6;
-
-  if (state.grantExp === 'first') gaps.push({
-    t: "Grant experience",
-    b: "First-time applicants face higher scrutiny on capability and past performance. You need to demonstrate you can actually run the program you're proposing.",
-    fix: "AchieveDXP's grant toolkit, pre-written boilerplate, and Nucleos implementation track record substitute for past-performance narrative on your first few applications."
-  });
-
-  // Reporting — AchieveDXP guarantees NRS-aligned reporting out of the box
-  if (state.infra.includes('lms') || state.existingPartners.length >= 2 || w) score += 4;
-  else gaps.push({
-    t: "Reporting & outcomes",
-    b: "Every federal corrections education grant now requires outcome data. If you can't produce it, you can't sustain funding.",
-    fix: "AchieveDXP produces NRS-aligned, federally-formatted reports automatically — completions, credentials, persistence, and re-arrest linkages — as a core feature, not an add-on."
-  });
-
-  // Budget clarity
-  if (state.budget && state.budget !== 'unsure') score += 3;
-
-  // Timing
-  if (state.timeline === 'now') score += 4;
-  else if (state.timeline === 'next') score += 2;
-
-  // Ceiling
-  score = Math.min(score, 97);
-  score = Math.max(score, 20);
-
-  if (!w) window.__lastReadinessScore = score;
-  return { score, gaps: gaps.slice(0, 5) };
+function computeReadinessScore() {
+  const progress = GrantCore.readiness(state.applicationChecks);
+  window.__lastReadinessScore = progress.score;
+  return { ...progress, gaps: GrantCore.CHECKS.filter(c => !state.applicationChecks[c.id]) };
 }
 function readinessLabel(score) {
-  return score >= 85 ? "COMPETITIVE"
-       : score >= 75 ? "READY TO APPLY"
-       : score >= 60 ? "NEARLY READY"
-       : score >= 45 ? "MODERATE GAPS" : "SIGNIFICANT GAPS";
+  return score === 100 ? 'READY FOR INTERNAL REVIEW' : score > 0 ? 'PREPARATION IN PROGRESS' : 'START YOUR CHECKLIST';
 }
 
-// 6-axis readiness decomposition for the radar chart. Each axis: 0-100.
-// With-AchieveDXP boosts each axis toward the ceiling based on the
-// specific capabilities the platform delivers.
-function computeReadinessVector(w) {
-  const infra = state.infra || [];
-  const goals = state.goals || [];
-  const partners = state.existingPartners || [];
-  const hasPartners = partners.length > 0 && !partners.includes('none');
-  const hasOther = !!(state.existingPartnersOther && state.existingPartnersOther.trim());
-
-  // Eligibility — stated agency type + goals breadth
-  const eligibility = Math.min(100,
-    (state.agencyType ? 40 : 10) +
-    Math.min(60, goals.length * 15)
-  );
-
-  // Infrastructure — 4 capabilities × 25 pts; AchieveDXP covers 3 of them
-  const hasTablets = infra.includes('tablets') || w;
-  const hasNetwork = infra.includes('network') || w;
-  const hasLMS     = infra.includes('lms')     || w;
-  const hasStaff   = infra.includes('staff');
-  const infrastructure = (hasTablets ? 25 : 0) + (hasNetwork ? 25 : 0)
-                       + (hasLMS ? 25 : 0) + (hasStaff ? 25 : 0);
-
-  // Programs — breadth + budget clarity
-  const programs = Math.min(100,
-    Math.min(75, goals.length * 18) +
-    ((state.budget && state.budget !== 'unsure') ? 25 : 0)
-  );
-
-  // Partners — has any + count + AchieveDXP boost
-  const anyPartner = hasPartners || hasOther || w;
-  let partners_dim = (anyPartner ? 50 : 0) + Math.min(30, partners.length * 10);
-  if (w) partners_dim = Math.max(partners_dim, 85);
-  partners_dim = Math.min(100, partners_dim);
-
-  // Reporting — LMS + 2+ partners produce NRS-capable reports; AchieveDXP guarantees
-  const reporting = Math.min(100,
-    (hasLMS ? 55 : 0) +
-    ((partners.length >= 2 || w) ? 45 : 0)
-  );
-
-  // Timing — timeline + grant experience
-  let timing = state.timeline === 'now'   ? 75
-             : state.timeline === 'next'  ? 55
-             : state.timeline === 'year'  ? 35 : 20;
-  if (state.grantExp === 'active') timing += 25;
-  else if (state.grantExp === 'past') timing += 15;
-  else if (state.grantExp === 'applied') timing += 8;
-  else if (state.grantExp === 'first' && w) timing += 15;
-  timing = Math.min(100, timing);
-
-  return { eligibility, infrastructure, programs, partners: partners_dim, reporting, timing };
-}
-
-// Translate readiness score into a concrete dollar ceiling the agency
-// unlocks today via the tracked grants.gov opportunities (ALNs matched
-// to stated goals). Pulled from LIVE_FEED so it's real data, not copy.
-function computeEligibleCeiling(withAchieveDXP) {
-  const opps = LIVE_FEED.opportunities || [];
-  if (!opps.length) return null;
-  const goalsToAlns = {
-    ged:    ["84.002", "84.331", "16.812"],
-    cte:    ["84.048", "84.002"],
-    postsec:["84.331", "84.002"],
-    reentry:["16.812", "16.828", "16.203"],
-    digital:["84.002", "16.812"],
-    sud:    ["93.243", "93.959", "16.812"],
-    sel:    ["93.959", "16.812"],
-    juv_ed: ["16.540", "16.726"]
-  };
-  const relevant = new Set();
-  (state.goals || []).forEach(g => (goalsToAlns[g] || []).forEach(a => relevant.add(a)));
-
-  const pool = relevant.size ? opps.filter(o => relevant.has(o.cfda)) : opps;
-  const ceilings = pool.map(o => o.award_ceiling).filter(n => n && n > 0);
-  if (!ceilings.length) return null;
-  const total = ceilings.reduce((s, v) => s + v, 0);
-  // With AchieveDXP: assume +1 eligible grant widens reach ~30%
-  return withAchieveDXP ? Math.round(total * 1.3) : total;
-}
-
-// Itemize where the +N points of AchieveDXP lift originate.
-// Real point mapping derived from the score formula in
-// computeReadinessScore() — honest, not hand-waved.
-function computeLiftItems() {
-  const infra = state.infra || [];
-  const partners = state.existingPartners || [];
-  const hasPartners = partners.length > 0 && !partners.includes('none');
-  const hasOther = !!(state.existingPartnersOther && state.existingPartnersOther.trim());
-  const items = [];
-  // Mirror the +pts increments in computeReadinessScore()
-  if (!infra.includes('tablets')) items.push({
-    label: "Corrections-grade devices (iT1)",
-    pts: 6,
-    desc: "Secure tablets + kiosks deployed by iT1. No capex — scoped into grant budget."
-  });
-  if (!infra.includes('network')) items.push({
-    label: "Secure network + site survey (iT1)",
-    pts: 6,
-    desc: "Network design, install, commissioning — FIPS-aligned, auditor-ready."
-  });
-  if (!infra.includes('lms')) items.push({
-    label: "AchieveDXP unified platform",
-    pts: 6,
-    desc: "One learner record, one reporting surface, SSO across every app."
-  });
-  if (!infra.includes('partners')) items.push({
-    label: "Pre-integrated content partners",
-    pts: 5,
-    desc: "Coursera, iCEV, NROC, Ascend, universities — pre-contracted via Nucleos."
-  });
-  if ((state.goals || []).length <= 1) items.push({
-    label: "Multi-program program design",
-    pts: 6,
-    desc: "Run GED + CTE + reentry on one platform — broadens grant-eligible footprint."
-  });
-  if (!hasPartners && !hasOther) items.push({
-    label: "Evidence-based partner roster",
-    pts: 8,
-    desc: "Named, reviewer-trusted partners replace unknown-vendor risk flag."
-  });
-  if (state.grantExp === 'first') items.push({
-    label: "Grant-writer toolkit + boilerplate",
-    pts: 6,
-    desc: "Pre-written narratives + Nucleos track record substitute for past-performance."
-  });
-  // Reporting fallback
-  if (!infra.includes('lms') && partners.length < 2) items.push({
-    label: "NRS-aligned automated reporting",
-    pts: 4,
-    desc: "Federally-formatted outcome data as a core feature, not an add-on."
-  });
-  return items;
-}
-
-let __radarChart = null;
-function renderReadinessRadar(today, withADXP) {
-  const el = document.getElementById('readinessRadar');
-  if (!el || !window.Chart) return;
-  if (__radarChart) { try { __radarChart.destroy(); } catch (_) {} __radarChart = null; }
-  const labels = ["Eligibility","Infrastructure","Programs","Partners","Reporting","Timing"];
-  const todayData = [today.eligibility, today.infrastructure, today.programs, today.partners, today.reporting, today.timing];
-  const withData  = [withADXP.eligibility, withADXP.infrastructure, withADXP.programs, withADXP.partners, withADXP.reporting, withADXP.timing];
-  __radarChart = new Chart(el, {
-    type: 'radar',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: "With AchieveDXP",
-          data: withData,
-          backgroundColor: "rgba(47,179,154,0.22)",
-          borderColor: "rgba(47,179,154,0.95)",
-          borderWidth: 2,
-          pointBackgroundColor: "#2FB39A",
-          pointBorderColor: "#fff",
-          pointRadius: 4
-        },
-        {
-          label: "Today",
-          data: todayData,
-          backgroundColor: "rgba(11,42,74,0.06)",
-          borderColor: "rgba(11,42,74,0.65)",
-          borderWidth: 2,
-          borderDash: [6, 4],
-          pointBackgroundColor: "#0B2A4A",
-          pointBorderColor: "#fff",
-          pointRadius: 4
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        r: {
-          beginAtZero: true, max: 100, min: 0,
-          ticks: { display: false, stepSize: 25 },
-          grid: { color: "rgba(11,42,74,0.08)" },
-          angleLines: { color: "rgba(11,42,74,0.12)" },
-          pointLabels: {
-            font: { family: "Inter, sans-serif", size: 12, weight: "600" },
-            color: "#0B2A4A"
-          }
-        }
-      }
-    }
-  });
-}
-
-// ============================================================
-// GRANT MATCHING
-// ============================================================
 function matchGrants() {
   const matches = [];
   GRANTS.forEach(g => {
@@ -1273,9 +961,6 @@ function matchGrants() {
     state.goals.forEach(goal => {
       if (g.focus.includes(goal)) fit += 2;
     });
-    if (state.timeline === 'now' && g.near) fit += 3;
-    else if (state.timeline === 'next' && g.near) fit += 1;
-    if (state.timeline === 'plan') fit += 1;
 
     if (fit >= 2 || g.id === "byrne_jag" || g.id === "saa_state") {
       matches.push({ ...g, fit });
@@ -1310,62 +995,28 @@ function fmtMoneyCompact(n) {
   return "$" + n;
 }
 
-// Prefer live grants.gov ceiling/floor; fall back to curated static range.
+// Only explicit opportunity IDs may supply a program-level funding figure.
 // Returns { label, value, isLive } for display on the grant card.
 function liveRangeFor(g) {
-  const live = g.cfda ? LIVE_FEED.byCfda.get(g.cfda) : null;
-  if (!live) return { label: "Typical range", value: fmtRange(g.range), isLive: false };
-  const ceil  = live.award_ceiling;
-  const floor = live.award_floor;
-  if (ceil && ceil > 0) {
-    const ceilStr  = fmtMoneyCompact(ceil);
-    const floorStr = (floor != null && floor > 0) ? fmtMoneyCompact(floor) : null;
-    return {
-      label: "Live award size",
-      value: floorStr ? `${floorStr} – ${ceilStr}` : `up to ${ceilStr}`,
-      isLive: true
-    };
-  }
-  return { label: "Typical range", value: fmtRange(g.range), isLive: false };
+  const live = GrantCore.linkedOpportunity(g, LIVE_FEED.opportunities);
+  return live && live.award_ceiling > 0
+    ? { label: 'Published award ceiling', value: fmtMoneyCompact(live.award_ceiling), isLive: true }
+    : { label: 'Funding amount', value: 'Verify in the current solicitation', isLive: false };
 }
 
 // ============================================================
 // FUNDING STACK STRATEGY
 // ============================================================
-function buildStack(grants) {
-  // Layers: Core / Wraparound / Flexible / Sustaining / Innovation
-  const layers = [];
-  const byId = Object.fromEntries(grants.map(g => [g.id, g]));
-
-  const core = grants.find(g => ["sca_adult","sca_juv","sc_pell","ed_reentry"].includes(g.id));
-  if (core) layers.push({ color: "#0B2A4A", name: "CORE — " + core.name, amt: fmtRange(core.range), why: "Primary program funding." });
-
-  const wrap = grants.find(g => ["aefla","perkins","wioa","state_adult_ed"].includes(g.id));
-  if (wrap) layers.push({ color: "#1A3E66", name: "WRAPAROUND — " + wrap.name, amt: fmtRange(wrap.range), why: "Formula / state-administered education funding." });
-
-  const flex = grants.find(g => ["byrne_jag","saa_state","usda_rural"].includes(g.id));
-  if (flex) layers.push({ color: "#2FB39A", name: "FLEXIBLE — " + flex.name, amt: fmtRange(flex.range), why: "Technology, equipment, and implementation support." });
-
-  const treat = grants.find(g => ["rsat","cossup","smart_reentry"].includes(g.id));
-  if (treat) layers.push({ color: "#228574", name: "SPECIALTY — " + treat.name, amt: fmtRange(treat.range), why: "Targeted program funding (reentry, SUD, treatment)." });
-
-  const innov = grants.find(g => ["nij_research","ascendium","safety_justice"].includes(g.id));
-  if (innov) layers.push({ color: "#E87722", name: "INNOVATION / FOUNDATION — " + innov.name, amt: fmtRange(innov.range), why: "Research, evaluation, and foundation funding to extend and sustain." });
-
-  // Total
-  let lo = 0, hi = 0;
-  layers.forEach(l => {
-    const g = grants.find(gg => l.name.includes(gg.name));
-    if (g) { lo += g.range[0]; hi += g.range[1]; }
-  });
-
-  return { layers, total: [lo, hi] };
+function buildStack() {
+  const items = selectedPlanItems();
+  return { layers: items.map(item => ({ ...item, amt: item.deadline || 'Deadline not verified' })), total: [0, 0] };
 }
 
 // ============================================================
 // RENDERING
 // ============================================================
 function generateResults() {
+  restorePlan();
   document.getElementById('wizard').style.display = 'none';
   document.getElementById('landing').style.display = 'none';
   const results = document.getElementById('results');
@@ -1376,6 +1027,9 @@ function generateResults() {
   renderPrintBanner();
   renderReadiness();
   renderGrants();
+  renderOpportunityExplorer();
+  renderImportedOpportunities();
+  renderSourceDirectory();
   renderSaa();
   renderPeerAwards();
   renderFoundations();
@@ -1390,62 +1044,25 @@ function generateResults() {
   renderNextStepCTAs();
   renderTLDR();
   setReportView('summary');
+  savePlan();
 }
 
 // ============================================================
 // TL;DR — default report view. Pulls from already-rendered state
-// (_score, _scoreWith, _grants, _stack) and shows: readiness lift,
-// year-1 funding range, top 3 grants, primary CTA. Toggle hides
+// (_score, _grants, _stack) and shows preparation progress,
+// shortlist count, suggested research routes, and optional assistance. Toggle hides
 // tab-bar/panels and shows this; "Explore the full plan" reverses.
 // ============================================================
 function renderTLDR() {
-  const today = state._score || 0;
-  const withDXP = state._scoreWith || 0;
-  const delta = Math.max(0, withDXP - today);
-  const $today = document.getElementById('tldrScoreToday');
-  const $with = document.getElementById('tldrScoreWith');
-  const $delta = document.getElementById('tldrDelta');
-  const $label = document.getElementById('tldrScoreLabel');
-  if ($today) $today.textContent = today || '—';
-  if ($with) $with.textContent = withDXP || '—';
-  if ($delta) $delta.textContent = delta > 0 ? `+${delta}` : '+0';
-  if ($label) $label.textContent = today ? `${readinessLabel(today)} → ${readinessLabel(withDXP)}` : '';
-
-  // Funding range from the stack render. state._stack.total = [low, high].
-  const stack = state._stack || { total: [0, 0] };
-  const [lo, hi] = stack.total || [0, 0];
-  const fmt = n => '$' + Math.round(n).toLocaleString();
-  const $fund = document.getElementById('tldrFundingAmount');
-  const $fundSub = document.getElementById('tldrFundingSub');
-  if ($fund) {
-    $fund.textContent = (lo || hi) ? `${fmt(lo)} – ${fmt(hi)}` : '$—';
-  }
-  if ($fundSub) {
-    const layerCount = (stack.layers || []).length;
-    $fundSub.textContent = layerCount
-      ? `Across ${layerCount} layered funding sources in your stack.`
-      : 'Across the matched grant stack.';
-  }
-
-  // Top 3 matched grants.
+  const progress = computeReadinessScore();
+  document.getElementById('tldrScoreToday').textContent = progress.score;
+  document.getElementById('tldrScoreLabel').textContent = progress.completed + ' of ' + progress.total + ' preparation tasks confirmed by your team';
+  document.getElementById('tldrFundingAmount').textContent = state.selectedGrantIds.length;
+  document.getElementById('tldrFundingSub').textContent = 'Saved opportunities and funding routes · eligibility requires source review';
   const grants = (state._grants || []).slice(0, 3);
-  const $grants = document.getElementById('tldrGrants');
-  if ($grants) {
-    if (!grants.length) {
-      $grants.innerHTML = '<div class="tldr-grant-empty">No matched grants yet — the live feed may be syncing.</div>';
-    } else {
-      $grants.innerHTML = grants.map(g => `
-        <div class="tldr-grant">
-          <div class="tldr-grant-name">${escapeHtml(g.name)}</div>
-          <div class="tldr-grant-meta">
-            <span class="tldr-grant-agency">${escapeHtml(g.agency)}</span>
-            <span class="tldr-grant-range">${escapeHtml(fmtRange(g.range))}</span>
-            <span class="tldr-grant-fit ${matchClass(g.fit)}">${escapeHtml(matchLabel(g.fit))}</span>
-          </div>
-        </div>`).join('');
-    }
-  }
+  document.getElementById('tldrGrants').innerHTML = grants.map(g => `<div class="tldr-grant"><div class="tldr-grant-name">${escapeHtml(g.name)}</div><div class="tldr-grant-meta"><span>${escapeHtml(g.agency)}</span><span class="evidence-badge">Program to research</span></div></div>`).join('');
 }
+
 function setReportView(mode) {
   const results = document.getElementById('results');
   if (!results) return;
@@ -1465,50 +1082,13 @@ function toggleReportView(mode, jumpToTab) {
 // pre-filled with context for the iT1 + Nucleos team, with the
 // shareable plan URL so the team sees the exact report.
 // ============================================================
-const NEXT_STEP_CTAS = {
-  primary: {
-    headline: "Request a callback",
-    blurb: "A Nucleos Public Safety specialist will review your report and reach out within one business day.",
-    button: "Request a call",
-    subject: "Callback request — AchieveDXP report",
-    ask: "I'd like to talk through my AchieveDXP Grant Navigator report: matched grants, funding stack, and next steps to an SOW."
-  },
-  readiness: {
-    headline: "Turn this readiness score into a 15-minute review.",
-    blurb: "A Nucleos advisor walks the gaps with you and confirms which matched grants fit first.",
-    button: "Email me a readiness review →",
-    subject: "Review my AchieveDXP readiness report",
-    ask: "I just ran the Grant Navigator and I'd like a 15-minute call to walk the gaps and prioritize which matched grants to go after first."
-  },
-  grants: {
-    headline: "Walk through your matched grant stack with a human.",
-    blurb: "We'll confirm eligibility, pull the current deadlines, and flag the one or two we think you'll win first.",
-    button: "Email me a grants walkthrough →",
-    subject: "Walk me through my matched grants",
-    ask: "I'd like a short call to walk the matched grant stack — which two we'd apply for first, and what the prep timeline looks like."
-  },
-  stack: {
-    headline: "Pressure-test your funding stack.",
-    blurb: "We'll review the layered funding model and confirm what each source will actually cover under the iT1 + Nucleos SOW.",
-    button: "Email me a stack review →",
-    subject: "Review my funding stack",
-    ask: "Can we walk through the proposed funding stack and confirm which AchieveDXP line items each source covers? I want a grounded view of the gap before we scope an SOW."
-  },
-  program: {
-    headline: "Refine your program design with a specialist.",
-    blurb: "Nucleos program leads help you tune the component mix to your population, budget, and grant targets.",
-    button: "Email me a program design review →",
-    subject: "Discuss my program design",
-    ask: "Could we review the program build I've drafted and tighten it for the specific grants we're targeting?"
-  },
-  gap: {
-    headline: "Close the funding gap.",
-    blurb: "The team helps you layer in the right secondary and foundation sources to close the delta in year one.",
-    button: "Email me on closing the gap →",
-    subject: "Help close my funding gap",
-    ask: "I'd like help structuring the secondary and foundation sources to close the funding gap in year one."
-  }
-};
+const NEXT_STEP_CTAS = Object.fromEntries(['primary', 'readiness', 'grants', 'stack', 'program', 'gap'].map(key => [key, {
+  headline: 'Want a second set of eyes on your plan?',
+  blurb: 'Request an optional conversation with the Nucleos team about your program and implementation needs.',
+  button: 'Request a call', subject: 'DOC education grant planning request',
+  ask: 'I would like help reviewing my DOC education funding plan.'
+}]));
+
 function renderNextStepCTAs() {
   document.querySelectorAll('.next-step-cta[data-ctx]').forEach(el => {
     const ctx = el.dataset.ctx;
@@ -1560,6 +1140,7 @@ function openCallbackModal(ctx) {
   const success = document.getElementById('cmSuccess');
   if (form) form.hidden = false;
   if (success) success.hidden = true;
+  const error = document.getElementById("cmError"); if (error) error.hidden = true;
   setTimeout(() => document.getElementById('cmName')?.focus(), 80);
 }
 function closeCallbackModal() {
@@ -1600,7 +1181,7 @@ function submitCallback(ev) {
     preferred_contact_time: when,
     specific_question: notes || cfg.ask || "(none)",
     readiness_score_today: String(state._score || ""),
-    readiness_score_with_achievedxp: String(state._scoreWith || ""),
+    application_preparation_percent: String(state._score || 0),
     shareable_report_url: (location.origin && !location.origin.startsWith("null"))
       ? (location.origin + location.pathname + location.hash) : "",
     requested_at: new Date().toISOString()
@@ -1616,18 +1197,19 @@ function submitCallback(ev) {
     localStorage.setItem(key, JSON.stringify(queue).slice(0, 1000000));
   } catch (_) {}
 
-  fetch(LEAD_ENDPOINT, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "Accept": "application/json" },
-    body: JSON.stringify(payload)
-  }).catch(() => { /* backed up to localStorage */ })
-    .finally(() => {
-      if (btn) { btn.disabled = false; btn.textContent = "Request callback"; }
-      const form = document.getElementById('callbackForm');
-      const success = document.getElementById('cmSuccess');
-      if (form) form.hidden = true;
-      if (success) success.hidden = false;
-    });
+  const error = document.getElementById('cmError');
+  if (error) error.hidden = true;
+  postLead(payload).then(async response => {
+    if (!response.ok) throw new Error('Submission failed');
+    const data = await response.json();
+    if (data.success !== true && data.success !== 'true') throw new Error('Submission not acknowledged');
+    document.getElementById('callbackForm').hidden = true;
+    document.getElementById('cmSuccess').hidden = false;
+  }).catch(() => {
+    if (error) { error.textContent = 'Your request was not delivered. Your plan is still available. Please retry or contact leads@nucleos.com.'; error.hidden = false; }
+  }).finally(() => {
+    if (btn) { btn.disabled = false; btn.textContent = 'Request callback'; }
+  });
 }
 // ESC to close the modal
 document.addEventListener('keydown', e => {
@@ -1655,7 +1237,7 @@ function renderHeader() {
   document.getElementById('reportTitle').textContent =
     agency + " — " + program + " Funding Plan";
   document.getElementById('reportSummary').textContent =
-    stateName + " • " + agencyLabel(state.agencyType) + " • " + popLabel(state.populationSize) + " served. Built in 5 minutes. Ready to edit and submit.";
+    stateName + " • " + agencyLabel(state.agencyType) + " • " + popLabel(state.populationSize) + " served. Draft planning workspace. Verify the solicitation before applying.";
 }
 
 function agencyLabel(t) {
@@ -1679,148 +1261,19 @@ function goalLabel(g) {
 }
 
 function renderReadiness() {
-  const { score, gaps } = computeReadinessScore(false);
-  const { score: scoreWith } = computeReadinessScore(true);
-  const delta = Math.max(0, scoreWith - score);
-  state._score = score;
-  state._scoreWith = scoreWith;
-  state._gaps = gaps;
-
-  // Animate gauge with today's score
-  drawGauge(score);
-  document.getElementById('scoreLabel').textContent = readinessLabel(score);
-
-  const summary =
-    score >= 80 ? "You're in strong position. AchieveDXP accelerates your next application and tightens reporting." :
-    score >= 65 ? "You're close. A few targeted pieces — unified reporting, named partners, platform — close the gap." :
-    score >= 50 ? "Real gaps to close. The good news: AchieveDXP fills most of them inside one contract." :
-                  "Starting from a foundation stage. AchieveDXP gives you a platform, partners, infrastructure, and reporting as one deployment — which is exactly the capability grant reviewers want to see.";
-  document.getElementById('scoreSummaryText').textContent = summary;
-
-  // With-AchieveDXP lift callout
-  const lift = document.getElementById('scoreLift');
-  if (lift) {
-    if (delta > 0) {
-      lift.innerHTML = `
-        <div class="lift-row">
-          <div class="lift-today">
-            <div class="lift-num">${score}</div>
-            <div class="lift-cap">Today</div>
-          </div>
-          <div class="lift-arrow" aria-hidden="true">→</div>
-          <div class="lift-with">
-            <div class="lift-num">${scoreWith}</div>
-            <div class="lift-cap">With AchieveDXP</div>
-          </div>
-          <div class="lift-delta">+${delta}</div>
-        </div>
-        <div class="lift-sub">${readinessLabel(score)} → <strong>${readinessLabel(scoreWith)}</strong></div>`;
-      lift.classList.add('show');
-    } else {
-      lift.classList.remove('show');
-    }
-  }
-
-  // Radar: six-axis readiness decomposition with two polygons
-  try {
-    const todayVec = computeReadinessVector(false);
-    const withVec  = computeReadinessVector(true);
-    renderReadinessRadar(todayVec, withVec);
-    // A11y fallback — populate the hidden <table> with the same numbers
-    const tbody = document.querySelector('#radarTable tbody');
-    if (tbody) {
-      const rows = [
-        ["Eligibility",    todayVec.eligibility,    withVec.eligibility],
-        ["Infrastructure", todayVec.infrastructure, withVec.infrastructure],
-        ["Programs",       todayVec.programs,       withVec.programs],
-        ["Partners",       todayVec.partners,       withVec.partners],
-        ["Reporting",      todayVec.reporting,      withVec.reporting],
-        ["Timing",         todayVec.timing,         withVec.timing]
-      ];
-      tbody.innerHTML = rows.map(r =>
-        `<tr><th scope="row">${r[0]}</th><td>${Math.round(r[1])}</td><td>${Math.round(r[2])}</td></tr>`
-      ).join('');
-    }
-  } catch (e) { console.warn("radar render failed:", e); }
-
-  // Lift breakdown — where the +N comes from
-  const breakdownEl = document.getElementById('liftBreakdown');
-  const breakdownSubEl = document.getElementById('liftBreakdownSub');
-  if (breakdownEl) {
-    const items = computeLiftItems();
-    if (!items.length || delta === 0) {
-      breakdownEl.innerHTML = `
-        <div class="lb-empty">You already have the core capabilities in place. AchieveDXP amplifies what you have — unified reporting, an expanded partner roster, and sustained funding infrastructure — rather than patching gaps.</div>`;
-      if (breakdownSubEl) breakdownSubEl.textContent = "You're in the top readiness band. AchieveDXP's value here is sustain-and-scale.";
-    } else {
-      // Normalize pts so shown sum ≈ delta (points are relative weights)
-      const rawSum = items.reduce((s, i) => s + i.pts, 0);
-      if (rawSum > 0) {
-        const scale = delta / rawSum;
-        items.forEach(i => { i.shownPts = Math.max(1, Math.round(i.pts * scale)); });
-        // Distribute any rounding error into the biggest item
-        let diff = delta - items.reduce((s, i) => s + i.shownPts, 0);
-        if (diff !== 0) {
-          items.sort((a, b) => b.shownPts - a.shownPts);
-          items[0].shownPts = Math.max(1, items[0].shownPts + diff);
-        }
-      } else {
-        items.forEach(i => { i.shownPts = i.pts; });
-      }
-      breakdownEl.innerHTML = items.map(i => `
-        <div class="lb-item">
-          <div class="lb-pts">+${i.shownPts}</div>
-          <div class="lb-body">
-            <div class="lb-label">${escapeHtml(i.label)}</div>
-            <div class="lb-desc">${escapeHtml(i.desc)}</div>
-          </div>
-        </div>
-      `).join('');
-      if (breakdownSubEl) breakdownSubEl.textContent =
-        `${items.length} AchieveDXP capabilities contribute the +${delta}-point lift to your readiness.`;
-    }
-  }
-
-  // Funding unlock — real dollars from grants.gov filtered to user goals
-  const unlock = document.getElementById('fundingUnlock');
-  if (unlock) {
-    const today$  = computeEligibleCeiling(false);
-    const with$   = computeEligibleCeiling(true);
-    const fmt = (n) => {
-      if (n == null) return null;
-      if (n >= 1e9) return "$" + (n / 1e9).toFixed(1).replace(/\.0$/, "") + "B";
-      if (n >= 1e6) return "$" + (n / 1e6).toFixed(1).replace(/\.0$/, "") + "M";
-      if (n >= 1e3) return "$" + Math.round(n / 1e3) + "K";
-      return "$" + n;
-    };
-    if (today$) {
-      unlock.innerHTML = `
-        <div class="fu-label">YOUR SCORE UNLOCKS</div>
-        <div class="fu-row">
-          <div class="fu-amount tabular">${fmt(today$)}</div>
-          <div class="fu-arrow">→</div>
-          <div class="fu-amount fu-with tabular">${fmt(with$)}</div>
-        </div>
-        <div class="fu-caption">Eligible grant ceiling today → with AchieveDXP in place · live grants.gov data</div>
-      `;
-      unlock.classList.add('show');
-    } else {
-      unlock.classList.remove('show');
-    }
-  }
-
-  // Gap cards (unchanged logic, enhanced styling picks up automatically)
-  const list = document.getElementById('gapsList');
-  if (gaps.length === 0) {
-    list.innerHTML = '<div class="gap-item good"><div class="title">Strong foundation <span class="tag">READY</span></div><div class="body">You have the core elements in place. AchieveDXP is the amplifier — unified reporting, expanded partner roster, and sustained funding infrastructure.</div></div>';
-  } else {
-    list.innerHTML = gaps.map(g => `
-      <div class="gap-item">
-        <div class="title">${escapeHtml(g.t)} <span class="tag">GAP</span></div>
-        <div class="body">${escapeHtml(g.b)}</div>
-        <div class="fix"><span class="fix-tag">✓ Fixed by AchieveDXP</span> ${escapeHtml(g.fix)}</div>
-      </div>`).join('');
-  }
+  const progress = computeReadinessScore();
+  state._score = progress.score;
+  document.getElementById('scoreVal').textContent = progress.score + '%';
+  document.getElementById('scoreLabel').textContent = readinessLabel(progress.score);
+  const host = document.getElementById('readinessChecklist');
+  host.innerHTML = GrantCore.CHECKS.map(c => `<label class="readiness-task"><input type="checkbox" data-check="${c.id}" ${state.applicationChecks[c.id] ? 'checked' : ''}><span><strong>${escapeHtml(c.title)}</strong><small>${escapeHtml(c.detail)}</small></span></label>`).join('');
+  host.querySelectorAll('input').forEach(input => input.addEventListener('change', () => {
+    state.applicationChecks[input.dataset.check] = input.checked;
+    const next = computeReadinessScore(); state._score = next.score;
+    document.getElementById('scoreVal').textContent = next.score + '%';
+    document.getElementById('scoreLabel').textContent = readinessLabel(next.score);
+    renderTLDR(); renderNarrative(); savePlan();
+  }));
 }
 
 function drawGauge(score) {
@@ -1869,140 +1322,66 @@ function drawGauge(score) {
 }
 
 function renderGrants() {
-  const matches = matchGrants();
-  state._grants = matches;
-  const list = document.getElementById('grantsList');
-  document.getElementById('grantsCardDesc').textContent =
-    matches.length + " matches ranked by fit, eligibility, and timing for " +
-    agencyLabel(state.agencyType) + " in " + ((US_STATES.find(s=>s[0]===state.stateCode)||["",""])[1] || "your state") + ".";
-
+  const matches = matchGrants(); state._grants = matches;
+  document.getElementById('grantsCardDesc').textContent = matches.length + ' program routes suggested by your stated goals. These are research starting points, not verified open or eligible awards.';
   renderLiveFeedBanner();
-  renderPeerBenchmark();
-
-  list.innerHTML = matches.map((g, idx) => {
-    const fresh = freshnessFor(g, idx);
-    const src = sourceUrlFor(g);
-    return `
-    <div class="grant-card">
-      <div class="grant-head">
-        <div>
-          <div class="name">
-            ${fresh.badge ? `<span class="freshness-badge ${fresh.cls}">${fresh.badge}</span>` : ''}
-            ${escapeHtml(g.name)}
-          </div>
-          <div class="agency">${escapeHtml(g.agency)} • CFDA ${escapeHtml(g.cfda)}${src ? `<a class="source-link" href="${src}" target="_blank" rel="noopener">↗ source</a>` : ''}</div>
-        </div>
-        <span class="match-badge ${matchClass(g.fit)}">${matchLabel(g.fit)}</span>
-      </div>
-      <div class="grant-meta">
-        <div class="grant-meta-item"><strong>${liveRangeFor(g).label}</strong>${liveRangeFor(g).value}${liveRangeFor(g).isLive ? '<span class="live-pill">live</span>' : ''}</div>
-        <div class="grant-meta-item"><strong>Cadence</strong>${escapeHtml(g.cadence)}</div>
-        <div class="grant-meta-item"><strong>Source</strong>${escapeHtml(g.tag)}</div>
-      </div>
-      <div class="grant-why">${escapeHtml(g.why)}</div>
-      <div class="grant-actions">
-        <button class="btn btn-teal btn-sm" onclick="copyBoilerplate('${g.id}')">Copy boilerplate</button>
-        <button class="btn btn-secondary btn-sm" onclick="addToStack('${g.id}')">Add to funding stack</button>
-      </div>
-      <div class="grant-sync-stamp">${fresh.stamp}</div>
-    </div>
-  `;}).join('');
+  const list = document.getElementById('grantsList'); list.replaceChildren();
+  matches.forEach(g => {
+    const card = document.createElement('article'); card.className = 'grant-card';
+    const source = sourceUrlFor(g);
+    card.innerHTML = `<div class="grant-head"><div><span class="evidence-badge">Program to research</span><h3 class="name">${escapeHtml(g.name)}</h3><div class="agency">${escapeHtml(g.agency)}</div></div></div><p class="grant-why">Confirm the current funding cycle, eligible applicant, allowed activities, and your state's application route. Program relevance does not establish eligibility.</p><div class="grant-actions"><a class="btn btn-secondary btn-sm" href="${escapeHtml(source)}" target="_blank" rel="noopener noreferrer">Find current calls ↗</a><button type="button" class="btn btn-teal btn-sm" aria-pressed="${state.selectedGrantIds.includes(g.id)}">${state.selectedGrantIds.includes(g.id) ? 'Remove from shortlist' : 'Save funding route'}</button></div>`;
+    card.querySelector('button').addEventListener('click', () => toggleSavedGrant(g.id)); list.appendChild(card);
+  });
 }
 
 /* ---------- LIVE FEED / FRESHNESS ---------- */
 function fmtSyncTime(d) {
-  const pad = n => (n < 10 ? '0' + n : '' + n);
-  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) +
-         ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ' ET';
+  return d instanceof Date && !isNaN(d) ? d.toISOString().replace('T', ' ').slice(0, 16) + ' UTC' : 'Unknown';
 }
 function lastFederalSync() {
-  // Prefer the real timestamp returned by the Worker; fall back to a
-  // simulated 03:14 ET today if we're offline (email / static / first paint).
-  if (LIVE_FEED.last_synced_at) {
-    const d = parseMaybeDate(LIVE_FEED.last_synced_at);
-    if (d) return d;
-  }
-  const now = new Date();
-  const d = new Date(now);
-  d.setHours(3, 14, 0, 0);
-  if (now.getHours() < 3) d.setDate(d.getDate() - 1);
-  return d;
+  const date = LIVE_FEED.last_synced_at ? new Date(LIVE_FEED.last_synced_at) : null;
+  return date && !isNaN(date) ? date : null;
 }
 function renderLiveFeedBanner() {
-  const fed = fmtSyncTime(lastFederalSync());
-  const txt = document.getElementById('liveFeedText');
-  const srcs = document.getElementById('liveFeedSources');
-  const dot = document.querySelector('#liveFeedBanner .lf-dot');
-
-  if (!txt) return;
-  if (LIVE_FEED.status === 'live') {
-    const count = LIVE_FEED.opportunities.length;
-    txt.innerHTML =
-      'Live from <strong>grants.gov</strong> — ' +
-      count + ' corrections-relevant federal opportunities verified ' + fed + '.';
-    if (dot) dot.style.background = '#2FB39A';
-  } else if (LIVE_FEED.status === 'offline') {
-    txt.innerHTML =
-      'Showing <strong>cached baseline</strong> — grants.gov proxy unreachable. ' +
-      'Data below reflects the last verified sync (' + fed + ').';
-    if (dot) dot.style.background = '#F5B82E';
-  } else {
-    txt.innerHTML = 'Syncing from <strong>grants.gov</strong>…';
-    if (dot) dot.style.background = '#CADCFC';
-  }
-  if (srcs) {
-    srcs.innerHTML =
-      '<span>Federal (grants.gov): <strong style="color:#F5B82E;">DAILY</strong></span>' +
-      '<span>State &amp; pass-through: <strong style="color:#F5B82E;">WEEKLY</strong></span>' +
-      '<span>Private / philanthropy: <strong style="color:#F5B82E;">MONTHLY</strong></span>';
-  }
+  const txt = document.getElementById('liveFeedText'); if (!txt) return;
+  const stamp = fmtSyncTime(lastFederalSync());
+  txt.textContent = LIVE_FEED.status === 'booting' ? 'Loading the published data snapshot…' :
+    LIVE_FEED.status === 'offline' ? 'Snapshot unavailable. Program research remains available; current openings cannot be confirmed.' :
+    LIVE_FEED.opportunities.length + ' opportunity records in the published snapshot. Last aggregate refresh: ' + stamp + '.';
+  const errors = LIVE_FEED.errors || [];
+  const health = Object.entries(LIVE_FEED.sourceHealth || {}).map(([source, h]) => source + ': ' + h.state).join(' · ');
+  document.getElementById('liveFeedSources').textContent = (health ? health + '. ' : '') + (errors.length ? errors.length + ' upstream refresh errors reported. Source coverage is incomplete; review source records before relying on them.' : 'Sources are refreshed on a schedule. Always confirm current status and eligibility with the funder.');
 }
-function freshnessFor(g, idx) {
-  const tag = (g.tag || '').toLowerCase();
-  const isFederal = tag.includes('federal') || tag.includes('doj') || tag.includes('ed') || tag.includes('grants.gov');
-  const sync = lastFederalSync();
-  const syncTxt = fmtSyncTime(sync);
-
-  // Prefer real grants.gov data if the live feed matches this grant's CFDA.
-  const live = (g.cfda && LIVE_FEED.byCfda.get(g.cfda)) || null;
-  if (live && live.post_date) {
-    const posted = parseMaybeDate(live.post_date);
-    const modified = parseMaybeDate(live.close_date) || posted;
-    const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-    let badge = 'LIVE', cls = 'live';
-    if (posted && posted.getTime() > weekAgo) { badge = 'NEW'; cls = 'new'; }
-    else if (modified && modified.getTime() > weekAgo) { badge = 'UPDATED'; cls = 'updated'; }
-    const stamp = 'Last verified from grants.gov (opp ' + (live.opp_number || live.source_id) + ') • ' + syncTxt;
-    return { badge, cls, stamp, live };
-  }
-
-  // Fallback when the live feed isn't reachable — preserve the visual story.
-  let badge = null, cls = 'live';
-  if (idx === 0) { badge = 'NEW'; cls = 'new'; }
-  else if (idx === 1) { badge = 'UPDATED'; cls = 'updated'; }
-  else if (isFederal) { badge = 'LIVE'; cls = 'live'; }
-  const stamp = 'Last verified from ' +
-    (isFederal ? 'grants.gov' : (tag.includes('state') ? 'state SAA feed' : 'funder source')) +
-    ' • ' + syncTxt +
-    (LIVE_FEED.status === 'offline' ? ' (cached)' : '');
-  return { badge, cls, stamp, live: null };
+function freshnessFor(g) {
+  const live = GrantCore.linkedOpportunity(g, LIVE_FEED.opportunities);
+  return live ? { badge: GrantCore.opportunityStatus(live).toUpperCase(), cls: 'live', stamp: 'Snapshot retrieved ' + fmtSyncTime(lastFederalSync()), live }
+    : { badge: 'RESEARCH', cls: 'research', stamp: 'Current opportunity and deadline not verified', live: null };
 }
 function sourceUrlFor(g) {
-  // If the live feed has a real opportunity for this CFDA, deep-link to it.
-  const live = g.cfda ? LIVE_FEED.byCfda.get(g.cfda) : null;
-  if (live && live.source_url) return live.source_url;
-  if (!g.cfda) return null;
-  return 'https://www.grants.gov/search-grants?cfda=' + encodeURIComponent(g.cfda);
+  const live = GrantCore.linkedOpportunity(g, LIVE_FEED.opportunities);
+  if (live && GrantCore.safeUrl(live.source_url)) return GrantCore.safeUrl(live.source_url);
+  const sourceIds = { sca_adult: 'bja', sca_juv: 'ojjdp', byrne_jag: 'bja', rsat: 'bja', cossup: 'bja', smart_reentry: 'bja', wioa: 'dol', aefla: 'education', perkins: 'education', sc_pell: 'education', ed_reentry: 'education', state_adult_ed: 'education', usda_rural: 'usda' };
+  if (g.id === 'ascendium') return 'https://www.ascendiumphilanthropy.org/';
+  if (g.id === 'safety_justice') return 'https://www.macfound.org/';
+  if (g.id === 'saa_state') {
+    const entry = LIVE_FEED.saa?.states?.[state.stateCode];
+    if (entry && !entry.verify && GrantCore.safeUrl(entry.url)) return GrantCore.safeUrl(entry.url);
+  }
+  return (GrantCore.SOURCES.find(s => s.id === sourceIds[g.id]) || GrantCore.SOURCES[0]).url;
 }
+
 async function refreshMatches() {
   const btn = document.querySelector('.lf-refresh');
   if (btn) { btn.disabled = true; btn.textContent = '⟳ Syncing grants.gov…'; }
   const ok = await refreshLiveFeed();
   renderLiveFeedBanner();
   renderGrants();
+  renderOpportunityExplorer();
+  renderSourceDirectory();
   renderSaa();
   renderPeerAwards();
   renderFoundations();
+  renderStack(); renderTLDR(); renderNarrative();
   if (btn) {
     btn.disabled = false;
     btn.textContent = ok ? '↻ Refresh matches' : '↻ Retry (offline)';
@@ -2018,53 +1397,12 @@ async function refreshMatches() {
 // Hidden if state.stateCode/goals not set, or if data missing.
 // ============================================================
 function renderSaa() {
-  const card = document.getElementById('saaCard');
-  const host = document.getElementById('saaContent');
-  if (!card || !host) return;
-  const saa = LIVE_FEED.saa;
-  const code = state.stateCode;
-  const entry = saa && saa.states ? saa.states[code] : null;
+  const card = document.getElementById('saaCard'), host = document.getElementById('saaContent');
+  const entry = LIVE_FEED.saa?.states?.[state.stateCode];
   if (!entry) { card.hidden = true; return; }
   card.hidden = false;
-
-  // Unverified entries never expose their specific contact — show a safe
-  // placeholder and route the prospect to Nucleos for the current source.
-  if (entry.verify) {
-    host.innerHTML = `
-      <div class="saa-row">
-        <div>
-          <div class="saa-label">State</div>
-          <div class="saa-state">${escapeHtml(entry.name)}</div>
-        </div>
-        <div>
-          <div class="saa-label">Administering agency</div>
-          <div class="saa-agency" style="font-style:italic; color: var(--grey-700);">
-            The iT1 + Nucleos team will provide the verified ${escapeHtml(entry.name)} administering-agency contact in your Statement of Work.
-          </div>
-          <a class="saa-url" href="mailto:leads@nucleos.com?subject=SAA%20contact%20for%20${encodeURIComponent(entry.name)}">
-            request verified contact via leads@nucleos.com ↗
-          </a>
-        </div>
-      </div>
-      <div class="saa-note">Byrne JAG, WIOA allocations, and most federal corrections pass-through funds flow through this office. AchieveDXP's grant toolkit includes boilerplate pre-approved by multiple SAAs.</div>
-    `;
-    return;
-  }
-
-  host.innerHTML = `
-    <div class="saa-row">
-      <div>
-        <div class="saa-label">State</div>
-        <div class="saa-state">${escapeHtml(entry.name)}</div>
-      </div>
-      <div>
-        <div class="saa-label">Administering agency</div>
-        <div class="saa-agency">${escapeHtml(entry.agency)}</div>
-        ${entry.url ? `<a class="saa-url" href="${escapeHtml(entry.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(entry.url.replace(/^https?:\/\//, ''))} ↗</a>` : ''}
-      </div>
-    </div>
-    <div class="saa-note">Byrne JAG, WIOA allocations, and most federal corrections pass-through funds flow through this office. AchieveDXP's grant toolkit includes boilerplate pre-approved by multiple SAAs.</div>
-  `;
+  const url = GrantCore.safeUrl(entry.url);
+  host.innerHTML = `<div class="saa-row"><div><div class="saa-label">Selected state or territory</div><div class="saa-state">${escapeHtml(entry.name)}</div></div><div><div class="saa-agency">${escapeHtml(entry.agency)}</div><span class="evidence-badge">${entry.verify ? 'Directory entry needs verification' : 'Directory entry — confirm current contact'}</span>${url ? `<p><a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">Research this state office ↗</a></p>` : ''}</div></div><p class="evidence-note">This is a justice funding route, not an open grant. Check state education agencies and workforce boards separately for adult education, CTE, and WIOA funding.</p>`;
 }
 
 function renderPeerAwards() {
@@ -2174,380 +1512,143 @@ function renderFoundations() {
         `;
       }).join('')}
     </div>
-    <div class="fnd-note">Private foundations rarely post open RFPs to grants.gov. Nucleos can introduce you to program officers at the foundations most aligned with your matched goals.</div>
+    <div class="fnd-note">These are funder research records, not open grants. Check current application cycles, geography, applicant types, invitation requirements, and whether a nonprofit or education partner must apply.</div>
   `;
   card.hidden = false;
 }
 
 function renderStack() {
-  const stack = buildStack(state._grants);
-  state._stack = stack;
-  const layersDiv = document.getElementById('stackLayers');
-  layersDiv.innerHTML = stack.layers.map(l => `
-    <div class="stack-layer" style="background:${l.color}">
-      <div class="layer-name">${escapeHtml(l.name)}</div>
-      <div class="layer-amt">${escapeHtml(l.amt)}</div>
-    </div>
-  `).join('');
-  document.getElementById('stackTotal').textContent =
-    "$" + stack.total[0].toLocaleString() + " – $" + stack.total[1].toLocaleString();
-
-  // Chart
-  if (window._stackChart) window._stackChart.destroy();
-  const ctx = document.getElementById('stackChart');
-  if (ctx && window.Chart) {
-    const data = stack.layers.map(l => (parseInt(l.amt.replace(/[^0-9]/g,'').substring(0,8))/2) || 250000);
-    const names = stack.layers.map(l => l.name.split(' — ')[0]);
-    window._stackChart = new Chart(ctx, {
-      type: 'doughnut',
-      data: { labels: names, datasets: [{
-        data,
-        backgroundColor: stack.layers.map(l => l.color),
-        borderWidth: 0
-      }]},
-      options: {
-        responsive: true, maintainAspectRatio: false, cutout: '60%',
-        plugins: {
-          legend: { position: 'bottom', labels: { font: { size: 11 }, color: '#4A4A4A', padding: 10, boxWidth: 12 } }
-        }
-      }
-    });
-  }
-
-  const rationale = `
-    <p>Reviewers score applications higher when programs demonstrate <strong>diversified funding</strong> and a plan that survives the award period. This stack layers a <em>core</em> primary source, <em>wraparound</em> education formula funding, <em>flexible</em> tech and implementation dollars, <em>specialty</em> program funds, and <em>innovation</em> capital.</p>
-    <p style="margin-top:10px;">AchieveDXP is designed to be a single line item across every one of these sources — its platform cost is eligible under each. That means your program doesn't disappear when one grant ends. It sustains.</p>
-  `;
-  document.getElementById('stackRationale').innerHTML = rationale;
+  const stack = buildStack(); state._stack = stack;
+  const host = document.getElementById('stackLayers'); host.replaceChildren();
+  if (!stack.layers.length) host.innerHTML = '<p class="workspace-empty">Save opportunities or program routes from the Grants tab to build your shortlist.</p>';
+  stack.layers.forEach(item => {
+    const row = document.createElement('article'); row.className = 'shortlist-item';
+    row.innerHTML = `<div><span class="evidence-badge">${escapeHtml(item.kind)}</span><h3>${escapeHtml(item.name)}</h3><p>${item.deadline ? 'Source closing date: ' + escapeHtml(item.deadline) + ' · verify cutoff time' : 'No verified closing date'} · ${escapeHtml(item.status)}</p>${item.url ? `<a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">Review source ↗</a>` : ''}</div><button type="button" class="btn btn-secondary btn-sm">Remove</button>`;
+    row.querySelector('button').addEventListener('click', () => toggleSavedGrant(item.id)); host.appendChild(row);
+  });
+  document.getElementById('stackTotal').textContent = stack.layers.length + ' saved';
+  document.getElementById('stackRationale').textContent = 'Build a separate budget for each application. Confirm eligible costs, matching requirements, overlap, and whether awards may be combined. A shortlist is not committed funding.';
+  renderQualification();
 }
 
 function renderBuilder() {
+  if (!state._planInitialized) {
+    state.programSelections = new Set(COMPONENTS.filter(c => c.goal && state.goals.includes(c.goal)).map(c => c.id));
+    state._planInitialized = true;
+  }
   const grid = document.getElementById('builderGrid');
-  // Seed selections based on goals
-  const seed = new Set();
-  state.goals.forEach(g => {
-    const c = COMPONENTS.find(c => c.goal === g);
-    if (c) seed.add(c.id);
-  });
-  seed.add('platform');
-  seed.add('services');
-  if (!state.infra.includes('tablets')) seed.add('tablets');
-  if (!state.infra.includes('network')) seed.add('network');
-  state.programSelections = seed;
-
-  grid.innerHTML = COMPONENTS.map(c => `
-    <div class="builder-item ${seed.has(c.id) ? 'selected' : ''}" data-id="${c.id}">
-      <div class="head">
-        <div class="title">${escapeHtml(c.title)}</div>
-        <div class="check"></div>
-      </div>
-      <div class="cost">${fmtRange(c.cost)} <span class="muted">${escapeHtml(c.per)}</span></div>
-      <div class="sources">Funded by: ${c.sources.join(' • ')}</div>
-    </div>
-  `).join('');
-  grid.querySelectorAll('.builder-item').forEach(el => {
-    el.addEventListener('click', () => {
-      const id = el.dataset.id;
-      if (state.programSelections.has(id)) state.programSelections.delete(id);
-      else state.programSelections.add(id);
-      el.classList.toggle('selected');
-      updateBuilderSummary();
-    });
-  });
+  grid.innerHTML = COMPONENTS.map(c => `<button type="button" class="builder-item ${state.programSelections.has(c.id) ? 'selected' : ''}" data-id="${c.id}" aria-pressed="${state.programSelections.has(c.id)}"><span class="head"><span class="title">${escapeHtml(c.title)}</span><span class="check"></span></span><span class="sources">Research routes: ${escapeHtml(c.sources.join(' · '))}</span></button>`).join('');
+  grid.querySelectorAll('button').forEach(el => el.addEventListener('click', () => {
+    const id = el.dataset.id;
+    if (state.programSelections.has(id)) state.programSelections.delete(id); else state.programSelections.add(id);
+    el.classList.toggle('selected', state.programSelections.has(id)); el.setAttribute('aria-pressed', String(state.programSelections.has(id)));
+    updateBuilderSummary(); renderNarrative(); savePlan();
+  }));
   updateBuilderSummary();
 }
-
 function updateBuilderSummary() {
-  let lo = 0, hi = 0;
-  const parts = [];
-  state.programSelections.forEach(id => {
-    const c = COMPONENTS.find(cc => cc.id === id);
-    if (c) { lo += c.cost[0]; hi += c.cost[1]; parts.push(c.title); }
-  });
-  document.getElementById('builderTotal').textContent = "$" + lo.toLocaleString() + " – $" + hi.toLocaleString();
-  document.getElementById('builderNote').textContent = state.programSelections.size + " components selected. Deselect any you don't need.";
-  document.getElementById('builderComponents').innerHTML = parts.length
-    ? "Includes: " + parts.join(" • ")
-    : "Select components above to see what your year-one program costs.";
-  // Push total into gap calc input
-  const costInput = document.getElementById('gapCost');
-  if (costInput && Number(costInput.value || 0) === 0) {
-    costInput.value = Math.round((lo + hi)/2);
-    state.gapCost = Number(costInput.value);
-    updateGapCalc();
-  }
+  const parts = COMPONENTS.filter(c => state.programSelections.has(c.id)).map(c => c.title);
+  document.getElementById('builderTotal').textContent = parts.length + ' selected';
+  document.getElementById('builderNote').textContent = 'Define program scope here. Enter your agency-approved budget in the Budget tab.';
+  document.getElementById('builderComponents').textContent = parts.length ? 'Includes: ' + parts.join(' · ') : 'Choose the activities your agency intends to deliver.';
 }
-
 function renderGapCalc() {
-  document.getElementById('gapCost').addEventListener('input', e => {
-    state.gapCost = Number(e.target.value || 0);
-    updateGapCalc();
-  });
-  document.getElementById('gapHave').addEventListener('input', e => {
-    state.gapHave = Number(e.target.value || 0);
-    updateGapCalc();
+  ['gapCost', 'gapHave', 'gapNotes'].forEach(id => {
+    const input = document.getElementById(id); input.value = state[id] || (id === 'gapNotes' ? '' : 0);
+    input.oninput = () => { state[id] = id === 'gapNotes' ? input.value.slice(0, 2000) : GrantCore.money(input.value); updateGapCalc(); renderNarrative(); savePlan(); };
   });
   updateGapCalc();
 }
 function updateGapCalc() {
-  const cost = state.gapCost || 0;
-  const have = state.gapHave || 0;
-  const gap = Math.max(0, cost - have);
-  const pct = cost > 0 ? Math.min(100, Math.round((have/cost)*100)) : 0;
-
+  const cost = GrantCore.money(state.gapCost), have = GrantCore.money(state.gapHave);
+  const gap = Math.max(0, cost - have), pct = cost > 0 ? Math.min(100, Math.round(have / cost * 100)) : 0;
   document.getElementById('gapFill').style.width = pct + '%';
   document.getElementById('gapPct').textContent = pct + '%';
-
-  const amt = document.getElementById('gapAmount');
-  const label = document.getElementById('gapLabel');
-  if (gap === 0 && cost > 0) {
-    amt.textContent = "Fully funded";
-    amt.classList.add('covered');
-    label.textContent = "Use the stack to extend beyond year one.";
-  } else {
-    amt.classList.remove('covered');
-    amt.textContent = "$" + gap.toLocaleString();
-    label.textContent = "Gap to fund";
-  }
-
-  // Recommended grants to close the gap — pick top 3 matches where range covers at least part of gap
-  const recs = (state._grants || []).filter(g => g.range[1] >= gap * 0.2).slice(0, 4);
-  document.getElementById('gapRecs').innerHTML = recs.length === 0
-    ? '<div class="muted small">Fill in your cost above to see grant recommendations.</div>'
-    : recs.map(g => `
-      <div class="grant-card">
-        <div class="grant-head">
-          <div>
-            <div class="name">${escapeHtml(g.name)}</div>
-            <div class="agency">${escapeHtml(g.agency)}</div>
-          </div>
-          <span class="match-badge ${matchClass(g.fit)}">${matchLabel(g.fit)}</span>
-        </div>
-        <div class="grant-meta">
-          <div class="grant-meta-item"><strong>Range</strong>${fmtRange(g.range)}</div>
-          <div class="grant-meta-item"><strong>Fills</strong>${Math.min(100, Math.round((g.range[1]/Math.max(gap,1))*100))}% of gap (max)</div>
-          <div class="grant-meta-item"><strong>Cadence</strong>${escapeHtml(g.cadence)}</div>
-        </div>
-        <div class="grant-why">${escapeHtml(g.why)}</div>
-      </div>`).join('');
+  document.getElementById('gapAmount').textContent = cost > 0 ? '$' + gap.toLocaleString() : 'Enter your budget';
+  document.getElementById('gapLabel').textContent = cost > 0 ? 'Unfunded amount based on agency-entered figures' : 'No vendor costs are assumed';
+  document.getElementById('gapRecs').innerHTML = '<p>Use your shortlist to research funding for this gap. An advertised award ceiling does not establish what your agency can receive. Do not charge the same cost to multiple awards.</p>';
 }
 
 function renderPartners() {
-  const goalsToPriority = {
-    "ged": ["ged","ascend","university"],
-    "cte": ["icev","coursera","workforce"],
-    "postsec": ["university","coursera"],
-    "reentry": ["workforce","vant4ge","jakapa"],
-    "digital": ["coursera","own"],
-    "sud": ["jakapa","vant4ge"],
-    "sel": ["jakapa","vant4ge"],
-    "juv_ed": ["ascend","ged","jakapa"]
-  };
-  const priority = new Set();
-  state.goals.forEach(g => (goalsToPriority[g] || []).forEach(p => priority.add(p)));
-  state.existingPartners.forEach(p => { if (p !== 'none') priority.add(p); });
-
-  const host = document.getElementById('partnerCatalog');
-  if (!host) return;
-
-  // Group by licensing tier; within each, priority matches sort first
-  const byTier = { add: [], own: [] };
-  for (const p of PARTNERS) {
-    if (byTier[p.tier]) byTier[p.tier].push(p);
-  }
-  const sortByPriority = (a, b) => {
-    const ap = priority.has(a.id) ? 0 : 1;
-    const bp = priority.has(b.id) ? 0 : 1;
-    return ap - bp;
-  };
-  byTier.add.sort(sortByPriority);
-
-  const renderRow = (p) => {
-    const badgeClass = p.tier === "own" ? "own" : (p.tier === "bundled" ? "bundled" : "add");
-    const badgeText  = p.tier === "own" ? "Bring your own" : (p.tier === "bundled" ? "Bundled" : "Additional licensing");
-    const priorityTag = priority.has(p.id) ? '<span class="c-priority">Priority for you</span>' : '';
-    const grantsHtml = (p.grants && p.grants.length)
-      ? `<div class="c-grants"><span class="c-grants-label">Typical grant coverage:</span>${escapeHtml(p.grants.join(" · "))}</div>`
-      : '';
-    return `
-      <div class="catalog-row ${priority.has(p.id) ? 'priority' : ''}">
-        <div>
-          <div class="c-name">${escapeHtml(p.name)}${priorityTag}</div>
-          <div class="c-desc">${escapeHtml(p.desc)}</div>
-        </div>
-        <div>
-          <div style="font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--grey-500); margin-bottom:6px; font-weight:600;">${escapeHtml(p.cat)}</div>
-          ${grantsHtml}
-        </div>
-        <div class="c-cost">
-          <span class="c-cost-badge ${badgeClass}">${escapeHtml(badgeText)}</span>
-          <span class="c-cost-note">${escapeHtml(p.cost_note || "")}</span>
-        </div>
-      </div>
-    `;
-  };
-
-  let html = '';
-  if (byTier.add.length) {
-    html += `<div class="catalog-group">
-      <div class="catalog-group-head">
-        <span class="cg-cat">Content &amp; credential partners</span>
-        <span></span>
-        <span class="cg-meta">${byTier.add.length} providers · additional licensing · grant-fundable</span>
-      </div>
-      ${byTier.add.map(renderRow).join('')}
-    </div>`;
-  }
-  if (byTier.own.length) {
-    html += `<div class="catalog-group">
-      <div class="catalog-group-head">
-        <span class="cg-cat">Your existing vendors</span>
-        <span></span>
-        <span class="cg-meta">integrate via SSO / xAPI · no duplicate licensing</span>
-      </div>
-      ${byTier.own.map(renderRow).join('')}
-    </div>`;
-  }
-  host.innerHTML = html;
+  const host = document.getElementById('partnerCatalog'); if (!host) return;
+  host.innerHTML = PARTNERS.map(p => `<article class="source-card"><h3>${escapeHtml(p.name)}</h3><p>${escapeHtml(p.desc)}</p><small>Confirm the partner’s role, evidence, commitments, and suitability for the selected solicitation.</small></article>`).join('');
 }
 
 function renderRoadmap() {
-  const timeline = state.timeline;
-  const quickPath = timeline === 'now';
   const phases = [
-    {
-      time: quickPath ? "Week 1" : "Month 1",
-      title: "Discovery & grant-alignment kickoff",
-      body: "Align on scope, identify two or three target grants from your matched stack, confirm eligibility, and draft the application timeline. Nucleos delivers pre-written boilerplate."
-    },
-    {
-      time: quickPath ? "Week 1-3" : "Month 1-2",
-      title: "Network and security design (iT1)",
-      body: "Site survey, network design, security posture documentation (CIPA / FERPA / NIST alignment). All deliverables dual-purpose: operational AND grant-ready feasibility documentation."
-    },
-    {
-      time: quickPath ? "Week 2-4" : "Month 2-3",
-      title: "Platform & partner activation",
-      body: "AchieveDXP stood up. SSO integrated with facility identity systems. Partners activated (Coursera, iCEV, GED provider, Ascend Math, university). Content curated for your populations."
-    },
-    {
-      time: quickPath ? "Week 3-5" : "Month 2-3",
-      title: "Device procurement",
-      body: "Tablets or Chromebooks ordered through iT1's Hardware-as-a-Service or direct purchase, preloaded and locked down. Grant-compliant procurement documentation produced in parallel."
-    },
-    {
-      time: quickPath ? "Month 2" : "Month 3-5",
-      title: "Pilot cohort launch",
-      body: "First 50-200 learners onboarded. Staff trained. Learner progress captured from day one. Pilot report generated at 60 days for interim grant reporting."
-    },
-    {
-      time: quickPath ? "Ongoing" : "Month 6+",
-      title: "Scale, report, sustain",
-      body: "Expand to full population. Quarterly grant reporting generated automatically from unified learner record. Sustainability plan (re-application, funding stack rotation) in motion by month 9."
-    }
+    ['Discover', 'Select a specific opportunity', 'Read the official notice, identify the lead applicant, and confirm population and geographic eligibility.'],
+    ['Prepare', 'Build the evidence and budget', 'Gather baseline learner outcomes, partner commitments, allowable-cost support, and an agency-approved budget.'],
+    ['Draft', 'Respond to the scoring criteria', 'Map the narrative and attachments to every requirement. Name an owner and internal deadline for each item.'],
+    ['Review', 'Run an independent review', 'Check figures, citations, accessibility, required signatures, and portal requirements before submission.'],
+    ['Submit', 'Confirm receipt and retain records', 'Submit before the source deadline, save the receipt, and track funder communications and amendments.']
   ];
-  document.getElementById('roadmap').innerHTML = phases.map(p => `
-    <div class="phase">
-      <div class="phase-time">${escapeHtml(p.time)}</div>
-      <div class="phase-title">${escapeHtml(p.title)}</div>
-      <div class="phase-body">${escapeHtml(p.body)}</div>
-    </div>
-  `).join('');
-  document.getElementById('roadmapDesc').textContent =
-    "Calibrated to your selected timeline (" +
-    (timeline === 'now' ? "apply this quarter" : timeline === 'next' ? "apply next quarter" : "planning 6-12 months out") +
-    ") and your current infrastructure. Every milestone produces grant-reportable artifacts.";
+  document.getElementById('roadmap').innerHTML = phases.map(([time,title,body]) => `<div class="phase"><div class="phase-time">${time}</div><div class="phase-title">${title}</div><div class="phase-body">${body}</div></div>`).join('');
+  document.getElementById('roadmapDesc').textContent = 'Set internal dates around each verified solicitation deadline. This sequence is a planning guide.';
 }
 
 // ============================================================
 // NARRATIVE GENERATION
 // ============================================================
 function buildNarrative() {
-  const stateName = (US_STATES.find(s => s[0] === state.stateCode) || ["",""])[1] || "the state";
-  const agency = state.agencyName || "The agency";
-  const program = state.programName || "Reentry & Education Program";
-  const pop = popLabel(state.populationSize) || "the population";
-  const goals = state.goals.map(goalLabel).join(", ");
-  const partnerNames = [
-    "Coursera for industry-recognized credentials",
-    "accredited university partners for post-secondary credit",
-    "iCEV for Perkins V-aligned CTE",
-    "Essential Education / NROC for NRS-compliant GED/HSE",
-    "Ascend Math for adaptive numeracy",
-    "GoEducate for regional workforce connection"
-  ].join(", ");
+  const components = COMPONENTS.filter(c => state.programSelections.has(c.id)).map(c => c.title).join(', ') || '[confirm program activities]';
+  const sources = selectedPlanItems().map(g => '- ' + g.name + (g.url ? '\n  Source: ' + g.url : '\n  Source requires verification')).join('\n') || '[select a solicitation and cite its requirements]';
+  return `WORKING DRAFT — complete the evidence fields and adapt to the selected solicitation. This is a template, not AI-generated or submission-ready text.
 
-  return `${agency} proposes ${program} — a comprehensive corrections education initiative serving ${pop} residents across ${stateName}. The program targets ${goals}, combining evidence-based curriculum with a unified delivery platform and an integrated partner ecosystem.
+Applicant: ${state.agencyName || '[agency name]'}
+Program: ${state.programName || '[program name]'}
+Location: ${state.stateCode || '[state]'}
+Intended population: ${popLabel(state.populationSize) || '[population]'}
 
-At the center of the program is AchieveDXP, a secure Digital Experience Platform purpose-built for corrections environments. AchieveDXP integrates ${partnerNames}. All partner content is delivered through one learner login, one teacher dashboard, and one unified reporting layer — eliminating the data fragmentation that has historically prevented corrections agencies from proving outcomes.
+Need and evidence
+${state.agencyName || 'The agency'} proposes an education and reentry program focused on ${state.goals.map(goalLabel).join(', ')}.
+[Insert dated agency baseline data, the unmet learner need, and citations. Explain how the proposed population meets the funder's requirements.]
 
-AchieveDXP operates inside a hardened compliance posture (CIPA, HIPAA, FERPA; aligned with SOC 2, ISO 27001, and NIST SP 800-53). Network design, secure devices, and implementation are delivered through the iT1 infrastructure team, making the full program — hardware, network, platform, partners, and services — available under a single, grant-compliant procurement. This model materially reduces procurement friction and accelerates time-to-impact.
+Activities and partners
+Planned activities: ${components}.
+[Identify delivery partners, staff responsibilities, referral pathways, and signed commitments.]
 
-Outcomes of interest are captured automatically: course completion, credential attainment, persistence, GED / HSE progress, post-release enrollment in education or workforce, and linkage to re-arrest outcomes where data sharing permits. The resulting learner record aligns with NRS (for AEFLA-funded work), Perkins V indicators (for CTE), WIOA performance measures (for workforce-connected programming), and standard federal evaluation frameworks. Research is clear: post-secondary correctional education reduces return to prison by approximately 28 percent (MIT Abdul Latif Jameel Poverty Action Lab, 2024), and diversified education-and-workforce models have been associated with the lowest state recidivism rate in the nation (VADOC, 17.6 percent).
+Measurable outcomes
+[Specify baseline, target, time period, measure, and reporting owner for each proposed outcome. Avoid unsupported outcome claims.]
 
-${agency} will use AchieveDXP to build a sustainable, evidence-based program that produces the data reviewers need, credentials learners can carry home, and outcomes taxpayers can see.`;
+Budget and sustainability
+Agency-entered program budget: ${state.gapCost ? '$' + GrantCore.money(state.gapCost).toLocaleString() : '[not entered]'}.
+Committed funds reported by the agency: $${GrantCore.money(state.gapHave).toLocaleString()}.
+[Verify allowable costs, match, indirect-cost treatment, and ongoing support after the award. No vendor pricing is included.]
+
+Funding sources under review
+${sources}
+
+Before submission
+Confirm applicant eligibility, official deadlines and time zones, scoring criteria, required attachments, and independent approval.`;
 }
-
 function buildSustainability() {
-  return `Sustainability is designed into the program from day one. AchieveDXP's platform cost is eligible across Second Chance Act, AEFLA, Perkins V, WIOA, Byrne JAG, and multiple state and foundation sources — meaning the program can shift funding sources as cycles rotate without disruption. During year one, ${state.agencyName || "the agency"} will establish baseline outcomes and develop the data story to support re-application and expansion. In years two and three, state-administered formula funds (AEFLA, Perkins V) transition to primary funding, supplemented by discretionary grants for expansion. By year three, the program is embedded in the agency's operating budget as a core education function, supported by ongoing grant dollars and demonstrated outcomes. AchieveDXP produces the longitudinal evidence — credentials earned, time on task, persistence, and linked reentry outcomes — that funders and legislators rely on to sustain appropriations.`;
+  return `${state.agencyName || '[Agency]'} will document which education and reentry activities can continue after the award period. [Name the responsible budget owner, confirmed ongoing resources, partner commitments, and renewal assumptions.] Distinguish committed resources from prospective grants. [Specify how learner outcomes will be measured and used to assess continuation.]`;
 }
-
 function buildLOI() {
-  const stateName = (US_STATES.find(s => s[0] === state.stateCode) || ["",""])[1] || "the state";
-  const agency = state.agencyName || "Your agency";
-  const program = state.programName || "Corrections Education Program";
-  const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  const score = state._score || 0;
-  const scoreWith = state._scoreWith || 0;
-  const topGrants = (state._grants || []).slice(0, 3).map(g => `  • ${g.name} (${g.agency}) — typical range ${fmtRange(g.range)}`).join("\n") || "  • (matched grants listed in the Funding Plan report)";
-  const popSize = popLabel(state.populationSize) || "the planned population";
-  return `${today}
+  return `INTERNAL PLANNING MEMO — draft for agency review
+Agency: ${state.agencyName || '[agency]'}
+Program: ${state.programName || '[program]'}
 
-TO:        Budget Office / Executive Leadership / Approving Authority
-FROM:      ${state.contactName || "[Your name]"}, ${state.contactRole || "[Your role]"}
-RE:        Letter of Intent — ${program}
+Requested decision: approve further research and application preparation for the sources in this funding plan.
 
-Purpose
--------
-${agency} intends to launch ${program} to serve ${popSize} in ${stateName}, using a grant-funded deployment of the AchieveDXP platform procured through the iT1 + Nucleos contract vehicle. This letter requests your acknowledgement so the iT1 + Nucleos team can return a binding Statement of Work.
+Selected funding routes:
+${selectedPlanItems().map(i => '- ' + i.name + (i.url ? ' (' + i.url + ')' : '')).join('\n') || '[No sources shortlisted]'}
 
-Why this approach
------------------
-1.  One procurement, five layers. AchieveDXP consolidates platform licensing, corrections-grade devices (iT1), secure network installation, pre-integrated content and credential partners, and grant-aligned reporting under one contract — not five separate vendor negotiations.
+Before authorizing an application, confirm the eligible lead applicant, match requirements, allowable costs, partner responsibilities, and the official deadline.
 
-2.  Grant-eligible today. Our current grant-readiness posture is ${score}/100. With AchieveDXP in place, our modeled readiness rises to ${scoreWith}/100 — the difference is exactly what reviewers score on (unified reporting, named partners, evidence of capability).
+Agency budget: ${state.gapCost ? '$' + GrantCore.money(state.gapCost).toLocaleString() : '[to be approved]'}.
+Responsible owner: ${state.contactName || '[name]'}
+Approver and internal review date: [complete]
 
-3.  Fundable with existing sources. The matched grant stack includes:
-${topGrants}
-
-Compliance posture
-------------------
-The platform operates inside the federal and state compliance envelope this agency already requires — SOC 2 audited, with controls continuously monitored across the frameworks federal reviewers expect.
-
-Requested action
-----------------
-Please acknowledge that (a) this program aligns with agency strategic priorities, (b) procurement should proceed under an existing federal vehicle (GSA / SEWP V / NASPO ValuePoint / state cooperative), and (c) ${state.contactName || "the program lead"} is authorized to receive a binding SOW from iT1 + Nucleos.
-
-Next steps, if approved
------------------------
-1.  iT1 + Nucleos return a fixed-fee Statement of Work within one business day.
-2.  Agency submits grant application(s) using AchieveDXP's reviewer-ready narrative and boilerplate (included).
-3.  Deployment begins on award — hardware, network, and platform commissioned end-to-end by iT1.
-
-Contact
--------
-${state.contactName || "[Your name]"}
-${state.contactRole || "[Your role]"}
-${state.contactEmail || "[your email]"}${state.contactPhone ? "\n" + state.contactPhone : ""}
-
-iT1 + Nucleos public safety team · publicsafety@it1.com · (877) 777-5995
-`;
+This memo does not authorize procurement, establish eligibility, or commit grant funds.`;
 }
+
 function renderNarrative() {
   document.getElementById('narrativeBox').textContent = buildNarrative();
   document.getElementById('sustBox').textContent = buildSustainability();
   const loi = document.getElementById('loiBox');
   if (loi) loi.textContent = buildLOI();
+  renderAiBrief();
 }
 
 // ============================================================
@@ -2570,51 +1671,6 @@ function initTabs() {
 // already-documented deployments (Wyoming DOC, Virginia DOC, SF County
 // Jail). No fabricated dollar figures.
 // ============================================================
-const PEER_BENCHMARKS = {
-  state_doc: {
-    headline: "State DOCs like yours are already shipping AchieveDXP.",
-    body: "Wyoming Department of Corrections and Virginia Department of Corrections run the platform across multiple facilities today — and use the same grant-reporting stack this plan recommends.",
-    refs: ["Wyoming DOC", "Virginia DOC"]
-  },
-  county_jail: {
-    headline: "County jails are already running AchieveDXP at scale.",
-    body: "San Francisco County Jail has been live on the platform for years, using AchieveDXP's unified learner record to report outcomes back to funders with zero manual spreadsheet work.",
-    refs: ["SF County Jail"]
-  },
-  juvenile: {
-    headline: "Juvenile agencies use this stack for pre- and post-release education.",
-    body: "Deployments across state juvenile justice agencies — including CA-aligned programs — run the same platform, partner catalog, and reporting layer this plan recommends.",
-    refs: ["State juvenile agencies"]
-  },
-  community: {
-    headline: "Community corrections use this stack to sustain post-release education.",
-    body: "The iT1 + Nucleos partnership ships AchieveDXP into reentry and parole programs so learning continues after release — the sustainability story funders expect.",
-    refs: ["iT1 + Nucleos reentry deployments"]
-  },
-  other: {
-    headline: "Multi-agency deployments run on this stack today.",
-    body: "Agencies combining corrections, education, and workforce all deploy AchieveDXP as a single platform through the iT1 + Nucleos contract vehicle — one procurement covering hardware, network, platform, and content partners.",
-    refs: ["iT1 + Nucleos multi-agency"]
-  }
-};
-function renderPeerBenchmark() {
-  const el = document.getElementById('peerBenchmark');
-  if (!el) return;
-  const data = PEER_BENCHMARKS[state.agencyType] || PEER_BENCHMARKS.other;
-  el.hidden = false;
-  el.innerHTML = `
-    <div class="pb-label">Agencies like yours</div>
-    <div class="pb-head">${escapeHtml(data.headline)}</div>
-    <div class="pb-body">${escapeHtml(data.body)}</div>
-    <div class="pb-refs">${data.refs.map(r => `<span class="pb-chip">${escapeHtml(r)}</span>`).join('')}</div>`;
-}
-
-// ============================================================
-// GRANT DEADLINES — client-side .ics generator. Each matched grant
-// becomes a VEVENT with a placeholder date (45d for near, 120d for
-// non-near), a description that includes the source URL, and a
-// 30-day reminder. Users update specific deadlines when confirmed.
-// ============================================================
 function icsEscape(s) {
   return String(s || "").replace(/\\/g, "\\\\").replace(/\n/g, "\\n")
     .replace(/,/g, "\\,").replace(/;/g, "\\;");
@@ -2625,50 +1681,19 @@ function icsDate(d) {
     + 'T' + pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + pad(d.getUTCSeconds()) + 'Z';
 }
 function downloadDeadlinesICS() {
-  const matches = state._grants || matchGrants();
-  if (!matches.length) { showToast("Render the report first"); return; }
-  const now = new Date();
-  const uidRoot = now.getTime();
-  const lines = [
-    "BEGIN:VCALENDAR",
-    "VERSION:2.0",
-    "PRODID:-//AchieveDXP Grant Navigator//EN",
-    "CALSCALE:GREGORIAN",
-    "METHOD:PUBLISH"
-  ];
-  matches.forEach((g, i) => {
-    const offsetDays = g.near ? 45 : 120;
-    const when = new Date(now.getTime() + offsetDays * 24 * 60 * 60 * 1000);
-    when.setUTCHours(15, 0, 0, 0);
-    const end = new Date(when.getTime() + 60 * 60 * 1000);
-    const src = sourceUrlFor(g) || "";
-    const desc = `${g.why}\n\nCadence: ${g.cadence}\nTypical range: ${fmtRange(g.range)}\nAgency: ${g.agency}\nCFDA: ${g.cfda}${src ? `\nSource: ${src}` : ''}\n\n(Placeholder reminder — verify the exact solicitation deadline on the source site and update this event.)`;
-    lines.push(
-      "BEGIN:VEVENT",
-      `UID:${uidRoot}-${i}@achievedxp-grant-navigator`,
-      `DTSTAMP:${icsDate(now)}`,
-      `DTSTART:${icsDate(when)}`,
-      `DTEND:${icsDate(end)}`,
-      `SUMMARY:${icsEscape(g.name + ' — deadline check')}`,
-      `DESCRIPTION:${icsEscape(desc)}`,
-      src ? `URL:${src}` : "",
-      "BEGIN:VALARM",
-      "ACTION:DISPLAY",
-      "TRIGGER:-P30D",
-      `DESCRIPTION:${icsEscape(g.name + ' deadline in 30 days')}`,
-      "END:VALARM",
-      "END:VEVENT"
-    );
+  const items = selectedPlanItems().filter(item => item.deadline && item.status === 'open');
+  if (!items.length) { showToast('Save an open opportunity with a source closing date first.'); return; }
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//DOC Grant Navigator//EN', 'CALSCALE:GREGORIAN'];
+  items.forEach(item => {
+    const day = item.deadline.replace(/-/g, '');
+    lines.push('BEGIN:VEVENT', 'UID:' + icsEscape(item.id) + '-' + day + '@doc-grant-navigator', 'DTSTAMP:' + icsDate(new Date()), 'DTSTART;VALUE=DATE:' + day,
+      'SUMMARY:' + icsEscape(item.name + ' — source closing date'), 'DESCRIPTION:' + icsEscape('Source reports a closing date without a verified cutoff time. Confirm the exact submission time and time zone with the funder. ' + (item.url || '')), ...(item.url ? ['URL:' + item.url] : []), 'END:VEVENT');
   });
-  lines.push("END:VCALENDAR");
-  const blob = new Blob([lines.filter(Boolean).join("\r\n") + "\r\n"], { type: "text/calendar" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = "achievedxp-grant-deadlines.ics";
-  document.body.appendChild(a); a.click(); a.remove();
+  lines.push('END:VCALENDAR');
+  const url = URL.createObjectURL(new Blob([lines.join('\r\n') + '\r\n'], {type:'text/calendar'}));
+  const a = document.createElement('a'); a.href = url; a.download = 'doc-grant-source-dates.ics'; a.click();
   setTimeout(() => URL.revokeObjectURL(url), 2000);
-  showToast("Calendar file downloaded");
+  showToast('Source dates exported; verify cutoff times before submission.');
 }
 
 // ============================================================
@@ -2688,17 +1713,20 @@ async function copyText(txt, msg) {
   try {
     await navigator.clipboard.writeText(txt);
     showToast(msg || "Copied to clipboard");
+    return true;
   } catch (e) {
-    // Fallback
     const ta = document.createElement('textarea');
     ta.value = txt; document.body.appendChild(ta);
-    ta.select(); document.execCommand('copy'); ta.remove();
-    showToast(msg || "Copied to clipboard");
+    let copied = false;
+    try { ta.select(); copied = document.execCommand('copy'); } catch (_) {}
+    finally { ta.remove(); }
+    showToast(copied ? (msg || "Copied to clipboard") : 'Clipboard unavailable. Select and copy the text, or use its download option.');
+    return copied;
   }
 }
 function copyNarrative() { copyText(buildNarrative(), "Narrative copied"); }
 function copySustainability() { copyText(buildSustainability(), "Sustainability paragraph copied"); }
-function copyLOI() { copyText(buildLOI(), "Letter of intent copied"); }
+function copyLOI() { copyText(buildLOI(), "Planning memo copied"); }
 function downloadLOI() {
   const agency = (state.agencyName || "agency").toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || "agency";
   const blob = new Blob([buildLOI()], { type: "text/plain;charset=utf-8" });
@@ -2711,52 +1739,22 @@ function downloadLOI() {
   showToast("LOI downloaded");
 }
 function copyBoilerplate(gid) {
-  const g = GRANTS.find(gg => gg.id === gid);
-  if (!g) return;
-  const txt = `Grant: ${g.name}
-Agency: ${g.agency} (CFDA ${g.cfda})
-Typical award range: $${g.range[0].toLocaleString()} – $${g.range[1].toLocaleString()}
-Cadence: ${g.cadence}
-
-Program fit for ${state.agencyName || "our agency"}:
-${g.why}
-
-AchieveDXP supports this grant by providing a secure, corrections-grade Digital Experience Platform that integrates the education and workforce partners this funding is designed to support (including Coursera, iCEV, Ascend Math, accredited universities, and GED/HSE providers). All partner activity is captured in a single learner record that produces the outcome reporting this grant requires. Implementation, devices, and network are delivered through the iT1 infrastructure team, making the program fundable under a single, grant-compliant procurement.`;
-  copyText(txt, "Boilerplate copied");
+  const g = GRANTS.find(item => item.id === gid); if (!g) return;
+  copyText('Program to research: ' + g.name + '\nSource directory: ' + sourceUrlFor(g) + '\nConfirm the active solicitation, eligibility, allowable costs, and deadline before drafting.', 'Research note copied');
 }
-function addToStack(gid) {
-  showToast("Added to your funding stack (visible in the Stack tab)");
-}
+function addToStack(gid) { toggleSavedGrant(gid); }
 function copyFullReport() {
-  const { score } = computeReadinessScore();
-  const stack = state._stack || { total: [0,0], layers: [] };
-  const grants = state._grants || [];
-  let out = `ACHIEVEDXP GRANT NAVIGATOR REPORT
-${state.agencyName || "Your agency"} — ${state.programName || "Corrections Education Program"}
-${(US_STATES.find(s=>s[0]===state.stateCode)||["",""])[1]} • ${agencyLabel(state.agencyType)}
+  const progress = computeReadinessScore();
+  copyText(`DOC EDUCATION GRANT PLAN
+${state.agencyName} — ${state.programName || 'Education and reentry program'}
+Preparation checklist: ${progress.completed}/${progress.total} confirmed by the agency. This is not an eligibility or award-probability score.
 
-GRANT READINESS SCORE: ${score}/100
-
-MATCHED GRANTS (top ${grants.length}):
-${grants.map(g => ` • ${g.name} — ${g.agency} — $${g.range[0].toLocaleString()}–$${g.range[1].toLocaleString()} (${matchLabel(g.fit)})`).join('\n')}
-
-FUNDING STACK:
-${stack.layers.map(l => ` • ${l.name} (${l.amt})`).join('\n')}
-Projected Year 1 range: $${stack.total[0].toLocaleString()} – $${stack.total[1].toLocaleString()}
-
-GRANT NARRATIVE:
 ${buildNarrative()}
 
-SUSTAINABILITY:
-${buildSustainability()}
-
-Prepared with AchieveDXP Grant Navigator • nucleos.com • publicsafety@it1.com`;
-  copyText(out, "Full report copied to clipboard");
+Sustainability:
+${buildSustainability()}`, 'Plan copied');
 }
 
-// ============================================================
-// INIT
-// ============================================================
 const NUCLEOS_B64 = "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";
 const ACHIEVE_B64 = "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";
 
@@ -2791,6 +1789,7 @@ function bootLanding() {
   const shared = decodePlanFromHash();
   if (shared) {
     SHARE_FIELDS.forEach(k => { if (k in shared) state[k] = shared[k]; });
+    state._sharedPlanData = shared.plan || null;
     generateResults();
   }
 }
@@ -2854,7 +1853,18 @@ function initResumeBanner() {
   const msg = document.getElementById('resumeMsg');
   if (!banner || !btn || !dismiss) return;
   const snap = loadProgress();
-  if (!hasMeaningfulProgress(snap)) return;
+  if (!hasMeaningfulProgress(snap)) {
+    try {
+      const plans = Object.values(JSON.parse(localStorage.getItem(PLAN_STORAGE_KEY) || '{}')).filter(p => p && p.profile && p.plan);
+      plans.sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)));
+      const latest = plans[0]; if (!latest) return;
+      msg.textContent = 'Continue your saved grant plan for ' + latest.profile.agencyName + '.';
+      btn.textContent = 'Open saved plan'; banner.classList.add('show');
+      btn.onclick = () => { restoreStateFromSnap(latest.profile); applySavedPlan(latest.plan); banner.classList.remove('show'); generateResults(); };
+      dismiss.onclick = () => { banner.classList.remove('show'); };
+    } catch (_) { /* Local storage is optional. */ }
+    return;
+  }
   const step = snap.step || 1;
   msg.textContent = `You have unfinished answers from a previous session (step ${step} of ${state.total}).`;
   banner.classList.add('show');

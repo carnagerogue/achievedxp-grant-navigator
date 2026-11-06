@@ -6,6 +6,7 @@ const PORT = 8765;
 
 module.exports = defineConfig({
   testDir: './tests',
+  testIgnore: '**/unit/**',
   timeout: 60_000,
   expect: { timeout: 10_000 },
   forbidOnly: !!process.env.CI,

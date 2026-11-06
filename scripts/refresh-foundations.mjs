@@ -13,6 +13,8 @@
  * To extend: add a seed entry with EIN + focus area.
  */
 
+import { fetchJson } from "./source-utils.mjs";
+
 const FOUNDATION_SEEDS = [
   // EIN, display name (fallback), focus tags, short pitch for UI
   { ein: "391090394", name: "Ascendium Education Group",              focus: ["reentry", "postsec", "adult_ed"], pitch: "Largest philanthropic funder of postsecondary education in prison in the U.S." },
@@ -30,9 +32,9 @@ const FOUNDATION_SEEDS = [
 ];
 
 async function fetchOrg(ein) {
-  const res = await fetch(`https://projects.propublica.org/nonprofits/api/v2/organizations/${ein}.json`);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return await res.json();
+  const data = await fetchJson(`https://projects.propublica.org/nonprofits/api/v2/organizations/${ein}.json`);
+  if (!data || !data.organization) throw new Error("ProPublica returned an unexpected organization response");
+  return data;
 }
 
 function normalize(seed, payload) {

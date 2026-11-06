@@ -1,0 +1,9 @@
+.git
+.github
+.circleci
+node_modules
+tests
+test-results
+playwright-report
+Dockerfile
+.dockerignore

@@ -1,0 +1,23 @@
+# Optional secure API host for the GitHub Pages website. Configure secrets in the host dashboard.
+services:
+  - type: web
+    name: achievedxp-grant-ai
+    runtime: node
+    buildCommand: node --version
+    startCommand: node server/index.mjs
+    healthCheckPath: /api/ai/status
+    envVars:
+      - key: NODE_VERSION
+        value: 24.22.1
+      - key: GRANT_AI_HOST
+        value: 0.0.0.0
+      - key: GRANT_AI_STATIC
+        value: off
+      - key: GRANT_AI_ORIGIN
+        value: https://carnagerogue.github.io
+      - key: GRANT_AI_MODEL
+        value: gpt-4.1
+      - key: GRANT_AI_KEY
+        sync: false
+      - key: GRANT_AI_ACCESS_TOKEN
+        generateValue: true

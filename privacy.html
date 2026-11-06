@@ -4,113 +4,43 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Privacy Policy · AchieveDXP Grant Navigator</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500&family=JetBrains+Mono:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="styles.css?v=2026-04-23n">
+<link rel="stylesheet" href="navigator.css">
+<link rel="stylesheet" href="intelligence.css">
+<link rel="stylesheet" href="welcome.css">
 <style>
-.privacy-page {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 48px 28px 96px;
-  font-family: "Inter", sans-serif;
-  color: var(--grey-900);
-  line-height: 1.65;
-}
-.privacy-page h1 {
-  font-family: "Fraunces", Georgia, serif;
-  font-size: 42px;
-  font-weight: 500;
-  letter-spacing: -0.025em;
-  color: var(--navy);
-  line-height: 1.1;
-  margin-bottom: 12px;
-}
-.privacy-page .kicker {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--teal-dark);
-  font-weight: 600;
-  margin-bottom: 14px;
-}
-.privacy-page .effective {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 12px;
-  color: var(--grey-500);
-  letter-spacing: 0.06em;
-  margin-bottom: 36px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(11,42,74,0.08);
-}
-.privacy-page h2 {
-  font-family: "Fraunces", Georgia, serif;
-  font-size: 24px;
-  font-weight: 500;
-  letter-spacing: -0.015em;
-  color: var(--navy);
-  margin-top: 40px;
-  margin-bottom: 12px;
-}
-.privacy-page h3 {
-  font-family: "Inter", sans-serif;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--navy);
-  margin-top: 24px;
-  margin-bottom: 8px;
-}
-.privacy-page p, .privacy-page li {
-  font-size: 15px;
-  color: var(--grey-700);
-  margin-bottom: 12px;
-}
-.privacy-page ul { padding-left: 22px; margin-bottom: 16px; }
-.privacy-page strong { color: var(--navy); }
-.privacy-page a { color: var(--teal-dark); text-decoration: none; border-bottom: 1px dashed rgba(47,179,154,0.35); }
-.privacy-page a:hover { border-bottom-style: solid; }
-.privacy-page .back {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--teal-dark);
-  text-decoration: none;
-  margin-bottom: 32px;
-  padding: 6px 12px;
-  border: 1px solid rgba(47,179,154,0.3);
-  border-radius: 999px;
-  font-weight: 600;
-}
-.privacy-page .back:hover { background: rgba(47,179,154,0.08); }
-.privacy-page .summary-box {
-  background: rgba(47,179,154,0.04);
-  border: 1px solid rgba(47,179,154,0.22);
-  border-left: 3px solid var(--teal);
-  border-radius: 10px;
-  padding: 20px 24px;
-  margin: 24px 0 32px;
-}
-.privacy-page .summary-box h3 { margin-top: 0; }
+body { background:#fff; }
+.privacy-page { max-width:800px;margin:0 auto;padding:56px 28px 96px;font-family:var(--sans);color:var(--ink);line-height:1.75; }
+.privacy-page h1 { font-size:clamp(34px,5vw,48px);font-weight:650;letter-spacing:-1.8px;line-height:1.1;margin-bottom:24px; }
+.privacy-page .kicker { font-size:13px;font-weight:600;color:#6e6e73;margin-bottom:12px; }
+.privacy-page .effective { font-size:13px;color:#6e6e73;padding-bottom:24px;border-bottom:1px solid var(--line);margin-bottom:32px; }
+.privacy-page h2 { font-size:27px;margin:44px 0 16px; }
+.privacy-page h3 { font-size:17px;margin:26px 0 12px; }
+.privacy-page p,.privacy-page li { font-size:16px;color:#51515a;margin-bottom:16px; }
+.privacy-page ul { padding-left:24px; }
+.privacy-page strong { color:var(--ink); }
+.privacy-page a { overflow-wrap:anywhere; }
+.privacy-page .back { display:inline-flex;align-items:center;gap:8px;font-size:14px;margin-bottom:36px;text-decoration:none; }
+.privacy-page .back svg { width:18px;height:18px; }
+.privacy-page .summary-box { background:#f2f6fd;border:1px solid #dce8fc;border-radius:18px;padding:24px 28px;margin:28px 0 38px; }
+.privacy-page .summary-box h3 { margin-top:0; }
+.privacy-page .summary-box p { margin-bottom:0; }
+@media(max-width:600px) { .privacy-page { padding:36px 24px 64px; }.privacy-page .summary-box { padding:22px; } }
 </style>
 </head>
 <body>
-<div class="app">
+<header class="welcome-header"><a class="welcome-brand" href="./" aria-label="AchieveDXP Grant Navigator home"><img class="achievedxp-wordmark" src="assets/achievedxp-logo.png" alt="AchieveDXP" width="859" height="160"><span>Grant Navigator</span></a><a class="btn primary" href="./#journey">Open workspace</a></header>
+<main id="main">
   <div class="privacy-page">
 
-    <a class="back" href="./">← Back to AchieveDXP</a>
+    <a class="back" href="./"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12H4m6-6-6 6 6 6"/></svg>Back to Grant Navigator</a>
 
     <div class="kicker">Privacy Policy</div>
     <h1>How the AchieveDXP Grant Navigator handles your data.</h1>
-    <div class="effective">Effective 2026-04-22 · Last updated 2026-04-22</div>
+    <div class="effective">Effective 2026-04-22 · Last updated 2026-11-05</div>
 
     <div class="summary-box">
       <h3>Summary, in plain English</h3>
-      <p>If you fill out the wizard, we collect the information you enter (agency name, role, work email, phone, the program details you select) and send it to our team at <strong>leads@nucleos.com</strong> so they can follow up. That's the only place your data goes. We don't sell it, we don't share it with third parties for marketing, and you can ask us to delete it at any time by emailing that address.</p>
+      <p>Creating a plan saves it in your browser. We send your contact information and planning context to <strong>leads@nucleos.com</strong> through Formsubmit only when you request follow-up or submit a callback request. Shared links and exports contain planning information, including your budget and notes. We do not sell your information or share it for third-party marketing. Contact that address to request deletion of information you sent us.</p>
     </div>
 
     <h2>Who we are</h2>
@@ -127,8 +57,12 @@
 
     <h3>2. Technical information collected automatically</h3>
     <ul>
-      <li><strong>localStorage in your browser</strong> — your in-progress wizard answers are saved locally so you can resume a session. This data stays on your device unless you submit the wizard.</li>
-      <li><strong>Shareable report URL hash</strong> — when you copy a share link, your wizard answers are encoded into the URL itself. Anyone you send the link to will see the same plan; the data is not stored on our servers.</li>
+      <li><strong>localStorage in your browser</strong> — agency profiles, saved opportunities, application drafts, criteria, budgets, eligibility reviews and aggregate program results are saved locally so you can resume work. Earlier wizard answers remain separately stored. Draft answers and saved plans, including your shortlist, checklist, and agency-entered budget, stay on your device unless you share or export them or request follow-up. Clear site data to remove local copies.</li>
+      <li><strong>Earlier wizard shareable report URL hash</strong> — the new workspace uses local backups rather than embedding work in navigation links. In the compatibility wizard, when you copy a share link, your agency profile, shortlist identifiers, preparation checklist, program selections, budget figures, and budget notes are encoded into the URL itself. Contact fields are excluded. Anyone with the link can read these planning details. Do not put confidential information in budget notes or share the link publicly. Source information may change when the feed updates.</li>
+      <li><strong>AI evidence briefs and analysis</strong> — briefs are assembled in your browser from your agency profile, a selected source record, and any public notice excerpt you supply. The new workbench includes the selected agency profile, actual narrative, criterion requirements and responses, attached aggregate evidence, reporting plan, and applicant/partner route. The Intelligence strategist sends the agency profile, mission, up to 12 selected notice records, research pathways, and up to four conversation messages. It excludes application narratives, budgets, and the result library. The reporting assistant sends only 1–20 measures selected for that application and period, its application work, and notice context. Narrative revision adds the explicit editing request; previous narrative versions are excluded. Contact fields and unrelated local records are excluded; budget totals are included only when you select that option. If in-app analysis is enabled and you explicitly request eligibility analysis, criterion extraction, drafting, narrative revision, application review, strategy development, or progress-report drafting, this context is sent through the workspace server to OpenAI. Requests use <code>store:false</code>; OpenAI’s applicable retention and processing policies still apply. This service does not log or persist prompt/analysis content. If you copy a brief into another service, that service’s policies apply. Use agency-approved tools and review the exact context before sharing it.</li>
+      <li><strong>Agency-added opportunities and eligibility reviews</strong> — imported notices and per-opportunity reviews are stored in your browser. Reviews can include responsible teams, partner names, next actions, and cited evidence. They are included in your downloaded plan, but excluded from share links. Review files before sharing; do not enter personal case records or confidential information.</li>
+      <li><strong>Public agency research</strong> — when you select “Research my agency,” the agency name, type, state, official website and optional facility/unit are sent through the workspace server to OpenAI’s hosted web-search tool. Search is scoped to the chosen agency website and selected official federal sources. Do not enter private information in these fields. Source-linked research notes are AI synthesis requiring your review. Reviewed notes and your program brief can be included in later explicit strategy and application requests, separately from funder requirements. Research notes, source links, acceptance choices and guided progress are stored in your browser and included in workspace backups. The service does not persist the research content; provider processing policies still apply.</li>
+      <li><strong>AI access</strong> — a configured hosted workspace requires a separate agency access code, held in page memory and sent only to the workspace server. Local development uses a temporary HttpOnly session cookie. Neither mechanism is used for advertising or analytics. Provider API keys are kept on the server.</li>
       <li>No analytics cookies, no advertising trackers, no third-party session recording.</li>
     </ul>
 
@@ -136,13 +70,13 @@
     <ul>
       <li>Sensitive personal information — Social Security numbers, financial-account numbers, passwords, health records.</li>
       <li>Biometric, geolocation (beyond self-reported state), or protected-class information.</li>
-      <li>Information about incarcerated individuals or agency-case data — this tool is exclusively for corrections-agency procurement planning, not program operations.</li>
+      <li>Information about incarcerated individuals or agency-case data — this tool is for agency grant planning, not individual program records.</li>
     </ul>
 
     <h2>How we use your data</h2>
     <ul>
-      <li><strong>To contact you about your plan.</strong> When you submit the wizard, a Nucleos account executive receives your information and typically reaches out within one business day.</li>
-      <li><strong>To prioritize high-fit inbound.</strong> Leads with a high readiness score + immediate timeline are flagged internally as <code>[PRIORITY]</code> so a specialist responds faster.</li>
+      <li><strong>To contact you about your plan.</strong> When you explicitly request follow-up or submit a callback request, the Nucleos team receives the contact details and planning context needed to respond. Creating a plan alone does not send a lead.</li>
+      <li><strong>To prioritize high-fit inbound.</strong> Requests with a substantially completed preparation checklist and an immediate timeline are flagged internally as <code>[PRIORITY]</code> so a specialist responds faster.</li>
       <li><strong>To improve the product.</strong> Aggregate, de-identified patterns (e.g., which agency types are most common) may inform future features. No individual records are published.</li>
     </ul>
 
@@ -150,7 +84,8 @@
     <ul>
       <li><strong>Nucleos sales &amp; success team</strong> (employees of Nucleos / iT1) — receive the full submission to follow up with you.</li>
       <li><strong>Formsubmit.co</strong> — a third-party form-relay service that routes your submission from the web page to our inbox. Their privacy policy: <a href="https://formsubmit.co/privacy-policy" target="_blank" rel="noopener noreferrer">formsubmit.co/privacy-policy</a>. We do not authorize them to use your data for any other purpose.</li>
-      <li><strong>No one else.</strong> We do not sell, rent, license, or exchange your data with advertisers, data brokers, or third-party marketers.</li>
+      <li><strong>OpenAI</strong> — receives the selected agency context and source material only when you explicitly request enabled in-app AI analysis. The workbench includes the application context described above; contact fields and unrelated local records are excluded. See <a href="https://openai.com/policies/privacy-policy/" target="_blank" rel="noopener noreferrer">OpenAI’s privacy policy</a> and your agency’s applicable service agreement.</li>
+      <li>We do not sell, rent, license, or exchange your data with advertisers, data brokers, or third-party marketers.</li>
     </ul>
 
     <h2>How long we keep it</h2>
@@ -182,11 +117,11 @@
       <li>The Navigator is served over HTTPS.</li>
       <li>Nucleos's AchieveDXP platform itself is SOC 2 Type I audited and continuously monitored for SOC 2 Type II controls, HIPAA, FedRAMP, ISO 27001:2022, and NIST SP 800-53 via Drata. See the <a href="./#compliance">Compliance section</a>.</li>
       <li>The lead-capture form uses Formsubmit.co for routing; the data in transit is encrypted.</li>
-      <li>Your in-progress wizard answers (localStorage) are stored only in your browser — never transmitted until you submit Step 10.</li>
+      <li>Your in-progress wizard answers (localStorage) are stored only in your browser — not sent as a lead unless you explicitly request follow-up or submit a callback request. Shared plan links contain the planning information described above.</li>
     </ul>
 
     <h2>Cookies</h2>
-    <p>The Navigator does not set tracking cookies. It uses <code>localStorage</code> to remember your wizard progress on a single device. You can clear it at any time via your browser's site-data settings.</p>
+    <p>The Navigator does not set tracking cookies. It uses <code>localStorage</code> for the current agency workspace, including guided progress, program briefs, public agency research notes and review choices, application drafts, up to five replaced narrative versions, and aggregate program evidence, plus earlier wizard progress and saved plans on a single device. The new workspace can be backed up and restored using a downloaded JSON file. Strategy conversation and generated application analyses stay in page memory unless explicitly exported or applied to an application. Agency research notes are the exception: they are saved locally with the guided plan. The optional AI service URL is public configuration; the workspace access code stays in page memory. Aggregate CSV imports must be reviewed by the agency and must not include individual learner information. There is no cross-device account sync; export plans you want to retain. You can clear it at any time via your browser's site-data settings.</p>
 
     <h2>Third-party data sources</h2>
     <p>The Navigator <em>displays</em> data from the following public sources (none of which receive your personal data):</p>
@@ -207,8 +142,8 @@
       <a href="mailto:publicsafety@it1.com">publicsafety@it1.com</a> · (877) 777-5995
     </p>
 
-    <a class="back" href="./" style="margin-top: 32px;">← Back to AchieveDXP</a>
+    <a class="back" href="./" style="margin-top: 32px;">Back to Grant Navigator</a>
   </div>
-</div>
+</main>
 </body>
 </html>

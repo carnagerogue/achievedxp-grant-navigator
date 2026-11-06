@@ -8,3 +8,5 @@ live-check.svg
 test-results/
 playwright-report/
 playwright/.cache/
+
+dist/

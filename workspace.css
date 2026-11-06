@@ -1,0 +1,83 @@
+/* DOC planning workspace: use existing brand tokens without vendor price surfaces. */
+[hidden] { display: none !important; }
+.plan-save-status { margin: 16px 0 24px; color: var(--navy); font-size: 13px; }
+.evidence-badge { display: inline-block; margin-bottom: 9px; padding: 5px 9px; border: 1px solid #b5d2d6; border-radius: 5px; background: #edf6f5; color: #185249; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+.evidence-note { border-left: 3px solid #b97922; padding: 8px 13px; margin: 14px 0; color: #4c463b; background: #fff9ed; font-size: 13px; line-height: 1.6; }
+.workspace-empty { background: #f1f5f7; color: #42576b; border: 1px dashed #b9c8d4; border-radius: 8px; padding: 22px; line-height: 1.7; }
+.opportunity-filters { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 14px; margin: 20px 0 12px; }
+.opportunity-filters label { display: grid; gap: 7px; color: var(--navy); font-size: 13px; font-weight: 600; }
+.opportunity-filters select { width: 100%; min-width: 0; }
+.consent-check { display: flex; align-items: flex-start; gap: 10px; margin: 20px 0; line-height: 1.6; font-size: 14px; cursor: pointer; }
+.consent-check input, .readiness-task input { flex-shrink: 0; width: 20px; height: 20px; margin-top: 3px; accent-color: #167b68; }
+.opportunity-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+.opportunity-facts dt { color: #5b6774; font-size: 12px; margin-bottom: 5px; }
+.opportunity-facts dd { margin: 0; color: var(--navy); font-size: 14px; overflow-wrap: anywhere; }
+.opportunity-facts small { display: block; font-size: 11px; margin-top: 5px; color: #5b6774; }
+.source-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 20px; }
+.source-card { border: 1px solid #d7e1e6; border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 10px; background: white; }
+.source-card h3 { font-family: Inter, sans-serif; font-size: 16px; margin: 0; color: var(--navy); line-height: 1.45; }
+.source-card p { margin: 0; font-size: 13px; line-height: 1.65; color: #42576b; }
+.source-card a { color: #126354; font-weight: 700; font-size: 13px; margin-top: auto; overflow-wrap: anywhere; }
+.source-card small { display: block; color: #607080; font-size: 11px; line-height: 1.6; }
+.preparation-card { display: grid; grid-template-columns: 1fr 2fr; gap: 32px; }
+.preparation-card > div:first-child { padding: 10px; }
+.preparation-card p { color: #42576b; font-size: 14px; line-height: 1.7; }
+.preparation-score { font-family: Fraunces, Georgia, serif; font-size: 64px; color: var(--navy); margin: 15px 0; }
+.readiness-task { display: flex; align-items: flex-start; gap: 13px; padding: 16px 4px; border-bottom: 1px solid #e0e8ec; cursor: pointer; }
+.readiness-task strong { display: block; color: var(--navy); font-size: 14px; margin-bottom: 6px; }
+.readiness-task small { display: block; color: #526579; line-height: 1.6; font-size: 12px; }
+.shortlist-item { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; padding: 22px 0; border-bottom: 1px solid #dce5eb; }
+.shortlist-item h3 { margin: 0; font-size: 18px; color: var(--navy); }
+.shortlist-item p { color: #526579; font-size: 13px; line-height: 1.7; }
+.shortlist-item a { font-size: 13px; color: #126354; }
+.builder-item { text-align: left; width: 100%; font: inherit; color: inherit; }
+.builder-item .head, .builder-item .sources { display: flex; }
+.builder-item .sources { font-size: 12px; line-height: 1.6; margin-top: 12px; }
+.results .card .btn-secondary, .tldr-toggle .btn-secondary, .shortlist-item .btn-secondary, .grant-actions .btn-secondary { background: white; color: #173c58; border: 1px solid #a7bdcc; }
+.tldr-funding-amount { font-size: 52px; }
+#cmError { background: #fff0ed; color: #8f3022; border: 1px solid #e0b9b3; border-radius: 8px; padding: 14px; line-height: 1.6; }
+.grant-card h3 { margin: 4px 0 8px; }
+.grant-card button[aria-pressed="true"] { background: #e9f2ef; color: #185249; border: 1px solid #7ba99a; }
+.panel input:focus-visible, .panel select:focus-visible, .panel button:focus-visible, .panel a:focus-visible { outline: 3px solid #237bba; outline-offset: 3px; }
+.narrative-box { white-space: pre-wrap; }
+.ai-brief-controls { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-top: 18px; }
+.ai-brief-controls label { display: grid; gap: 8px; font-size: 13px; font-weight: 600; color: var(--navy); min-width: 0; }
+.ai-brief-controls select { width: 100%; min-width: 0; text-overflow: ellipsis; }
+.ai-brief-preview { display: block; width: 100%; margin-top: 8px; font-size: 12px; line-height: 1.7; resize: vertical; }
+[data-ai-brief-action]:disabled { opacity: .5; cursor: not-allowed; }
+.toast { visibility: hidden; opacity: 0; }
+.toast.show { visibility: visible; opacity: 1; }
+.review-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; margin: 18px 0; }
+.review-grid label, #opportunityImportForm > label, #qualificationCard > label, .requirement-row label { display: grid; gap: 7px; font-size: 13px; color: var(--navy); min-width: 0; }
+.review-grid .text-input, .requirement-row .text-input, #qualificationOpportunity { width: 100%; min-width: 0; }
+.requirement-row { padding: 18px; border: 1px solid #d7e1e6; border-radius: 9px; margin: 22px 0; display: grid; gap: 12px; }
+.requirement-row legend { padding: 0 8px; color: var(--navy); font-weight: 700; }
+.requirement-row p { margin: 0; }
+.import-file-label { display: grid; gap: 10px; margin: 20px 0; font-size: 13px; }
+.imported-record { display: flex; gap: 16px; align-items: center; justify-content: space-between; border-top: 1px solid #d7e1e6; padding: 12px 0; font-size: 12px; overflow-wrap: anywhere; }
+#opportunityImportForm > button { margin-top: 14px; }
+#importPreview { overflow-wrap: anywhere; }
+details > summary { cursor: pointer; }
+.notice-excerpt { margin: 20px 0; padding: 16px; border: 1px solid #d7e1e6; border-radius: 8px; }
+.notice-excerpt > label { display: grid; gap: 8px; font-size: 13px; }
+.notice-excerpt .text-input { width: 100%; }
+.ai-service { border-top: 1px solid #d7e1e6; margin-top: 24px; padding-top: 16px; }
+.ai-service h3,.ai-service h4 { color: var(--navy); }
+.ai-service label { display: grid; gap: 8px; font-size: 13px; max-width: 480px; }
+#runAiAnalysis { margin: 16px 0; }
+#aiAnalysisStatus { font-size: 14px; color: #42576b; line-height: 1.7; }
+#aiAnalysisOutput { overflow-wrap: anywhere; font-size: 14px; line-height: 1.8; }
+.analysis-finding { border: 1px solid #d7e1e6; border-radius: 8px; padding: 18px; margin: 16px 0; }
+.analysis-finding h4 { margin: 0 0 10px; }
+.analysis-citation { border-left: 3px solid var(--teal); padding-left: 12px; margin: 12px 0; }
+.analysis-citation blockquote { margin: 12px 0; color: #42576b; white-space: pre-wrap; }
+.analysis-draft { white-space: pre-wrap; }
+.opportunity-sort { display: grid; gap: 8px; max-width: 340px; font-size: 13px; margin: 16px 0; color: var(--navy); }
+.opportunity-sort select { width: 100%; }
+.match-reasoning { padding: 14px; border: 1px solid #d7e1e6; border-radius: 8px; margin: 16px 0; color: #42576b; font-size: 13px; line-height: 1.7; }
+.match-reasoning summary { font-weight: 700; color: var(--navy); }
+@media (max-width: 850px) { .source-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .preparation-card { grid-template-columns: 1fr; gap: 10px; } }
+@media (max-width: 600px) { .opportunity-filters, .source-grid, .opportunity-facts { grid-template-columns: 1fr; } .shortlist-item { flex-direction: column; } .preparation-card { padding: 20px; } .grant-actions { flex-wrap: wrap; } .opportunity-filters .text-input { width: 100%; } }
+@media (max-width: 600px) { .ai-brief-controls { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .review-grid { grid-template-columns: 1fr; } .imported-record { flex-direction: column; align-items: flex-start; } }
+@media print { .consent-check, .opportunity-filters, .grant-actions, .source-card a, .shortlist-item button { display: none; } .source-grid { grid-template-columns: repeat(2, 1fr); } .source-card, .shortlist-item, .readiness-task { break-inside: avoid; } }
