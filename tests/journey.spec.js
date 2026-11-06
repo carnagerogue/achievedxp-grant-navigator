@@ -73,7 +73,6 @@ async function agency(page) {
   await page
     .getByRole("combobox", { name: "State or territory", exact: true })
     .selectOption("MI");
-  await page.getByRole("button", { name: "Use this agency" }).click();
   await expect(page.getByLabel("Agency name", { exact: true })).toHaveValue(
     "Michigan Department of Corrections",
   );

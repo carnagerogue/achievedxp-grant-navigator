@@ -121,16 +121,8 @@ window.FundingJourney = {
     function agency() {
       const p = ctx().state.profile,
         j = data(),
-        suggestion = AgencyDirectory.states.find((s) => s.code === p.stateCode),
-        states = [
-          ...AgencyDirectory.states.map((s) => [s.code, s.state]),
-          ["AS", "American Samoa"],
-          ["GU", "Guam"],
-          ["MP", "Northern Mariana Islands"],
-          ["PR", "Puerto Rico"],
-          ["VI", "U.S. Virgin Islands"],
-        ];
-      return `<div class="journey-grid"><form id="journeyAgency" class="panel journey-form"><h2>Who are we finding funding for?</h2><p class="quiet">Start with the legal applicant. We’ll research the public context before asking you to fill in the details.</p>${field("Applicant type", `<select data-j-profile="agencyType">${option(types, p.agencyType)}</select>`)}${field("State or territory", `<select data-j-profile="stateCode"><option value="">Select a state</option>${option(states, p.stateCode)}</select>`)}${input("Agency name", "agencyName", p.agencyName, { profile: true, required: true, max: 300, placeholder: "Search or enter your agency" })}<datalist id="docAgencyNames">${AgencyDirectory.states.map((a) => `<option value="${e(a.name)}">${e(a.state)}</option>`).join("")}</datalist>${suggestion && p.agencyType === "state_doc" && p.agencyName !== suggestion.name ? `<div class="agency-suggestion"><span><strong>${e(suggestion.name)}</strong><small>Directory suggestion · confirm the legal applicant</small></span>${jbutton("Use this agency", "use-agency", "small")}</div>` : ""}${input("Official website", "website", j.website, { type: "url", placeholder: "https://", max: 2000 })}${input("Facility, region or education unit", "unit", j.unit, { placeholder: "Optional · narrow the research to your team", max: 500 })}<p class="note">Public agency information only. No individual learner records. Research searches the agency website and official federal sources through OpenAI.</p>${ui.access()}<div class="journey-form-actions">${jbutton("Continue with my own research", "manual", "text-button")}<button class="btn primary" type="submit" ${busy ? "disabled" : ""}>Research my agency ${icon("arrow")}</button></div></form><aside class="journey-help"><h2>What we’ll look for</h2>${[
+        states = AgencyDirectory.jurisdictions;
+      return `<div class="journey-grid"><form id="journeyAgency" class="panel journey-form"><h2>Who are we finding funding for?</h2><p class="quiet">Choose your applicant type and state. Known DOC details fill automatically and carry through your workspace.</p>${field("Applicant type", `<select data-j-profile="agencyType">${option(types, p.agencyType)}</select>`)}${field("State or territory", `<select data-j-profile="stateCode"><option value="">Select a state</option>${option(states, p.stateCode)}</select>`)}${input("Agency name", "agencyName", p.agencyName, { profile: true, required: true, max: 300, placeholder: "Search or enter your agency" })}<datalist id="docAgencyNames">${AgencyDirectory.states.map((a) => `<option value="${e(a.name)}">${e(a.state)}</option>`).join("")}</datalist><p class="note" id="agencyAutofillStatus" role="status">Directory details remain editable. Confirm the legal applicant before relying on research.</p>${input("Official website", "website", j.website, { type: "url", placeholder: "https://", max: 2000 })}${input("Facility, region or education unit", "unit", j.unit, { placeholder: "Optional · narrow the research to your team", max: 500 })}<p class="note">Public agency information only. No individual learner records. Research searches the agency website and official federal sources through OpenAI.</p>${ui.access()}<div class="journey-form-actions">${jbutton("Continue with my own research", "manual", "text-button")}<button class="btn primary" type="submit" ${busy ? "disabled" : ""}>Research my agency ${icon("arrow")}</button></div></form><aside class="journey-help"><h2>What we’ll look for</h2>${[
         ["agency", "Agency mission & jurisdiction"],
         ["doc", "Education & workforce programs"],
         ["path", "Published priorities & partners"],
@@ -155,7 +147,7 @@ window.FundingJourney = {
       const c = ctx(),
         p = c.state.profile,
         j = data();
-      return `<div class="journey-grid"><form id="journeyProgram" class="panel journey-form"><h2>Turn the need into a fundable program.</h2><p class="quiet">Your agency research supplies context. These answers define the work you actually want to fund.</p><div class="question-section"><h3>01 · Define the need and the learners</h3>${input("Program name", "programName", p.programName, { profile: true, required: true, max: 300, placeholder: "Name the program or initiative" })}${input("What education gap should this funding address?", "program.need", j.program.need, { area: true, required: true, max: 3000, placeholder: "Describe the unmet need and what evidence would demonstrate it.", help: "Be specific about the gap. Add a source or mark the baseline as unknown; do not invent figures." })}${input("Who will the program serve?", "program.learners", j.program.learners, { required: true, placeholder: "Learner group, custody or release stage, and access needs" })}${input("Where will it operate?", "program.location", j.program.location, { placeholder: "Facilities, region, statewide system or partner service area" })}</div><div class="question-section"><h3>02 · Describe delivery and the funding need</h3><fieldset class="journey-goals"><legend>What should the program achieve?</legend><div class="checkbox-grid">${Object.entries(
+      return `<div class="journey-grid"><form id="journeyProgram" class="panel journey-form"><h2>Turn the need into a fundable program.</h2><p class="quiet">Your agency research supplies context. These answers define the work you actually want to fund.</p><div class="question-section"><h3>01 · Define the need and the learners</h3>${input("Program name", "programName", p.programName, { profile: true, required: true, max: 300, placeholder: "Name the program or initiative" })}${input("What education gap should this funding address?", "program.need", j.program.need, { area: true, required: true, max: 3000, placeholder: "Describe the unmet need and what evidence would demonstrate it.", help: "Be specific about the gap. Add a source or mark the baseline as unknown; do not invent figures." })}${input("Who will the program serve?", "program.learners", j.program.learners, { required: true, placeholder: "Learner group, custody or release stage, and access needs" })}${input("Where will it operate?", "program.location", j.program.location, { placeholder: "Facilities, region, statewide system or partner service area", help: "Starts from your agency location. Narrow it to the proposed program’s service area." })}</div><div class="question-section"><h3>02 · Describe delivery and the funding need</h3><fieldset class="journey-goals"><legend>What should the program achieve?</legend><div class="checkbox-grid">${Object.entries(
         labels,
       )
         .map(
@@ -316,13 +308,13 @@ window.FundingJourney = {
       const c = ctx(),
         j = data();
       if (el.dataset.jProfile) {
-        c.state.profile[el.dataset.jProfile] = el.value;
         if (
           ["agencyName", "agencyType", "stateCode"].includes(
             el.dataset.jProfile,
           )
         )
-          j.identityConfirmed = false;
+          ui.updateAgency(el.dataset.jProfile, el.value);
+        else c.state.profile[el.dataset.jProfile] = el.value;
       }
       if (el.dataset.jField) {
         const k = el.dataset.jField;
@@ -330,8 +322,8 @@ window.FundingJourney = {
           ui.application(selected())[k] = el.value;
         } else if (k.startsWith("program.")) j.program[k.slice(8)] = el.value;
         else {
-          j[k] = el.value;
-          if (k === "website" || k === "unit") j.identityConfirmed = false;
+          if (k === "website" || k === "unit") ui.updateAgency(k, el.value);
+          else j[k] = el.value;
           if (k === "manualNotes" || k === "manualUrl") {
             j.researchMode = "manual";
             j.reviewedIdentity = "";
@@ -353,7 +345,7 @@ window.FundingJourney = {
         if (!el.checked) j.reviewedIdentity = "";
       }
       if (el.id === "journeyDXP") c.state.usesAchieveDXP = el.checked;
-      if (el.id === "journeyFocus") j.focusKey = el.value;
+      if (el.id === "journeyFocus") ui.selectApplication(el.value);
       ui.save();
     }
     async function startResearch() {
@@ -456,23 +448,6 @@ window.FundingJourney = {
         )
       ) {
         capture(el);
-        if (
-          el.dataset.jProfile === "agencyName" &&
-          ctx().state.profile.agencyType === "state_doc"
-        ) {
-          const a = AgencyDirectory.states.find((a) => a.name === el.value);
-          if (a) {
-            ctx().state.profile.stateCode = a.code;
-            data().website = a.url;
-            ui.save();
-            ui.render();
-          }
-        }
-        if (
-          el.dataset.jProfile === "stateCode" ||
-          el.dataset.jProfile === "agencyType"
-        )
-          ui.render();
       }
     });
     document.addEventListener("submit", (ev) => {
@@ -488,7 +463,6 @@ window.FundingJourney = {
           ui.render();
           return;
         }
-        ui.seedStrategy(J.mission(ctx().state.profile, data()));
         go("funding");
       }
     });
@@ -505,18 +479,6 @@ window.FundingJourney = {
       if (action.startsWith("back-")) {
         go(action.slice(5));
         return;
-      }
-      if (action === "use-agency") {
-        const s = AgencyDirectory.states.find(
-          (s) => s.code === c.state.profile.stateCode,
-        );
-        if (s) {
-          c.state.profile.agencyName = s.name;
-          j.website = s.url;
-          j.identityConfirmed = false;
-          ui.save();
-          ui.render();
-        }
       }
       if (action === "manual") {
         if (!c.state.profile.agencyName.trim()) {
@@ -551,7 +513,7 @@ window.FundingJourney = {
       }
       if (action === "choose-grant") {
         if (!ui.choose(b.dataset.key)) return;
-        j.focusKey = b.dataset.key;
+        ui.selectApplication(b.dataset.key);
         ui.save();
         ui.render();
       }

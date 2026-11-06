@@ -83,7 +83,9 @@ test("discovery, comparison and a cited application survive reload with a valid 
   await page.getByLabel("State or territory").selectOption("MI");
   await page.getByLabel("Adult education & literacy").check();
   await page.getByLabel("Our agency already uses AchieveDXP").check();
-  await page.getByRole("button", { name: "Save agency profile" }).click();
+  await page
+    .getByRole("button", { name: "Explore funding", exact: true })
+    .click();
   await page.locator("[data-compare]").nth(0).check();
   await page.locator("[data-compare]").nth(1).check();
   await page.getByRole("tab", { name: /Compare/ }).click();
@@ -134,6 +136,11 @@ test("discovery, comparison and a cited application survive reload with a valid 
   await page.getByRole("tab", { name: "05 Submit" }).click();
   await page.getByLabel("Confirm applicant eligibility").check();
   await page.reload();
+  await expect(page.getByRole("tab", { name: "05 Submit" })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
+  await page.getByRole("tab", { name: "01 Qualify" }).click();
   await expect(
     page.getByRole("heading", { name: "Make the go / no-go decision." }),
   ).toBeVisible();

@@ -39,7 +39,13 @@ window.FundingIntelligence = {
     function render(compact = false) {
       const c = ui.context(),
         stale = result && contextAtRequest !== contextKey();
-      if (compact && !mission && !result) mission = c.mission || "";
+      mode = c.strategyMode || "mission";
+      mission =
+        c.strategyPrompt == null
+          ? c.profile.programName || c.profile.activities
+            ? c.mission || ""
+            : ""
+          : c.strategyPrompt;
       return `<section class="intelligence-home ${compact ? "intelligence-embedded" : ""}"><div class="intelligence-heading"><img class="achieve-mascot" src="assets/mascot.png" alt="Achieve robot mascot" width="400" height="367"><div class="eyebrow">${icon("spark")} INTELLIGENCE FOR YOUR MISSION</div>${compact ? "<h2>Research funding around your program.</h2>" : "<h1>A clearer path to funding.</h1>"}<p>Your mission. Your evidence. An intelligent next step.</p></div>
         <form id="strategyForm" class="strategy-composer ${busy ? "is-thinking" : ""}" aria-busy="${busy}"><label class="sr-only" for="missionPrompt">What would you like to make possible?</label><textarea id="missionPrompt" maxlength="3000" minlength="12" required placeholder="What would you like to make possible?">${e(mission)}</textarea>
         <div class="composer-context"><span>${icon("agency")} ${e(c.profile.agencyName || "Your agency profile")} ${c.profile.stateCode ? "· " + e(c.profile.stateCode) : "· Nationwide research"}</span><button class="text-button" type="button" data-intent="context">Review AI context ${icon("arrow")}</button></div>
@@ -67,10 +73,16 @@ window.FundingIntelligence = {
       );
     }
     document.addEventListener("input", (ev) => {
-      if (ev.target.id === "missionPrompt") mission = ev.target.value;
+      if (ev.target.id === "missionPrompt") {
+        mission = ev.target.value;
+        ui.saveMission(mission);
+      }
     });
     document.addEventListener("change", (ev) => {
-      if (ev.target.id === "strategyMode") mode = ev.target.value;
+      if (ev.target.id === "strategyMode") {
+        mode = ev.target.value;
+        ui.saveStrategyMode(mode);
+      }
     });
     document.addEventListener("click", (ev) => {
       const b = ev.target.closest("[data-intent]");
@@ -78,7 +90,9 @@ window.FundingIntelligence = {
       if (b.dataset.intent === "suggest") {
         const s = suggestions.find((x) => x[0] === b.dataset.prompt);
         mission = s[2];
+        ui.saveMission(mission);
         mode = s[0] === "shortlist" ? "shortlist" : "mission";
+        ui.saveStrategyMode(mode);
         ui.render();
         document.querySelector("#missionPrompt")?.focus();
       }
@@ -86,6 +100,7 @@ window.FundingIntelligence = {
       if (b.dataset.intent === "clear") {
         if (busy) return;
         mission = "";
+        ui.saveMission(mission);
         history = [];
         result = null;
         error = "";
@@ -94,6 +109,7 @@ window.FundingIntelligence = {
       }
       if (b.dataset.intent === "followup") {
         mission = "";
+        ui.saveMission(mission);
         ui.render();
         document.querySelector("#missionPrompt")?.focus();
         window.scrollTo({
@@ -191,7 +207,9 @@ window.FundingIntelligence = {
       render,
       setMission(value) {
         mission = value;
+        ui.saveMission(mission);
         mode = "mission";
+        ui.saveStrategyMode(mode);
         result = null;
         history = [];
         error = "";

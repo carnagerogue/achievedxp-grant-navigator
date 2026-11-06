@@ -301,13 +301,78 @@
       "https://corrections.wyo.gov/",
     ],
   ];
+  const states = rows.map(([code, state, name, url]) => ({
+    code,
+    state,
+    name,
+    url,
+  }));
+  const normalize = (value) =>
+    String(value || "")
+      .trim()
+      .toLowerCase();
+  const named = (name) =>
+    states.find((s) => normalize(s.name) === normalize(name));
+  const sameUrl = (a, b) =>
+    normalize(a).replace(/\/$/, "") === normalize(b).replace(/\/$/, "");
+  function resolveIdentity(current, field, value) {
+    const next = { ...current };
+    const prior = named(current.agencyName);
+    if (field) {
+      if (current[field] === value) return next;
+      next[field] = value;
+    }
+    let entry;
+    if (field === "agencyName") {
+      entry = named(value);
+      if (entry) {
+        next.agencyType = "state_doc";
+        next.stateCode = entry.code;
+      }
+    } else if (!field || field === "stateCode" || field === "agencyType") {
+      if (next.agencyType === "state_doc") {
+        entry = states.find((s) => s.code === next.stateCode);
+        if (!field && !entry && !next.stateCode && prior) {
+          entry = prior;
+          next.stateCode = entry.code;
+        }
+        // Restore missing directory details without replacing custom agency edits.
+        if (!field && next.agencyName && !prior) entry = null;
+      }
+      if (field && !entry && prior) {
+        next.agencyName = "";
+        if (sameUrl(next.website, prior.url)) next.website = "";
+      }
+    }
+    if (entry) {
+      const changedAgency = prior?.code !== entry.code;
+      next.agencyName = entry.name;
+      if (field || changedAgency || !next.website) next.website = entry.url;
+    }
+    if (current.agencyName && next.agencyName !== current.agencyName)
+      next.unit = "";
+    return next;
+  }
+  function location(identity) {
+    return (
+      identity.unit ||
+      states.find((s) => s.code === identity.stateCode)?.state ||
+      identity.stateCode ||
+      ""
+    );
+  }
   return {
-    states: rows.map(([code, state, name, url]) => ({
-      code,
-      state,
-      name,
-      url,
-    })),
+    states,
+    jurisdictions: [
+      ...states.map((s) => [s.code, s.state]),
+      ["AS", "American Samoa"],
+      ["GU", "Guam"],
+      ["MP", "Northern Mariana Islands"],
+      ["PR", "Puerto Rico"],
+      ["VI", "U.S. Virgin Islands"],
+    ],
+    resolveIdentity,
+    location,
     note: "Agency directory starting points. Confirm the current name, website, jurisdiction and legal applicant before relying on them.",
   };
 });
