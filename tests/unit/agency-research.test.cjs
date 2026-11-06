@@ -238,3 +238,15 @@ test("reviewed research and the program brief reach strategy and application con
   assert.equal(strategy.agency_research.length, 1);
   assert.equal(strategy.program_brief.need, "Adult education gap");
 });
+
+test('provider Markdown citations render clean prose while preserving verified source links', async () => {
+  const {prepareAgencyResearch,researchFromResponse}=await import('../../server/agency-research.mjs');
+  const payload=response();
+  const paragraph=payload.output[1].content[0];
+  const citation='([corrections.example.gov](https://corrections.example.gov/education?utm_source=openai))';
+  paragraph.text='Education: The agency describes [adult literacy](https://corrections.example.gov/literacy) and credential pathways. '+citation;
+  paragraph.annotations=[{type:'url_citation',title:'Agency education services',url:agency.website,start_index:paragraph.text.indexOf(citation),end_index:paragraph.text.length}];
+  const [fact]=researchFromResponse(payload,prepareAgencyResearch({agency}));
+  assert.equal(fact.text,'The agency describes adult literacy and credential pathways.');
+  assert.equal(fact.sources[0].url,agency.website);
+});
