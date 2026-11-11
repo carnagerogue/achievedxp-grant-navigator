@@ -3,6 +3,8 @@
 Target website: https://carnagerogue.github.io/achievedxp-grant-navigator/
 Target repository: https://github.com/carnagerogue/achievedxp-grant-navigator
 
+For the planned `grants.achievedxp.com` address, follow the [custom-domain migration](CUSTOM_DOMAIN.md), including DNS, HTTPS, Render, and existing workspace backups.
+
 Review the implementation in the target repository before publishing. A draft pull request does not replace the live Pages website.
 
 1. Review the redesigned website and checks. Merge the reviewed implementation into the target repository’s `main` branch.
