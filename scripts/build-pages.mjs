@@ -9,6 +9,7 @@ import {
 const out = resolve("dist");
 await mkdir(out, { recursive: true });
 const files = [
+  "CNAME",
   "index.html",
   "privacy.html",
   "navigator.css",
